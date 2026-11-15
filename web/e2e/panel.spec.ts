@@ -390,11 +390,19 @@ test('the panel stays light when the browser darkens pages', async ({ browser },
 	expect(await shot(['--enable-features=WebContentsForceDark'])).toBe(await shot([]));
 });
 
-test('the picked lane row is light', async ({ page }, info) => {
+test('a picked lane and a picked task are raised light cards', async ({ page }, info) => {
 	test.skip(phone(info.project.name), 'the desk only');
-	await page.goto('/projects/sample/lanes/api');
-	const row = page.getByRole('link', { name: /^api\b/ }).first();
-	await expect(row).toHaveAttribute('aria-current', 'true');
-	await expect(row).toHaveCSS('background-color', 'rgb(224, 217, 203)');
-	await expect(row).toHaveCSS('color', 'rgb(31, 28, 23)');
+	await page.goto('/projects/sample/lanes/api?task=SAM-102');
+	const lane = page.getByRole('link', { name: /^api\b/ }).first();
+	const task = page.getByRole('link', { name: /Paginate the orders list/ });
+	await expect(lane).toHaveAttribute('aria-current', 'true');
+	await expect(task).toHaveAttribute('aria-current', 'true');
+	for (const row of [lane, task]) {
+		await expect(row).toHaveCSS('background-color', 'rgb(255, 253, 249)');
+		await expect(row).toHaveCSS(
+			'box-shadow',
+			/rgb\(214, 206, 190\) 0px 0px 0px 1px, rgba\(31, 28, 23, 0\.08\) 0px 2px 6px/
+		);
+	}
+	await expect(task.locator('.name')).toHaveCSS('font-weight', '600');
 });

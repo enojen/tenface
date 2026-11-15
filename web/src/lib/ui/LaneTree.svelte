@@ -74,7 +74,8 @@
 	}
 
 	.row.picked {
-		box-shadow: inset 0 0 0 2px var(--ink);
+		background: var(--lift);
+		box-shadow: var(--shadow-pick);
 		margin-right: -8px;
 		padding-right: 8px;
 	}
@@ -174,5 +175,9 @@
 
 	.name.todo {
 		color: var(--ink-soft);
+	}
+
+	.row.picked .name {
+		font-weight: 600;
 	}
 </style>
