@@ -2,10 +2,6 @@ import type { Api, State } from './types.ts';
 
 const RETRY_MS = [1_000, 2_000, 5_000, 10_000, 30_000];
 
-/**
- * The server sends the whole state as a `state` event on every change.
- * The browser retries a dropped stream by itself, but not after a non-200 answer, so then we open a new one.
- */
 export function createStreamApi(url: string): Api {
 	return {
 		subscribe(onState, onConnection) {

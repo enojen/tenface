@@ -233,7 +233,7 @@ A warm, low-chroma Sepia neutral scale with a single blood red; each tone has a 
 - **Id** (JetBrains Mono 500–600, the size of its line): SAM-102, Q12, PR #418.
 
 ### Named Rules
-**The Five Sizes Rule.** Only 12, 14, 16, 20 and 28 px exist. The one exception is the 9 px letter or count drawn inside an agent icon. A long title wraps; it is never cut with "…".
+**The Five Sizes Rule.** Only 12, 14, 16, 20 and 28 px exist. The one exception is the 9 px mark drawn inside a small icon: the letter or count of an agent icon, and the "?" of the question card in a tree row. A long title wraps; it is never cut with "…".
 
 ## Layout
 

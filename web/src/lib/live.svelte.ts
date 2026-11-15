@@ -1,9 +1,7 @@
 import { api } from './api/index.ts';
 import type { Connection, State } from './api/types.ts';
 
-/** The last known state of the server and the time, both live. */
 class Live {
-	// Raw: the panel never changes the state, so no deep proxies (less RAM).
 	state = $state.raw<State | null>(null);
 	connection = $state<Connection>({ online: true });
 	now = $state(Date.now());
@@ -27,7 +25,6 @@ class Live {
 
 export const live = new Live();
 
-/** True on a screen wide enough for the three desktop columns. */
 class Wide {
 	value = $state(false);
 

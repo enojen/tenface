@@ -1,7 +1,3 @@
-// The contract with the server. Later these types come from the Rust server.
-
-// Each set of states is a const object: code writes TaskState.Done, the JSON carries 'done'.
-
 export const Step = {
 	Plan: 'plan',
 	Approve: 'approve',
@@ -13,7 +9,6 @@ export const Step = {
 	Close: 'close'
 } as const;
 export type StepName = (typeof Step)[keyof typeof Step];
-/** Every step in its order. */
 export const STEP_NAMES: readonly StepName[] = Object.values(Step);
 
 export interface State {

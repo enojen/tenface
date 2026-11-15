@@ -1,4 +1,3 @@
-// Made-up data in the shape of the server state. No real names.
 import {
 	type Agent,
 	AgentRole,
@@ -19,7 +18,6 @@ const STEPS: StepName[] = [Step.Plan, Step.Approve, Step.Build, Step.PR, Step.Me
 export function sampleState(now: number): State {
 	const ago = (minutes: number) => new Date(now - minutes * 60_000).toISOString();
 
-	/** Steps that ran one after another and end `endAgo` minutes ago, or still run. */
 	function runs(times: [StepName, number][], open: boolean, endAgo = 0): StepRun[] {
 		let start = endAgo + times.reduce((sum, [, minutes]) => sum + minutes, 0);
 		return times.map(([step, minutes], index) => {
@@ -86,7 +84,6 @@ export function sampleState(now: number): State {
 		};
 	}
 
-	/** A lane with made-up tasks: a chain of done tasks, then the running ones, then the queue. */
 	function lane(
 		id: string,
 		description: string,

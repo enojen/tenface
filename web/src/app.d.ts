@@ -1,16 +1,9 @@
-// See https://svelte.dev/docs/kit/types#app.d.ts
-// for information about these interfaces
+import type { AgentRole } from '#lib/api/types.ts';
+
 declare global {
 	namespace App {
-		// interface Error {}
-		// interface Locals {}
-		// interface PageData {}
 		interface PageState {
-			/** The agent whose card was open, so that back opens it again. */
-			agent?: 'planner' | 'babysitter';
+			agent?: AgentRole;
 		}
-		// interface Platform {}
 	}
 }
-
-export {};
