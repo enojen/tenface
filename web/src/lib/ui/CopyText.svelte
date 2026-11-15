@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { toast } from '#lib/toast.svelte.ts';
+	import { ToastMark, toast } from '#lib/toast.svelte.ts';
 
 	let {
 		text,
@@ -17,7 +17,7 @@
 		try {
 			await navigator.clipboard.writeText(text);
 		} catch {
-			toast.show('Could not copy');
+			toast.show('Could not copy', ToastMark.Failed);
 			return;
 		}
 		copied = true;

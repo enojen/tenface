@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Agent } from '#lib/api/types.ts';
+	import { type Agent, AgentRole } from '#lib/api/types.ts';
 	import BotHead from './BotHead.svelte';
 
 	let { agent, size, count = true }: { agent: Agent; size: 40 | 48 | 56; count?: boolean } = $props();
@@ -31,7 +31,7 @@
 			<text x="38.1" y="13.1" text-anchor="middle" fill="var(--ink)" font-family="Inter Variable, Inter, system-ui, sans-serif" font-size="9" font-weight="700">{wideCard ? '9+' : open}</text>
 		{/if}
 	</svg>
-	<BotHead letter={agent.role === 'planner' ? 'P' : 'B'} size={size / 2} />
+	<BotHead letter={agent.role === AgentRole.Planner ? 'P' : 'B'} size={size / 2} />
 </span>
 
 <style>

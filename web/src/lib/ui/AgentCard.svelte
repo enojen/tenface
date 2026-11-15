@@ -4,7 +4,7 @@
 	import Copy from '@lucide/svelte/icons/copy';
 	import Info from '@lucide/svelte/icons/info';
 	import MessageSquare from '@lucide/svelte/icons/message-square';
-	import type { Agent, Question } from '#lib/api/types.ts';
+	import { type Agent, AgentRole, type Question } from '#lib/api/types.ts';
 	import { clock, minutesBetween, waitTime } from '#lib/format.ts';
 	import { live } from '#lib/live.svelte.ts';
 	import AgentRing from './AgentRing.svelte';
@@ -18,7 +18,7 @@
 	}: { agent: Agent; owner: string; questionHref: (question: Question) => string } = $props();
 
 	const PAGE = 3;
-	const role = $derived(agent.role === 'planner' ? 'Planner' : 'Babysitter');
+	const role = $derived(agent.role === AgentRole.Planner ? 'Planner' : 'Babysitter');
 	const percent = $derived(Math.round((agent.context.used / agent.context.limit) * 100));
 	const thousands = (tokens: number) => `${Math.round(tokens / 1000)}k`;
 	const oldest = $derived([...agent.questions].sort((a, b) => a.openedAt.localeCompare(b.openedAt)));
@@ -30,7 +30,7 @@
 
 {#if notes}
 	<div class="head notes-head">
-		<button class="icon-button back" aria-label="Back to the {role.toLowerCase()}" onclick={() => (notes = false)}>
+		<button type="button" class="icon-button back" aria-label="Back to the {role.toLowerCase()}" onclick={() => (notes = false)}>
 			<ChevronLeft size={20} />
 		</button>
 		<h3 class="title">Notes · {role.toLowerCase()} · {owner}</h3>
@@ -39,7 +39,7 @@
 		<p class="label muted">No notes yet.</p>
 	{:else}
 		<ol class="notes">
-			{#each agent.notes as note (note.at + note.text)}
+			{#each agent.notes as note}
 				<li>
 					<span class="label muted">{clock(note.at, live.now)}</span>
 					<span class="label"><strong>{note.kind}</strong><span>{note.text}</span></span>
@@ -54,7 +54,7 @@
 			<h3 class="title">{role} <span class="owner">· {owner}</span></h3>
 			<span class="label strong">Context {percent}% · {thousands(agent.context.used)} / {thousands(agent.context.limit)}</span>
 		</span>
-		<button class="icon-button info" aria-label="Notes of the {role.toLowerCase()}" onclick={() => (notes = true)}>
+		<button type="button" class="icon-button info" aria-label="Notes of the {role.toLowerCase()}" onclick={() => (notes = true)}>
 			<Info size={20} />
 		</button>
 	</div>

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import X from '@lucide/svelte/icons/x';
-	import type { PlanNode, PlanSign, Question } from '#lib/api/types.ts';
+	import { type PlanNode, PlanSign, type Question } from '#lib/api/types.ts';
 	import { minutesBetween, waitTime } from '#lib/format.ts';
 	import { live } from '#lib/live.svelte.ts';
-	import { treeRows } from '#lib/tree.ts';
+	import { RowKind, treeRows } from '#lib/tree.ts';
 	import TreeCells from './TreeCells.svelte';
 
 	let {
@@ -12,14 +12,19 @@
 		onclose
 	}: { question: Question; heading?: 'h1' | 'h2'; onclose?: () => void } = $props();
 
-	const SIGN_NAMES: Record<PlanSign, string> = { '+': 'added', '−': 'removed', '→': 'moved', '~': 'changed' };
-	const change = $derived(question.change!);
+	const SIGN_NAMES: Record<PlanSign, string> = {
+		[PlanSign.Added]: 'added',
+		[PlanSign.Removed]: 'removed',
+		[PlanSign.Moved]: 'moved',
+		[PlanSign.Changed]: 'changed'
+	};
+	const change = $derived(question.change);
 </script>
 
 {#snippet tree(roots: PlanNode[], signs: boolean)}
 	<ul class="tree">
 		{#each treeRows(roots, (node) => node.children) as row, index (index)}
-			{#if row.kind === 'gap'}
+			{#if row.kind === RowKind.Gap}
 				<li class="gap" aria-hidden="true">{#if signs}<span class="sign"></span>{/if}<TreeCells cells={row.cells} /></li>
 			{:else}
 				{@const node = row.item}
@@ -32,13 +37,13 @@
 						{/if}
 					{/if}
 					<TreeCells cells={row.cells} />
-					<span class="body" class:added={node.sign === '+'}>
+					<span class="body" class:added={node.sign === PlanSign.Added}>
 						<span class="node-cell" class:line-above={row.lineAbove} class:line-below={row.lineBelow}>
-							<span class="node" class:removed={node.sign === '−'} class:moved={node.sign === '→'}></span>
+							<span class="node" class:removed={node.sign === PlanSign.Removed} class:moved={node.sign === PlanSign.Moved}></span>
 						</span>
 						<span class="text">
 							<span class="label meta" class:mono={!node.note}>{node.note ?? node.ref}</span>
-							{#if node.sign === '−'}
+							{#if node.sign === PlanSign.Removed}
 								<s class="name faint">{node.title}</s>
 							{:else}
 								<span class="name" class:soft={!node.sign}>{node.title}</span>
@@ -52,39 +57,41 @@
 	</ul>
 {/snippet}
 
-<article class="plan">
-	<header>
-		<div class="top">
-			<svelte:element this={heading} class="headline">{question.topic}</svelte:element>
-			{#if onclose}<button class="icon-button close" aria-label="Close" onclick={onclose}><X size={20} /></button>{/if}
-		</div>
-		<p class="label muted">
-			<span class="mono id">{question.id}</span> · from the planner · {waitTime(minutesBetween(question.openedAt, live.now))}
+{#if change}
+	<article class="plan">
+		<header>
+			<div class="top">
+				<svelte:element this={heading} class="headline">{question.topic}</svelte:element>
+				{#if onclose}<button type="button" class="icon-button close" aria-label="Close" onclick={onclose}><X size={20} /></button>{/if}
+			</div>
+			<p class="label muted">
+				<span class="mono id">{question.id}</span> · from the planner · {waitTime(minutesBetween(question.openedAt, live.now))}
+			</p>
+		</header>
+
+		<p class="reason">{change.reason}</p>
+		<p class="legend label muted">
+			{#each Object.entries(SIGN_NAMES) as [sign, name] (sign)}<span><span class="mono strong">{sign}</span> {name}</span>{/each}
 		</p>
-	</header>
 
-	<p class="reason">{change.reason}</p>
-	<p class="legend label muted">
-		{#each Object.entries(SIGN_NAMES) as [sign, name] (sign)}<span><span class="mono strong">{sign}</span> {name}</span>{/each}
-	</p>
+		{#each change.trees as plan (plan.lane)}
+			{#if plan.isNew}
+				<section class="new-lane" aria-label="New lane {plan.lane}">
+					<h3 class="title"><span class="mono" aria-hidden="true">+</span>New lane {plan.lane}</h3>
+					{#if plan.waits}<p class="label muted">{plan.waits}</p>{/if}
+					{@render tree(plan.roots, false)}
+				</section>
+			{:else}
+				<section class="lane" aria-label="Lane {plan.lane} after the change">
+					<h3 class="label muted strong">Lane {plan.lane} after the change</h3>
+					{@render tree(plan.roots, true)}
+				</section>
+			{/if}
+		{/each}
 
-	{#each change.trees as plan (plan.lane)}
-		{#if plan.isNew}
-			<section class="new-lane" aria-label="New lane {plan.lane}">
-				<h3 class="title"><span class="mono" aria-hidden="true">+</span>New lane {plan.lane}</h3>
-				{#if plan.waits}<p class="label muted">{plan.waits}</p>{/if}
-				{@render tree(plan.roots, false)}
-			</section>
-		{:else}
-			<section class="lane" aria-label="Lane {plan.lane} after the change">
-				<h3 class="label muted strong">Lane {plan.lane} after the change</h3>
-				{@render tree(plan.roots, true)}
-			</section>
-		{/if}
-	{/each}
-
-	<p class="answer">Answer in the planner chat with the id, for example <span class="mono strong">{question.id} ok</span>.</p>
-</article>
+		<p class="answer">Answer in the planner chat with the id, for example <span class="mono strong">{question.id} ok</span>.</p>
+	</article>
+{/if}
 
 <style>
 	.plan {
