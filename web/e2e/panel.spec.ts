@@ -389,3 +389,12 @@ test('the panel stays light when the browser darkens pages', async ({ browser },
 	expect(browser).toBeTruthy();
 	expect(await shot(['--enable-features=WebContentsForceDark'])).toBe(await shot([]));
 });
+
+test('the picked lane row is light', async ({ page }, info) => {
+	test.skip(phone(info.project.name), 'the desk only');
+	await page.goto('/projects/sample/lanes/api');
+	const row = page.getByRole('link', { name: /^api\b/ }).first();
+	await expect(row).toHaveAttribute('aria-current', 'true');
+	await expect(row).toHaveCSS('background-color', 'rgb(224, 217, 203)');
+	await expect(row).toHaveCSS('color', 'rgb(31, 28, 23)');
+});
