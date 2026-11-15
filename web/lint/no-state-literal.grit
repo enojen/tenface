@@ -1,0 +1,16 @@
+or {
+	or {
+		`$a === $b`,
+		`$a !== $b`
+	} where {
+		or {
+			and { $b <: JsStringLiteralExpression(), $lit = $b, $other = $a },
+			and { $a <: JsStringLiteralExpression(), $lit = $a, $other = $b }
+		},
+		not $other <: `typeof $_`,
+		not $other <: r"^.*\.key$"
+	},
+	JsCaseClause(test=$lit) where { $lit <: JsStringLiteralExpression() }
+} where {
+	register_diagnostic(span=$lit, message="Compare with a const object (TaskState.Done), not a string literal.")
+}
