@@ -3,13 +3,12 @@
 	import { api } from '#lib/api/index.ts';
 	import type { Project } from '#lib/api/types.ts';
 	import { LoadState, searched, searchFor } from '#lib/load.svelte.ts';
-	import { askers, askersLabel, laneTrio } from '#lib/model.ts';
+	import { askers, askersLabel, projectRunning } from '#lib/model.ts';
 	import BotHead from './BotHead.svelte';
 	import LoadFailed from './LoadFailed.svelte';
 	import Pager from './Pager.svelte';
 	import SearchField from './SearchField.svelte';
 	import Skeleton, { SkeletonKind } from './Skeleton.svelte';
-	import Trio from './Trio.svelte';
 
 	let { projects, size = 5 }: { projects: Project[]; size?: number } = $props();
 
@@ -27,10 +26,10 @@
 	});
 </script>
 
-<section class="table" aria-label="Projects" style:--columns="1fr 120px 72px 16px">
+<section class="table" aria-label="Projects" style:--columns="1fr 72px 16px">
 	<SearchField bind:value={query} label="Search projects" />
 	<div class="table-head" aria-hidden="true">
-		<span>Project</span><span class="center">Lanes</span><span class="center">Needs you</span><span></span>
+		<span>Project</span><span class="center">Needs you</span><span></span>
 	</div>
 	{#if found === null && hits.state === LoadState.Failed}
 		<LoadFailed what="the projects" onretry={() => hits.retry()} />
@@ -40,11 +39,12 @@
 		<ul>
 			{#each shown as project (project.id)}
 				{@const ask = askers(project)}
-				{@const lanes = laneTrio(project.lanes)}
 				<li>
 					<a class="table-row" href="/projects/{project.id}">
-						<span class="title name">{project.name}<span class="sr-only">,</span></span>
-						<span class="center"><Trio trio={lanes} noun="lanes: " /></span>
+						<span class="name">
+							<span class="title">{project.name}</span>
+							{#if projectRunning(project.lanes)}<span class="running-note">running</span>{/if}
+						</span>
 						<span class="center heads">
 							<span class="sr-only">, {askersLabel(ask.planner, ask.babysitters)}</span>
 							{#if ask.planner > 0}<BotHead letter="P" />{/if}
@@ -64,6 +64,9 @@
 <style>
 	.name {
 		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
 		overflow-wrap: anywhere;
 	}
 

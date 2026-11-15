@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { LaneSummary } from '#lib/api/types.ts';
-	import Trio from './Trio.svelte';
+	import LaneProgress from './LaneProgress.svelte';
 
 	let { lane, heading = 'h1' }: { lane: LaneSummary; heading?: 'h1' | 'h2' } = $props();
 </script>
@@ -8,7 +8,7 @@
 <div class="lane-head">
 	<svelte:element this={heading} class="card-head"><span aria-hidden="true">Lane ·</span> {lane.name}</svelte:element>
 	<p class="subject">{lane.description}</p>
-	<Trio trio={lane.trio} noun="tasks: " />
+	<LaneProgress trio={lane.trio} />
 </div>
 
 <style>

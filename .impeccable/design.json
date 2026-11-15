@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-15T19:00:00Z",
+  "generatedAt": "2026-11-15T20:00:00Z",
   "title": "Design System: Tenface",
   "extensions": {
     "colorMeta": {
@@ -212,12 +212,12 @@
       "css": ".ds-copy{display:inline-flex;align-items:center;gap:4px;height:36px;box-sizing:border-box;padding:0 8px;border-radius:999px;border:1px solid #857c6c;background:none;color:#1f1c17;font:600 14px/20px 'JetBrains Mono',ui-monospace,monospace}.ds-copy:focus-visible{outline:2px solid #1f1c17;outline-offset:2px}"
     },
     {
-      "name": "Trio",
+      "name": "Lane Progress",
       "kind": "custom",
       "refersTo": "mark-running",
-      "description": "Done, running and waiting counts: filled gray, filled red, empty outline. Counts tasks in a lane row, lanes in a project row.",
-      "html": "<span class=\"ds-trio\" role=\"img\" aria-label=\"1 done, 1 running, 5 waiting\"><span><i class=\"d\"></i>1</span><span><i class=\"r\"></i>1</span><span><i class=\"w\"></i>5</span></span>",
-      "css": ".ds-trio{display:inline-flex;gap:8px;font:400 12px/16px Inter,system-ui,sans-serif;color:#5e574b}.ds-trio>span{display:inline-flex;align-items:center;gap:4px}.ds-trio i{width:14px;height:14px;box-sizing:border-box;border-radius:4px}.ds-trio .d{background:#7a7262}.ds-trio .r{background:#a3161c}.ds-trio .w{border:1.5px solid #857c6c}"
+      "description": "The lane head's counts in words (running red, waiting soft ink, done muted, zeros left out) over an 8 px capsule bar: done gray, running red, waiting empty. Table rows show only a red running note instead.",
+      "html": "<div class=\"ds-progress\"><p><span class=\"r\">1 running</span> · 5 waiting · <span class=\"d\">1 done</span></p><span class=\"bar\" aria-hidden=\"true\"><i class=\"bd\" style=\"width:14.3%\"></i><i class=\"br\" style=\"width:14.3%\"></i></span></div>",
+      "css": ".ds-progress{display:flex;flex-direction:column;gap:6px;font:400 12px/16px Inter,system-ui,sans-serif;color:#3d3830}.ds-progress p{margin:0}.ds-progress .r{font-weight:600;color:#a3161c}.ds-progress .d{color:#5e574b}.ds-progress .bar{display:flex;width:220px;height:8px;overflow:hidden;border-radius:999px;background:#f1ece2;box-shadow:inset 0 0 0 1.5px #857c6c}.ds-progress .bd{background:#7a7262}.ds-progress .br{background:#a3161c}"
     },
     {
       "name": "Agent Ring",
@@ -264,7 +264,7 @@
     "northStar": "The Quiet Ledger",
     "overview": "Tenface is a ledger that the owner reads in a few seconds. Every project, lane, task and step is written down in warm, paper-like Sepia tones, in tables and trees that read like a well-kept book. The page does not glow or decorate. Its one color, a blood red, says \"this runs now\". What the agents ask the owner does not sit on the page. Each question belongs to the agent that asked it: the planner of the project (P) or the babysitter of a lane (B). The agent is a ring that shows its context use, and a small card on the ring counts its open questions. Tap the ring and its card lists the questions. The owner answers in that agent's chat, for example \"Q12 ok\". The surface is light Sepia by day and dark Sepia by night. There is no accent color. Shapes follow Apple's current capsule forms without the glass. The phone answers \"what now\"; the desktop shows project, lane and task side by side.",
     "keyCharacteristics": [
-      "The trio: done is a filled gray square, running a filled red square, waiting an empty square with a gray outline; it counts tasks, and lanes in a project row.",
+      "Done is a filled gray square, running a filled red square, waiting an empty outline; these marks draw the tree. A project row shows only a red \"running\", a lane row a red \"N tasks running\"; the lane head shows all counts in words over a capsule bar.",
       "Red means running and nothing else; a question is a count on the asking agent's ring.",
       "Every question has an id (Q12) that is unique across the whole system.",
       "Ink marks where the owner is: the current tab, the selected row, the selected desktop lane.",
@@ -310,7 +310,7 @@
       },
       {
         "name": "The Offline Rule",
-        "body": "Offline, the panel shows the last known state under the strip: the trio and the ring keep their last colors, and the strip alone says the panel is offline. Only the running node turns into a 2 px gray outline and its step tile turns gray.",
+        "body": "Offline, the panel shows the last known state under the strip: the running notes, the lane progress and the ring keep their last colors, and the strip alone says the panel is offline. Only the running node turns into a 2 px gray outline and its step tile turns gray.",
         "section": "layout"
       },
       {
@@ -320,7 +320,7 @@
       }
     ],
     "dos": [
-      "Do count tasks with the trio everywhere: done, running, waiting.",
+      "Do show in a row only what runs: \"running\" for a project, \"N tasks running\" for a lane; the lane head gives all three counts.",
       "Do put a question in the card of the agent that asked it, with its id and the waiting time.",
       "Do close a question when the owner answers it in the chat: a hook in the asking agent's session (the babysitter's or the planner's) tells the server, and the row leaves the card.",
       "Do show the agent on every lane and project page, and let the owner drag it out of the way.",

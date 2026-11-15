@@ -3,12 +3,12 @@
 	import { api } from '#lib/api/index.ts';
 	import type { Project } from '#lib/api/types.ts';
 	import { LoadState, searched, searchFor } from '#lib/load.svelte.ts';
+	import { tasksRunning } from '#lib/model.ts';
 	import BotHead from './BotHead.svelte';
 	import LoadFailed from './LoadFailed.svelte';
 	import Pager from './Pager.svelte';
 	import SearchField from './SearchField.svelte';
 	import Skeleton, { SkeletonKind } from './Skeleton.svelte';
-	import Trio from './Trio.svelte';
 
 	let {
 		project,
@@ -26,7 +26,7 @@
 	);
 	const found = $derived(searched(project.lanes, query, hits));
 	const shown = $derived(found?.slice(page * size, page * size + size) ?? []);
-	const columns = $derived(desk ? '1fr 120px 64px' : '1fr 120px 72px 16px');
+	const columns = $derived(desk ? '1fr 64px' : '1fr 72px 16px');
 	$effect(() => {
 		query;
 		page = 0;
@@ -37,7 +37,7 @@
 	<h2 id="lanes-title" class="card-head band">Lanes</h2>
 	<SearchField bind:value={query} label="Search lanes" />
 	<div class="table-head" aria-hidden="true">
-		<span>Lane</span><span class="center">Tasks</span><span class="center">Needs you</span>{#if !desk}<span></span>{/if}
+		<span>Lane</span><span class="center">Needs you</span>{#if !desk}<span></span>{/if}
 	</div>
 	{#if found === null && hits.state === LoadState.Failed}
 		<LoadFailed what="the lanes" onretry={() => hits.retry()} />
@@ -56,8 +56,11 @@
 						href="/projects/{project.id}/lanes/{lane.id}"
 						aria-current={here ? 'true' : undefined}
 					>
-						<span class="title name">{lane.name}<span class="sr-only">,</span></span>
-						<span class="center"><Trio trio={lane.trio} noun="tasks: " /></span>
+						<span class="name">
+							<span class="title">{lane.name}</span>
+							{#if lane.trio.running > 0}<span class="running-note">{tasksRunning(lane.trio.running)}</span>{/if}
+							<span class="sr-only">,</span>
+						</span>
 						<span class="center">
 							{#if asks > 0}<BotHead letter="B" /><span class="sr-only">, {asks} open {asks === 1 ? 'question' : 'questions'} from the babysitter</span>{/if}
 						</span>
@@ -75,6 +78,9 @@
 <style>
 	.name {
 		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
 		overflow-wrap: anywhere;
 	}
 

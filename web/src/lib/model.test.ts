@@ -1,14 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { sampleWorld } from './api/sample.ts';
+import { LaneState } from './api/types.ts';
 import { summarize } from './api/world.ts';
 import {
 	askers,
 	askersLabel,
-	laneTrio,
 	lastPage,
 	nameMatches,
+	projectRunning,
+	tasksRunning,
 	tasksState,
-	taskTrio
+	taskTrio,
+	trioParts
 } from './model.ts';
 
 const world = () => sampleWorld(Date.parse('2026-11-15T12:00:00Z'));
@@ -25,7 +28,24 @@ describe('the trio', () => {
 		const lanes = project().lanes;
 		expect(tasksState(lanes.find((lane) => lane.id === 'docs')!.tasks)).toBe('done');
 		expect(tasksState(lanes.find((lane) => lane.id === 'api')!.tasks)).toBe('running');
-		expect(laneTrio(summary().lanes)).toEqual({ done: 2, running: 4, waiting: 4 });
+	});
+
+	it('says a project runs when one of its lanes runs', () => {
+		const lanes = summary().lanes;
+		expect(projectRunning(lanes)).toBe(true);
+		expect(projectRunning(lanes.filter((lane) => lane.state !== LaneState.Running))).toBe(false);
+	});
+
+	it('counts running tasks in words', () => {
+		expect(tasksRunning(1)).toBe('1 task running');
+		expect(tasksRunning(2)).toBe('2 tasks running');
+	});
+
+	it('lists the running, waiting and done counts that are not zero, in that order', () => {
+		expect(trioParts({ done: 1, running: 0, waiting: 5 })).toEqual([
+			{ state: 'waiting', count: 5 },
+			{ state: 'done', count: 1 }
+		]);
 	});
 });
 
