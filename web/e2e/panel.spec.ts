@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 const phone = (name: string) => name === 'phone';
 
@@ -48,7 +48,10 @@ test('a task opens from the tree and closes again', async ({ page }, info) => {
 		? page.getByRole('dialog', { name: 'Task SAM-102' })
 		: page.getByRole('complementary', { name: 'Task SAM-102' });
 	await expect(detail.getByRole('img', { name: /^Steps: plan 7 min/ })).toBeVisible();
-	await expect(detail.getByRole('link', { name: 'PR #418 on GitHub' })).toHaveAttribute('href', /418/);
+	await expect(detail.getByRole('link', { name: 'PR #418 on GitHub' })).toHaveAttribute(
+		'href',
+		/418/
+	);
 	if (phone(info.project.name)) await page.keyboard.press('Escape');
 	else await detail.getByRole('button', { name: 'Close' }).click();
 	await expect(page).toHaveURL(/\/lanes\/api$/);
@@ -104,7 +107,9 @@ for (const url of ['/projects', '/projects/sample', '/projects/sample/lanes/api?
 		await page.goto(url);
 		await page.getByRole('main').first().waitFor();
 		const result = await new AxeBuilder({ page }).analyze();
-		const serious = result.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical');
+		const serious = result.violations.filter(
+			(v) => v.impact === 'serious' || v.impact === 'critical'
+		);
 		expect(serious.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(' ')}`)).toEqual([]);
 	});
 }

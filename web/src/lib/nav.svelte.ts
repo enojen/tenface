@@ -1,4 +1,4 @@
-import { goto, type AfterNavigate } from '$app/navigation';
+import { type AfterNavigate, goto } from '$app/navigation';
 
 // The in-app history, so that "back" returns to the page before instead of adding a new entry.
 const stack: string[] = [];
@@ -39,14 +39,19 @@ const depth = (url: URL) => url.pathname.split('/').filter(Boolean).length;
  * Slides the page in the direction of the move; nothing when only the query changes.
  * A history move of the browser (the iPhone swipe) is not slid: Safari animates it already.
  */
-export function slide(from: URL | undefined, to: URL | undefined, popstate: boolean, delta?: number) {
+export function slide(
+	from: URL | undefined,
+	to: URL | undefined,
+	popstate: boolean,
+	delta?: number
+) {
 	const mine = ownBack;
 	ownBack = false;
 	if (popstate && !mine) return null;
 	if (!from || !to || from.pathname === to.pathname) return null;
-	if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
+	if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches)
+		return null;
 	const backward = (delta ?? 0) < 0 || depth(to) < depth(from);
 	document.documentElement.dataset.slide = backward ? 'back' : 'forward';
 	return backward;
 }
-
