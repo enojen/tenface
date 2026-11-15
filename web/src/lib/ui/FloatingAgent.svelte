@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
-	import type { Agent, Question } from '#lib/api/types.ts';
+	import { type Agent, AgentRole, type Question } from '#lib/api/types.ts';
 	import { rememberCard } from '#lib/nav.svelte.ts';
 	import { page } from '$app/state';
 	import AgentCard from './AgentCard.svelte';
@@ -13,12 +13,27 @@
 	const LOW = 104;
 	const KEY = 'tenface.agent';
 
-	function saved(): { side: 'left' | 'right'; bottom: number } {
+	const Side = { Left: 'left', Right: 'right' } as const;
+	type Side = (typeof Side)[keyof typeof Side];
+
+	const Phase = { Rest: 'rest', Pressed: 'pressed', Dragging: 'dragging', Settling: 'settling' } as const;
+	type Phase = (typeof Phase)[keyof typeof Phase];
+
+	const SCALE: Record<Phase, number> = {
+		[Phase.Rest]: 1,
+		[Phase.Pressed]: 0.94,
+		[Phase.Dragging]: 1.08,
+		[Phase.Settling]: 1
+	};
+
+	const isSide = (value: unknown): value is Side => value === Side.Left || value === Side.Right;
+
+	function saved(): { side: Side; bottom: number } {
 		try {
 			const value = JSON.parse(localStorage.getItem(KEY) ?? '');
-			if ((value.side === 'left' || value.side === 'right') && typeof value.bottom === 'number') return value;
+			if (isSide(value.side) && typeof value.bottom === 'number') return value;
 		} catch {}
-		return { side: 'right', bottom: LOW };
+		return { side: Side.Right, bottom: LOW };
 	}
 
 	let place = $state(saved());
@@ -29,25 +44,23 @@
 	let dialog = $state<HTMLDialogElement>();
 	let open = $state(false);
 
-	// The ring trails the finger a little, then swings to its edge: it should feel heavy.
-	type Phase = 'rest' | 'pressed' | 'dragging' | 'settling';
-	let phase = $state<Phase>('rest');
+	let phase = $state<Phase>(Phase.Rest);
 	let at = $state({ x: 0, y: 0 });
 	let target = { x: 0, y: 0 };
 	let frame = 0;
 
-	const role = $derived(agent.role === 'planner' ? 'Planner' : 'Babysitter');
+	const role = $derived(agent.role === AgentRole.Planner ? 'Planner' : 'Babysitter');
 	const percent = $derived(Math.round((agent.context.used / agent.context.limit) * 100));
 	const count = $derived(agent.questions.length);
 	const label = $derived(
-		`${role} of ${owner}, context ${percent} percent, ${count} open ${count === 1 ? 'question' : 'questions'}. Drag to move, tap to ${open ? 'close' : 'open'} its card`
+		`${role} of ${owner}, context ${percent} percent, ${count} open ${count === 1 ? 'question' : 'questions'}, ${agent.working ? 'working' : 'waiting'}. Drag to move, tap to ${open ? 'close' : 'open'} its card`
 	);
 	const rest = $derived({
-		x: place.side === 'left' ? EDGE : width - SIZE - EDGE,
+		x: place.side === Side.Left ? EDGE : width - SIZE - EDGE,
 		y: Math.min(Math.max(height - place.bottom - SIZE, 16), height - SIZE - LOW)
 	});
-	const shown = $derived(phase === 'dragging' ? at : rest);
-	const scale = $derived(phase === 'dragging' ? 1.08 : phase === 'pressed' ? 0.94 : 1);
+	const shown = $derived(phase === Phase.Dragging ? at : rest);
+	const scale = $derived(SCALE[phase]);
 	const style = $derived(`transform: translate3d(${shown.x}px, ${shown.y}px, 0) scale(${scale})`);
 
 	const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -60,7 +73,7 @@
 
 	function down(event: PointerEvent) {
 		start = { x: event.clientX, y: event.clientY, moved: false };
-		phase = 'pressed';
+		phase = Phase.Pressed;
 		(event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
 	}
 
@@ -71,7 +84,7 @@
 		if (!start.moved) {
 			start.moved = true;
 			at = { ...rest };
-			phase = 'dragging';
+			phase = Phase.Dragging;
 			frame = requestAnimationFrame(follow);
 		}
 	}
@@ -83,28 +96,31 @@
 		dragged = moved;
 		cancelAnimationFrame(frame);
 		if (!moved) {
-			phase = 'rest';
+			phase = Phase.Rest;
 			return;
 		}
 		const top = Math.min(Math.max(event.clientY - SIZE / 2, 16), height - SIZE - LOW);
-		place = { side: event.clientX < width / 2 ? 'left' : 'right', bottom: Math.round(height - top - SIZE) };
-		phase = 'settling';
-		setTimeout(() => phase === 'settling' && (phase = 'rest'), 520);
+		place = { side: event.clientX < width / 2 ? Side.Left : Side.Right, bottom: Math.round(height - top - SIZE) };
+		phase = Phase.Settling;
+		setTimeout(endSettling, 520);
 		try {
 			localStorage.setItem(KEY, JSON.stringify(place));
 		} catch {}
 	}
 
+	function endSettling() {
+		if (phase === Phase.Settling) phase = Phase.Rest;
+	}
+
 	function cancel() {
 		start = null;
 		cancelAnimationFrame(frame);
-		phase = 'rest';
+		phase = Phase.Rest;
 	}
 
 	let cardBelow = $state(false);
 	let cardStyle = $state('');
 
-	/** The card opens on the side of the ring that has more room, so it never leaves the screen. */
 	function placeCard() {
 		const top = rest.y;
 		cardBelow = top + SIZE / 2 < height / 2;
@@ -142,10 +158,11 @@
 {/snippet}
 
 <button
+	type="button"
 	class="float agent-button"
 	{style}
-	class:dragging={phase === 'dragging'}
-	class:settling={phase === 'settling'}
+	class:dragging={phase === Phase.Dragging}
+	class:settling={phase === Phase.Settling}
 	aria-label={label}
 	aria-haspopup="dialog"
 	aria-expanded={open}
@@ -158,6 +175,7 @@
 	{@render ring()}
 </button>
 
+<!-- biome-ignore lint/a11y/useKeyWithClickEvents: Escape closes a modal dialog -->
 <dialog
 	bind:this={dialog}
 	tabindex="-1"
@@ -169,9 +187,9 @@
 	onclick={(event) => event.target === dialog && dialog?.close()}
 >
 	<div class="card" class:below={cardBelow} style={cardStyle}>
-		<AgentCard {agent} {owner} {questionHref} />
+		{#if open}<AgentCard {agent} {owner} {questionHref} />{/if}
 	</div>
-	<button class="float agent-button" {style} aria-label={label} aria-expanded="true" onclick={() => dialog?.close()}>
+	<button type="button" class="float agent-button" {style} aria-label={label} aria-expanded="true" onclick={() => dialog?.close()}>
 		{@render ring()}
 	</button>
 </dialog>
@@ -231,6 +249,22 @@
 		background: var(--dim);
 	}
 
+	.card {
+		position: absolute;
+		left: 16px;
+		right: 16px;
+		overflow-y: auto;
+		transform-origin: bottom right;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		padding: 14px;
+		border-radius: 18px;
+		background: var(--tile);
+		border: 1px solid var(--line-strong);
+		box-shadow: var(--shadow-card);
+	}
+
 	dialog[open] .card {
 		animation: card-in 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
 	}
@@ -261,21 +295,5 @@
 		dialog[open]::backdrop {
 			animation: none;
 		}
-	}
-
-	.card {
-		position: absolute;
-		left: 16px;
-		right: 16px;
-		overflow-y: auto;
-		transform-origin: bottom right;
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-		padding: 14px;
-		border-radius: 18px;
-		background: var(--tile);
-		border: 1px solid var(--line-strong);
-		box-shadow: var(--shadow-card);
 	}
 </style>

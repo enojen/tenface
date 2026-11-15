@@ -2,6 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page, test } from '@playwright/test';
 
 const phone = (name: string) => name === 'phone';
+const babysitter = /^Babysitter of api, context 62 percent, 1 open question/;
 
 async function noSideScroll(page: Page) {
 	const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
@@ -124,10 +125,7 @@ test('a direct link still has a way back', async ({ page }) => {
 test('copying an id says so on the screen', async ({ page }) => {
 	const copies = await recordCopies(page);
 	await page.goto('/projects/sample/lanes/api');
-	await page
-		.getByRole('button', { name: /^Babysitter of api, context 62 percent, 1 open question/ })
-		.first()
-		.click();
+	await page.getByRole('button', { name: babysitter }).first().click();
 	await expect(page.getByText('Merge PR #418?')).toBeVisible();
 	await page.getByRole('button', { name: 'Copy Q12' }).click();
 	expect(await copies()).toEqual(['Q12']);
@@ -136,6 +134,44 @@ test('copying an id says so on the screen', async ({ page }) => {
 	await expect(page.getByRole('button', { name: 'Copy handover prompt' })).toHaveText('Copied');
 	await page.keyboard.press('Escape');
 	await expect(page.getByText('Merge PR #418?')).toBeHidden();
+});
+
+test('a failed copy says so without a check mark', async ({ page }) => {
+	await page.addInitScript(() => {
+		Object.defineProperty(navigator, 'clipboard', {
+			value: {
+				writeText: async () => {
+					throw new Error('denied');
+				}
+			}
+		});
+	});
+	await page.goto('/projects/sample/lanes/api');
+	await page.getByRole('button', { name: babysitter }).first().click();
+	await page.getByRole('button', { name: 'Copy Q12' }).click();
+	await expect(page.getByRole('status').filter({ hasText: 'Could not copy' })).toBeVisible();
+	await expect(page.locator('.toast svg')).toHaveCount(0);
+});
+
+test('the agent card opens on its questions after it closed on the notes', async ({ page }) => {
+	await page.goto('/projects/sample/lanes/api');
+	await page.getByRole('button', { name: babysitter }).first().click();
+	await page.getByRole('button', { name: 'Notes of the babysitter' }).click();
+	await expect(page.getByRole('heading', { name: /^Notes/ })).toBeVisible();
+	await page.keyboard.press('Escape');
+	await page.getByRole('button', { name: babysitter }).first().click();
+	await expect(page.getByText('Merge PR #418?')).toBeVisible();
+});
+
+test('the agent ring says whether the agent works', async ({ page }) => {
+	await page.goto('/projects/sample');
+	await expect(
+		page.getByRole('button', { name: /^Planner of sample/ }).first()
+	).toHaveAccessibleName(/, waiting\./);
+	await page.goto('/projects/sample/lanes/api');
+	await expect(page.getByRole('button', { name: babysitter }).first()).toHaveAccessibleName(
+		/, working\./
+	);
 });
 
 test('a planner question opens its plan change', async ({ page }, info) => {

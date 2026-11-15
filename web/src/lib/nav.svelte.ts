@@ -67,7 +67,6 @@ export function slide(
 	return backward;
 }
 
-/** Keeps the open agent card in the history entry, so that "back" brings it back open. */
 export function rememberCard(role: App.PageState['agent']) {
 	if (page.state.agent === role) return;
 	replaceState('', { ...page.state, agent: role });
