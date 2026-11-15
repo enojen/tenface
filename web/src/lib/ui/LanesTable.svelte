@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import type { Project } from '#lib/api/types.ts';
-	import { taskTrio } from '#lib/model.ts';
+	import { nameMatches, taskTrio } from '#lib/model.ts';
 	import BotHead from './BotHead.svelte';
 	import Pager from './Pager.svelte';
 	import SearchField from './SearchField.svelte';
@@ -17,7 +17,7 @@
 
 	let query = $state('');
 	let page = $state(0);
-	const found = $derived(project.lanes.filter((lane) => lane.name.includes(query.trim().toLowerCase())));
+	const found = $derived(project.lanes.filter((lane) => nameMatches(lane.name, query)));
 	const shown = $derived(found.slice(page * size, page * size + size));
 	const columns = $derived(desk ? '1fr 120px 64px' : '1fr 120px 72px 16px');
 	$effect(() => {

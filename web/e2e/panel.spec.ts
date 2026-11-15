@@ -8,12 +8,10 @@ async function noSideScroll(page: Page) {
 	expect(overflow).toBeLessThanOrEqual(0);
 }
 
-/** Drags with touch events, as a finger does on the phone. */
 async function swipe(page: Page, selector: string, from: number, to: number) {
 	await page.evaluate(
 		({ selector, from, to }) => {
 			const target = document.querySelector(selector)!;
-			// WebKit has no Touch constructor, so the events carry plain touch points.
 			const send = (type: string, y: number) => {
 				const event = new Event(type, { bubbles: true, cancelable: true });
 				const points = type === 'touchend' ? [] : [{ identifier: 1, clientX: 195, clientY: y }];
@@ -67,6 +65,20 @@ test('a pull down closes the task sheet', async ({ page }, info) => {
 	await swipe(page, 'dialog[open] .handle', 300, 560);
 	await expect(page).toHaveURL(/\/lanes\/api$/);
 	await expect(page.getByRole('dialog', { name: 'Task SAM-102' })).toBeHidden();
+});
+
+test('a tap on the sheet edge keeps it, a tap above closes it', async ({ page }, info) => {
+	test.skip(!phone(info.project.name), 'the phone only');
+	await page.goto('/projects/sample/lanes/api?task=SAM-102');
+	const sheet = page.getByRole('dialog', { name: 'Task SAM-102' });
+	await expect(sheet).toBeVisible();
+	const box = (await sheet.boundingBox()) as { x: number; y: number; width: number };
+	await page.mouse.click(box.x + 40, box.y + 6);
+	await page.waitForTimeout(500);
+	await expect(sheet).toBeVisible();
+	await expect(page).toHaveURL(/\?task=SAM-102$/);
+	await page.mouse.click(box.x + 40, box.y - 40);
+	await expect(page).toHaveURL(/\/lanes\/api$/);
 });
 
 test('back returns to the page before, without new history', async ({ page }, info) => {

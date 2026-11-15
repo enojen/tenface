@@ -1,9 +1,10 @@
 <script lang="ts">
 	import House from '@lucide/svelte/icons/house';
 	import LayoutGrid from '@lucide/svelte/icons/layout-grid';
+	import { homeUrl } from '#lib/views/links.ts';
 	import { page } from '$app/state';
 
-	const home = $derived(page.url.pathname === '/');
+	const home = $derived(page.url.pathname === homeUrl);
 </script>
 
 <nav aria-label="Main">

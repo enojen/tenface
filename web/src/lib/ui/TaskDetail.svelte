@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ListChecks from '@lucide/svelte/icons/list-checks';
 	import X from '@lucide/svelte/icons/x';
-	import type { StepName, Task } from '#lib/api/types.ts';
+	import { type StepName, type Task, TaskState } from '#lib/api/types.ts';
 	import { stepTime } from '#lib/format.ts';
 	import { live } from '#lib/live.svelte.ts';
 	import { totalMinutes } from '#lib/model.ts';
@@ -19,10 +19,10 @@
 <div class="detail">
 	<div class="top">
 		<svelte:element this={heading} class="headline">{task.title}</svelte:element>
-		<button class="icon-button close" class:sr-only={hideClose} aria-label="Close" onclick={onclose}><X size={20} /></button>
+		<button type="button" class="icon-button close" class:hidden-close={hideClose} aria-label="Close" onclick={onclose}><X size={20} /></button>
 	</div>
 
-	{#if task.steps.length > 0 || task.state !== 'todo'}
+	{#if task.steps.length > 0 || task.state !== TaskState.Todo}
 		<div class="steps">
 			<span class="label muted head"><span>Steps</span><span>{stepTime(totalMinutes(task, live.now))} total</span></span>
 			<StepSnake {task} {steps} />
@@ -70,6 +70,14 @@
 
 	.close {
 		margin-right: -12px;
+	}
+
+	.hidden-close:not(:focus-visible) {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
 	}
 
 	.steps {

@@ -8,8 +8,5 @@ export default defineConfig({
 		reuseExistingServer: !process.env.CI
 	},
 	use: { baseURL: 'http://localhost:4173' },
-	projects: [
-		// The owner uses an iPhone, so the phone runs in WebKit, the engine of Safari.
-		{ name: 'phone', use: { ...devices['iPhone 14'] } }
-	]
+	projects: [{ name: 'phone', use: { ...devices['iPhone 14'] } }]
 });

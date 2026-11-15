@@ -3,7 +3,7 @@
 	import '@fontsource-variable/jetbrains-mono';
 	import '../app.css';
 	import { live, wide } from '#lib/live.svelte.ts';
-	import { slide, track } from '#lib/nav.svelte.ts';
+	import { NavigationKind, slide, track } from '#lib/nav.svelte.ts';
 	import ErrorStrip from '#lib/ui/ErrorStrip.svelte';
 	import Nav from '#lib/ui/Nav.svelte';
 	import { afterNavigate, onNavigate } from '$app/navigation';
@@ -19,8 +19,8 @@
 		if (slide(
 				navigation.from?.url,
 				navigation.to?.url,
-				navigation.type === 'popstate',
-				navigation.type === 'popstate' ? navigation.delta : 0
+				navigation.type === NavigationKind.Popstate,
+				navigation.type === NavigationKind.Popstate ? navigation.delta : 0
 			) === null) return;
 		return new Promise((resolve) => {
 			document.startViewTransition(async () => {

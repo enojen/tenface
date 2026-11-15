@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import type { Project } from '#lib/api/types.ts';
-	import { askers, askersLabel, laneTrio } from '#lib/model.ts';
+	import { askers, askersLabel, laneTrio, nameMatches } from '#lib/model.ts';
 	import BotHead from './BotHead.svelte';
 	import Pager from './Pager.svelte';
 	import SearchField from './SearchField.svelte';
@@ -11,7 +11,7 @@
 
 	let query = $state('');
 	let page = $state(0);
-	const found = $derived(projects.filter((project) => project.name.includes(query.trim().toLowerCase())));
+	const found = $derived(projects.filter((project) => nameMatches(project.name, query)));
 	const shown = $derived(found.slice(page * size, page * size + size));
 	$effect(() => {
 		query;
