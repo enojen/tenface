@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { type Agent, AgentRole } from '#lib/api/types.ts';
+	import { AgentRole, type AgentSummary } from '#lib/api/types.ts';
 	import BotHead from './BotHead.svelte';
 
-	let { agent, size, count = true }: { agent: Agent; size: 40 | 48 | 56; count?: boolean } = $props();
+	let { agent, size, count = true }: { agent: AgentSummary; size: 40 | 48 | 56; count?: boolean } = $props();
 
 	const CIRCUMFERENCE = 2 * Math.PI * 20;
 	const share = $derived(Math.min(1, agent.context.used / agent.context.limit));
-	const open = $derived(agent.questions.length);
+	const open = $derived(agent.questions);
 	const wideCard = $derived(open > 9);
 </script>
 

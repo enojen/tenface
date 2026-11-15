@@ -1,16 +1,19 @@
 import { describe, expect, it } from 'vitest';
-import { sampleState } from './api/sample.ts';
+import { sampleWorld } from './api/sample.ts';
+import { summarize } from './api/world.ts';
 import {
 	askers,
 	askersLabel,
-	laneState,
 	laneTrio,
 	lastPage,
 	nameMatches,
+	tasksState,
 	taskTrio
 } from './model.ts';
 
-const project = () => sampleState(Date.parse('2026-11-15T12:00:00Z')).projects[0];
+const world = () => sampleWorld(Date.parse('2026-11-15T12:00:00Z'));
+const project = () => world().projects[0];
+const summary = () => summarize(world()).projects[0];
 
 describe('the trio', () => {
 	it('counts the api lane of the design as 1 done, 1 running, 5 waiting', () => {
@@ -20,15 +23,15 @@ describe('the trio', () => {
 
 	it('gives a lane one state', () => {
 		const lanes = project().lanes;
-		expect(laneState(lanes.find((lane) => lane.id === 'docs')!)).toBe('done');
-		expect(laneState(lanes.find((lane) => lane.id === 'api')!)).toBe('running');
-		expect(laneTrio(lanes)).toEqual({ done: 2, running: 4, waiting: 4 });
+		expect(tasksState(lanes.find((lane) => lane.id === 'docs')!.tasks)).toBe('done');
+		expect(tasksState(lanes.find((lane) => lane.id === 'api')!.tasks)).toBe('running');
+		expect(laneTrio(summary().lanes)).toEqual({ done: 2, running: 4, waiting: 4 });
 	});
 });
 
 describe('who asks', () => {
 	it('names the planner and the babysitters apart', () => {
-		const { planner, babysitters } = askers(project());
+		const { planner, babysitters } = askers(summary());
 		expect(askersLabel(planner, babysitters)).toBe(
 			'2 open questions: 1 from the planner, 1 from the babysitter'
 		);

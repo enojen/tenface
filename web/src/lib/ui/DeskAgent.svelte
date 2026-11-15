@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
-	import { type Agent, AgentRole, type AgentSource, type Question } from '#lib/api/types.ts';
+	import { AgentRole, type AgentSource, type AgentSummary, type Question } from '#lib/api/types.ts';
 	import { rememberCard } from '#lib/nav.svelte.ts';
 	import { page } from '$app/state';
 	import AgentCard from './AgentCard.svelte';
@@ -13,7 +13,7 @@
 		questionHref,
 		align = 'left'
 	}: {
-		agent: Agent;
+		agent: AgentSummary;
 		source: AgentSource;
 		owner: string;
 		questionHref: (question: Question) => string;
@@ -31,7 +31,7 @@
 	const id = $props.id();
 	const role = $derived(agent.role === AgentRole.Planner ? 'Planner' : 'Babysitter');
 	const percent = $derived(Math.round((agent.context.used / agent.context.limit) * 100));
-	const count = $derived(agent.questions.length);
+	const count = $derived(agent.questions);
 
 	function closeOnEscape(event: KeyboardEvent) {
 		if (event.key !== 'Escape' || !open) return;

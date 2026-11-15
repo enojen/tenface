@@ -1,10 +1,13 @@
-import { type Lane, type Project, type StepRun, type Task, TaskState } from './api/types.ts';
+import {
+	LaneState,
+	type LaneSummary,
+	type Project,
+	type StepRun,
+	type Task,
+	TaskState,
+	type Trio
+} from './api/types.ts';
 import { minutesBetween } from './format.ts';
-
-export const LaneState = { Done: 'done', Running: 'running', Waiting: 'waiting' } as const;
-export type LaneState = (typeof LaneState)[keyof typeof LaneState];
-
-export type Trio = Record<LaneState, number>;
 
 export function taskTrio(tasks: Task[]): Trio {
 	return {
@@ -14,16 +17,16 @@ export function taskTrio(tasks: Task[]): Trio {
 	};
 }
 
-export function laneState(lane: Lane): LaneState {
-	if (lane.tasks.some((task) => task.state === TaskState.Running)) return LaneState.Running;
-	if (lane.tasks.length > 0 && lane.tasks.every((task) => task.state === TaskState.Done))
+export function tasksState(tasks: Task[]): LaneState {
+	if (tasks.some((task) => task.state === TaskState.Running)) return LaneState.Running;
+	if (tasks.length > 0 && tasks.every((task) => task.state === TaskState.Done))
 		return LaneState.Done;
 	return LaneState.Waiting;
 }
 
-export function laneTrio(lanes: Lane[]): Trio {
+export function laneTrio(lanes: LaneSummary[]): Trio {
 	const trio: Trio = { [LaneState.Done]: 0, [LaneState.Running]: 0, [LaneState.Waiting]: 0 };
-	for (const lane of lanes) trio[laneState(lane)] += 1;
+	for (const lane of lanes) trio[lane.state] += 1;
 	return trio;
 }
 
@@ -43,8 +46,8 @@ export const totalMinutes = (task: Task, now: number) =>
 
 export function askers(project: Project) {
 	return {
-		planner: project.planner.questions.length,
-		babysitters: project.lanes.reduce((sum, lane) => sum + lane.babysitter.questions.length, 0)
+		planner: project.planner.questions,
+		babysitters: project.lanes.reduce((sum, lane) => sum + lane.babysitter.questions, 0)
 	};
 }
 
@@ -68,12 +71,3 @@ export const lastPage = (total: number, size: number) => Math.max(0, Math.ceil(t
 
 export const findLane = (project: Project, id: string) =>
 	project.lanes.find((lane) => lane.id === id);
-
-export function findQuestion(project: Project, id: string) {
-	const all = [project.planner, ...project.lanes.map((lane) => lane.babysitter)];
-	for (const agent of all) {
-		const question = agent.questions.find((candidate) => candidate.id === id);
-		if (question) return question;
-	}
-	return undefined;
-}

@@ -19,15 +19,27 @@ export interface Project {
 	id: string;
 	name: string;
 	steps: StepName[];
-	planner: Agent;
-	lanes: Lane[];
+	planner: AgentSummary;
+	lanes: LaneSummary[];
+}
+
+export const LaneState = { Done: 'done', Running: 'running', Waiting: 'waiting' } as const;
+export type LaneState = (typeof LaneState)[keyof typeof LaneState];
+
+export type Trio = Record<LaneState, number>;
+
+export interface LaneSummary {
+	id: string;
+	name: string;
+	description: string;
+	state: LaneState;
+	trio: Trio;
+	babysitter: AgentSummary;
 }
 
 export interface Lane {
 	id: string;
 	name: string;
-	description: string;
-	babysitter: Agent;
 	tasks: Task[];
 }
 
@@ -58,6 +70,13 @@ export interface StepRun {
 
 export const AgentRole = { Planner: 'planner', Babysitter: 'babysitter' } as const;
 export type AgentRole = (typeof AgentRole)[keyof typeof AgentRole];
+
+export interface AgentSummary {
+	role: AgentRole;
+	working: boolean;
+	context: { used: number; limit: number };
+	questions: number;
+}
 
 export interface Agent {
 	role: AgentRole;
@@ -122,6 +141,7 @@ export interface Api {
 	): () => void;
 	lane(project: string, lane: string, signal: AbortSignal): Promise<Lane>;
 	agent(source: AgentSource, signal: AbortSignal): Promise<Agent>;
+	question(project: string, id: string, signal: AbortSignal): Promise<Question>;
 	searchProjects(query: string, signal: AbortSignal): Promise<string[]>;
 	searchLanes(project: string, query: string, signal: AbortSignal): Promise<string[]>;
 }

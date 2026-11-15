@@ -1,11 +1,8 @@
 import {
 	type Agent,
 	AgentRole,
-	type Lane,
 	type PlanChange,
 	PlanSign,
-	type Project,
-	type State,
 	Step,
 	type StepName,
 	type StepRun,
@@ -15,7 +12,27 @@ import {
 
 const STEPS: StepName[] = [Step.Plan, Step.Approve, Step.Build, Step.PR, Step.Merge, Step.Close];
 
-export function sampleState(now: number): State {
+export interface SampleLane {
+	id: string;
+	name: string;
+	description: string;
+	babysitter: Agent;
+	tasks: Task[];
+}
+
+export interface SampleProject {
+	id: string;
+	name: string;
+	steps: StepName[];
+	planner: Agent;
+	lanes: SampleLane[];
+}
+
+export interface SampleWorld {
+	projects: SampleProject[];
+}
+
+export function sampleWorld(now: number): SampleWorld {
 	const ago = (minutes: number) => new Date(now - minutes * 60_000).toISOString();
 
 	function runs(times: [StepName, number][], open: boolean, endAgo = 0): StepRun[] {
@@ -119,7 +136,7 @@ export function sampleState(now: number): State {
 		prefix: string,
 		[done, running, waiting]: [number, number, number],
 		tasks: Task[] = []
-	): Lane {
+	): SampleLane {
 		if (tasks.length === 0) tasks.push(...chain(id, prefix, [done, running, waiting]));
 		const used = 40_000 + id.length * 9_000;
 		return {
@@ -279,7 +296,7 @@ export function sampleState(now: number): State {
 		]
 	};
 
-	const sample: Project = {
+	const sample: SampleProject = {
 		id: 'sample',
 		name: 'sample',
 		steps: STEPS,

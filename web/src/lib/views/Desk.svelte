@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { api } from '#lib/api/index.ts';
-	import type { Project, Question } from '#lib/api/types.ts';
+	import type { Project } from '#lib/api/types.ts';
 	import { live } from '#lib/live.svelte.ts';
 	import { LoadState, loadFor } from '#lib/load.svelte.ts';
 	import { back } from '#lib/nav.svelte.ts';
@@ -19,23 +19,37 @@
 		project,
 		laneId,
 		taskId = null,
-		question = null
-	}: { project: Project; laneId: string | null; taskId?: string | null; question?: Question | null } = $props();
+		questionId = null
+	}: { project: Project; laneId: string | null; taskId?: string | null; questionId?: string | null } = $props();
 
 	const lane = $derived(project.lanes.find((candidate) => candidate.id === laneId) ?? project.lanes[0]);
 	const tree = loadFor(
 		() => (lane ? `${project.id}/${lane.id}` : null),
 		(signal) => api.lane(project.id, lane?.id ?? '', signal)
 	);
+	const plan = loadFor(
+		() => (questionId ? `${project.id}/${questionId}` : null),
+		(signal) => api.question(project.id, questionId ?? '', signal)
+	);
 	const task = $derived(taskId ? tree.value?.tasks.find((candidate) => candidate.id === taskId) : undefined);
 	const close = () => back(lane ? laneUrl(project.id, lane.id) : projectUrl(project.id));
 
 	function detailLabel() {
 		if (task) return `Task ${task.id}`;
-		if (question) return `Question ${question.id}`;
+		if (questionId) return `Question ${questionId}`;
 		return 'Detail';
 	}
 </script>
+
+{#snippet planChange()}
+	{#if plan.value?.change}
+		<PlanChange question={plan.value} heading="h2" onclose={close} />
+	{:else if plan.state === LoadState.Loading}
+		<Skeleton kind={SkeletonKind.Tree} label="Loading the plan change {questionId}" />
+	{:else}
+		<LoadFailed what="the plan change {questionId}" onretry={() => plan.retry()} />
+	{/if}
+{/snippet}
 
 <div class="desk">
 	<BackHeader href="/projects" label="Back to projects">
@@ -45,7 +59,7 @@
 
 	<div class="columns">
 		<div class="column first">
-			<LanesTable {project} desk size={10} picked={lane?.id ?? null} outlined={question !== null} />
+			<LanesTable {project} desk size={10} picked={lane?.id ?? null} outlined={questionId !== null} />
 		</div>
 
 		<main class="column">
@@ -75,8 +89,8 @@
 		<aside class="column detail" aria-label={detailLabel()}>
 			{#if task}
 				{#key task.id}<TaskDetail {task} steps={project.steps} onclose={close} />{/key}
-			{:else if question?.change}
-				<PlanChange {question} heading="h2" onclose={close} />
+			{:else if questionId}
+				{@render planChange()}
 			{:else}
 				<p class="muted">Pick a task in the tree, or a planner question in the P card.</p>
 			{/if}
