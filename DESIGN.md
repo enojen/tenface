@@ -239,9 +239,9 @@ A warm, low-chroma Sepia neutral scale with a single blood red; each tone has a 
 **Character:** Inter carries every word at a calm, tight scale; JetBrains Mono sets the exact things the owner may copy or compare: task ids, question ids, PR numbers.
 
 ### Hierarchy
-- **Display** (700, 28px, 34px): page titles: Projects, the project name.
+- **Display** (700, 28px, 34px): page titles: Home, Projects.
 - **Headline** (700, 20px, 26px): the title of the "not here" page.
-- **Card Head** (700, 12px, 16px, uppercase, 0.08em, soft ink): what a card is, with its short name: "Lanes", "Lane · api", "Task · SAM-103", "Plan change · Q16", "Babysitter · api". The phone lane page opens with it too.
+- **Card Head** (700, 12px, 16px, uppercase, 0.08em, soft ink): what a card is, with its short name: "Project · sample", "Lane · api", "Task · SAM-103", "Plan change · Q16", "Babysitter · api". On a project page the project head is the page title (h1).
 - **Subject** (500, 16px, 22px): the sentence under a card head: the lane's description, the task title, the plan change topic.
 - **Title** (500, 15px, 20px): the name in a table row, a question title, a new lane in a plan change. A task in the tree is 15px at 400; the picked one is 600.
 - **Body** (400, 14px, 20px): notes, button text, error text.
@@ -249,7 +249,9 @@ A warm, low-chroma Sepia neutral scale with a single blood red; each tone has a 
 - **Id** (JetBrains Mono 500–600, the size of its line): SAM-102, Q12, PR #418.
 
 ### Named Rules
-**The Card Head Rule.** A card opens with its head on a band: the Card Head line, then the Subject, on a Raised Sepia band that runs to the card's edges and its top corners. The lanes table, the lane column, the detail column, the agent card and the task sheet have it. The head is the strongest line of its card and the Subject sits under it, quieter; a level below is never heavier than the level above. A Card Head outside a card (the phone lane page, the phone plan change) has no band.
+**The Card Head Rule.** A card opens with its head on a band: the Card Head line, then the Subject, on a Raised Sepia band that runs to the card's edges and its top corners. The project card, the lane card, the task card, the agent card and the task sheet have it. The head is the strongest line of its card and the Subject sits under it, quieter; a level below is never heavier than the level above. A Card Head outside a card (the phone plan change) has no band.
+
+**The Project Holds Rule.** On the desktop the project card holds the page: its band runs the full width ("Project · sample", a red "running" when a lane runs, the back arrow and the P ring), the lanes list is its own content without a frame, and the lane card and the task card sit inside it in Lift white. The lane and task bands share one row, so they have the same top and height (CSS subgrid). The task card keeps its band when nothing is picked: "Task" and "No task selected", and an empty body. On the phone each level is its own page, so cards do not nest: a "‹ Projects" or "‹ sample" back link names the level above, and the page is one card with its band.
 
 **The Six Sizes Rule.** Only 12, 14, 15, 16, 20 and 28 px exist. The one exception is the 9 px mark drawn inside a small icon: the letter or count of an agent icon, and the "?" of the question card in a tree row. A long title wraps; it is never cut with "…".
 
@@ -261,11 +263,11 @@ The phone is the first target (designed at 390 px), with a 16 px side gutter and
 
 **Tables.** Projects and lanes use one table kit: an optional section title, a "Search …" capsule field, a header row and rows at least 56 px high. The phone shows five rows per page with a pager ("1–5 of 10" between two arrows); a question list in an agent card shows three. Projects: Project | Needs you (one agent head per asking agent, P and/or B); under the project name a red "running" when one of its lanes runs. A project: Lane | Needs you (a B head when the lane's babysitter asks something); under the lane name a red "1 task running" / "3 tasks running". A row with nothing running shows only its name.
 
-**Lane.** A header with the back arrow, the head "Lane · api", the one-line description of the lane and its progress, then one tree. A lane holds one root tree, because one babysitter does not take more. The tree indents only at a fork; an only child stays in its parent's column.
+**Lane.** A "‹ sample" back link, then one card: its band has the head "Lane · api", the one-line description of the lane and its progress, and the card holds one tree. A lane holds one root tree, because one babysitter does not take more. The tree indents only at a fork; an only child stays in its parent's column.
 
 **Task.** A bottom sheet over the lane, dimmed with ink at 32%: a grab handle and the head band ("Task · SAM-103" and the title), the steps with the total time ("1h03 total"), PR and Tracker buttons (48 px), and the babysitter's note. The steps are a snake of eight places, four per row: plan, approve, build, debug, eval, PR, merge, close. A step a project does not use has a dashed `line-strong` tile and no time.
 
-**Desktop.** The floating nav sits at the bottom center here too. The projects page is the same table, wide, with every row on one page. A project page is three phone-like columns side by side: the project (its lanes table and the P ring), the lane (its tree and the B ring) and the detail. The columns fill the whole screen width with 32 px side gutters and reach down to the nav: the lanes column is 24% of the screen (360 to 440 px), and the lane and the detail share the rest equally; below 1200 px the gap and the gutters are 16 px and the first column is 380 px. The detail column shows whatever the owner picked last: a task, or the plan change of a planner question. An agent card opens in place under its ring, without dimming the page.
+**Desktop.** The floating nav sits at the bottom center here too. The projects page is the same table, wide, with every row on one page. A project page is one project card (see the Project Holds Rule) with three columns inside: the lanes list, the lane card (its tree and the B ring) and the task card. The project card fills the screen width with 32 px side gutters and reaches down to the nav: the lanes list is 22% of the screen (340 to 420 px), and the lane and task cards share the rest equally; below 1200 px the gutters are 16 px and the lanes list is 340 px. The task card shows whatever the owner picked last: a task, or the plan change of a planner question. An agent card opens in place under its ring, without dimming the page.
 
 ### Named Rules
 **The Last Pick Rule.** The detail column shows the last pick. The picked task stays a lifted card in the tree. The selected lane row is a lifted card while its task is shown, and only a 2 px ink outline, without the card, while the detail column shows a plan change.

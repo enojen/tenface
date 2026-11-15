@@ -72,6 +72,7 @@
 			</p>
 		</header>
 
+		<div class="plan-body">
 		<p class="reason">{change.reason}</p>
 		<p class="legend label muted">
 			{#each Object.entries(SIGN_NAMES) as [sign, name] (sign)}<span><span class="mono strong">{sign}</span> {name}</span>{/each}
@@ -93,11 +94,18 @@
 		{/each}
 
 		<p class="answer">Answer in the planner chat with the id, for example <span class="mono strong">{question.id} ok</span>.</p>
+		</div>
 	</article>
 {/if}
 
 <style>
 	.plan {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.plan-body {
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
@@ -107,7 +115,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
-		margin-bottom: 8px;
 	}
 
 	.top {

@@ -25,6 +25,7 @@
 		<button type="button" class="icon-button close" class:hidden-close={hideClose} aria-label="Close" onclick={onclose}><X size={20} /></button>
 	</div>
 
+	<div class="detail-body">
 	{#if task.steps.length > 0 || task.state !== TaskState.Todo}
 		<div class="steps">
 			<span class="label muted head"><span>Steps</span><span>{stepTime(totalMinutes(task, live.now))} total</span></span>
@@ -50,10 +51,12 @@
 			<p>{task.note}</p>
 		</div>
 	{/if}
+	</div>
 </div>
 
 <style>
-	.detail {
+	.detail,
+	.detail-body {
 		display: flex;
 		flex-direction: column;
 		gap: 16px;
