@@ -3,7 +3,6 @@ import type { Api } from './types.ts';
 
 const MockMode = { Offline: 'offline' } as const;
 
-/** The made-up state; `?mock=offline` in the URL shows the offline strip. */
 export function createMockApi(): Api {
 	return {
 		subscribe(onState, onConnection) {

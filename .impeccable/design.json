@@ -278,7 +278,7 @@
       },
       {
         "name": "The Five Sizes Rule",
-        "body": "Only 12, 14, 16, 20 and 28 px exist, except the 9 px letter or count inside an agent icon. A long title wraps; it is never cut.",
+        "body": "Only 12, 14, 16, 20 and 28 px exist, except the 9 px mark inside a small icon: the letter or count of an agent icon and the \"?\" of the question card in a tree row. A long title wraps; it is never cut.",
         "section": "typography"
       },
       {
