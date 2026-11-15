@@ -75,6 +75,7 @@
 
 	.row.picked {
 		box-shadow: inset 0 0 0 2px var(--ink);
+		margin-right: -8px;
 		padding-right: 8px;
 	}
 

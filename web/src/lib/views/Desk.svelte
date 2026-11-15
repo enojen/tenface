@@ -85,16 +85,19 @@
 </div>
 
 <style>
+	.desk {
+		min-height: calc(100dvh - 120px - env(safe-area-inset-bottom));
+		display: flex;
+		flex-direction: column;
+	}
+
 	.desk :global(.back-header) {
-		max-width: 1280px;
-		margin: 0 auto;
-		padding: 24px 24px 16px 12px;
+		padding: 24px 32px 16px 20px;
 	}
 
 	.columns {
-		max-width: 1280px;
-		margin: 0 auto;
-		padding: 0 24px 32px;
+		flex: 1;
+		padding: 0 32px;
 		display: flex;
 		gap: 24px;
 		align-items: stretch;
@@ -110,6 +113,10 @@
 		display: flex;
 		flex-direction: column;
 		gap: 16px;
+	}
+
+	.first {
+		flex: 0 0 clamp(360px, 24vw, 440px);
 	}
 
 	.detail {
