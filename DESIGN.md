@@ -303,6 +303,9 @@ The floating capsule nav with Home and Projects, on the phone and the desktop; t
 ### Error strip
 An ink strip at the top with an icon, one line of what is wrong and one line of what happens now ("You see the last known state. The panel reconnects by itself."). On the desktop it is at least 56 px high with 24 px side padding.
 
+### Loading
+What the panel already has shows at once: a lane's header and trio, the agent card's header. What comes from the server (a lane's task tree, the questions, notes and buttons of an agent card, search results) shows as a skeleton until it arrives: still bars in the Raised Sepia tone, in the shape of the rows to come (tree rows with a node square, table rows on the table's columns, card lines). No shimmer and no spinner. If the request fails, one muted line says what did not load, with "Try again". A refresh of something already shown keeps it on screen; only a new lane, a new search or a new card starts from the skeleton. On the desktop a lane pick changes the columns in place, without the phone's page slide.
+
 ## Do's and Don'ts
 
 ### Do:

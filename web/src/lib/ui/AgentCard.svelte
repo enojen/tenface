@@ -4,42 +4,59 @@
 	import Copy from '@lucide/svelte/icons/copy';
 	import Info from '@lucide/svelte/icons/info';
 	import MessageSquare from '@lucide/svelte/icons/message-square';
-	import { type Agent, AgentRole, type Question } from '#lib/api/types.ts';
+	import type { Snippet } from 'svelte';
+	import { api } from '#lib/api/index.ts';
+	import { type Agent, AgentRole, type AgentSource, type Question } from '#lib/api/types.ts';
 	import { clock, minutesBetween, waitTime } from '#lib/format.ts';
 	import { live } from '#lib/live.svelte.ts';
+	import { LoadState, loadFor } from '#lib/load.svelte.ts';
 	import AgentRing from './AgentRing.svelte';
 	import CopyText from './CopyText.svelte';
+	import LoadFailed from './LoadFailed.svelte';
 	import Pager from './Pager.svelte';
+	import Skeleton, { SkeletonKind } from './Skeleton.svelte';
 
 	let {
 		agent,
+		source,
 		owner,
 		questionHref
-	}: { agent: Agent; owner: string; questionHref: (question: Question) => string } = $props();
+	}: { agent: Agent; source: AgentSource; owner: string; questionHref: (question: Question) => string } = $props();
 
 	const PAGE = 3;
 	const role = $derived(agent.role === AgentRole.Planner ? 'Planner' : 'Babysitter');
 	const percent = $derived(Math.round((agent.context.used / agent.context.limit) * 100));
 	const thousands = (tokens: number) => `${Math.round(tokens / 1000)}k`;
-	const oldest = $derived([...agent.questions].sort((a, b) => a.openedAt.localeCompare(b.openedAt)));
+
+	const detail = loadFor(
+		() => `${source.project}/${source.lane ?? ''}`,
+		(signal) => api.agent(source, signal)
+	);
+	const oldest = $derived(
+		[...(detail.value?.questions ?? [])].sort((a, b) => a.openedAt.localeCompare(b.openedAt))
+	);
 
 	let notes = $state(false);
 	let page = $state(0);
 	const shown = $derived(oldest.slice(page * PAGE, page * PAGE + PAGE));
 </script>
 
-{#if notes}
-	<div class="head notes-head">
-		<button type="button" class="icon-button back" aria-label="Back to the {role.toLowerCase()}" onclick={() => (notes = false)}>
-			<ChevronLeft size={20} />
-		</button>
-		<h3 class="title">Notes · {role.toLowerCase()} · {owner}</h3>
-	</div>
-	{#if agent.notes.length === 0}
+{#snippet loaded(render: Snippet<[Agent]>)}
+	{#if detail.value}
+		{@render render(detail.value)}
+	{:else if detail.state === LoadState.Failed}
+		<LoadFailed what="the {role.toLowerCase()}" onretry={() => detail.retry()} />
+	{:else}
+		<Skeleton kind={SkeletonKind.Card} label="Loading the {role.toLowerCase()}" rows={2} />
+	{/if}
+{/snippet}
+
+{#snippet noteList(full: Agent)}
+	{#if full.notes.length === 0}
 		<p class="label muted">No notes yet.</p>
 	{:else}
 		<ol class="notes">
-			{#each agent.notes as note}
+			{#each full.notes as note}
 				<li>
 					<span class="label muted">{clock(note.at, live.now)}</span>
 					<span class="label"><strong>{note.kind}</strong><span>{note.text}</span></span>
@@ -47,19 +64,10 @@
 			{/each}
 		</ol>
 	{/if}
-{:else}
-	<div class="head">
-		<AgentRing {agent} size={40} count={false} />
-		<span class="who">
-			<h3 class="title">{role} <span class="owner">· {owner}</span></h3>
-			<span class="label strong">Context {percent}% · {thousands(agent.context.used)} / {thousands(agent.context.limit)}</span>
-		</span>
-		<button type="button" class="icon-button info" aria-label="Notes of the {role.toLowerCase()}" onclick={() => (notes = true)}>
-			<Info size={20} />
-		</button>
-	</div>
+{/snippet}
 
-	{#if agent.questions.length > 0}
+{#snippet needsAndActions(full: Agent)}
+	{#if full.questions.length > 0}
 		<section class="needs" aria-label="Needs you">
 			<h4>Needs you</h4>
 			<div class="table-head" aria-hidden="true" style:--columns="1fr 72px 64px">
@@ -92,13 +100,36 @@
 	{/if}
 
 	<div class="actions">
-		<a class="button" href={agent.chatUrl} target="_blank" rel="noreferrer"><MessageSquare size={16} aria-hidden="true" />Chat</a>
-		<CopyText class="button" text={agent.handoverPrompt} label="Copy handover prompt" done="Handover prompt copied">
+		<a class="button" href={full.chatUrl} target="_blank" rel="noreferrer"><MessageSquare size={16} aria-hidden="true" />Chat</a>
+		<CopyText class="button" text={full.handoverPrompt} label="Copy handover prompt" done="Handover prompt copied">
 			{#snippet children(copied)}
 				{#if copied}<Check size={16} aria-hidden="true" />Copied{:else}<Copy size={16} aria-hidden="true" />Copy handover prompt{/if}
 			{/snippet}
 		</CopyText>
 	</div>
+{/snippet}
+
+{#if notes}
+	<div class="head notes-head">
+		<button type="button" class="icon-button back" aria-label="Back to the {role.toLowerCase()}" onclick={() => (notes = false)}>
+			<ChevronLeft size={20} />
+		</button>
+		<h3 class="title">Notes · {role.toLowerCase()} · {owner}</h3>
+	</div>
+	{@render loaded(noteList)}
+{:else}
+	<div class="head">
+		<AgentRing {agent} size={40} count={false} />
+		<span class="who">
+			<h3 class="title">{role} <span class="owner">· {owner}</span></h3>
+			<span class="label strong">Context {percent}% · {thousands(agent.context.used)} / {thousands(agent.context.limit)}</span>
+		</span>
+		<button type="button" class="icon-button info" aria-label="Notes of the {role.toLowerCase()}" onclick={() => (notes = true)}>
+			<Info size={20} />
+		</button>
+	</div>
+
+	{@render loaded(needsAndActions)}
 {/if}
 
 <style>

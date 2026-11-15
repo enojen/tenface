@@ -10,7 +10,7 @@ export default defineConfig({
 		},
 		{
 			command: 'pnpm dev --port 4175 --strictPort',
-			env: { VITE_TENFACE_STREAM: '/stream' },
+			env: { VITE_TENFACE_SERVER: '/api' },
 			port: 4175,
 			reuseExistingServer: !process.env.CI
 		}

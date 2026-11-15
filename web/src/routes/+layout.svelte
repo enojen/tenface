@@ -17,12 +17,9 @@
 
 	afterNavigate(track);
 	onNavigate((navigation) => {
-		if (slide(
-				navigation.from?.url,
-				navigation.to?.url,
-				navigation.type === NavigationKind.Popstate,
-				navigation.type === NavigationKind.Popstate ? navigation.delta : 0
-			) === null) return;
+		const popstate = navigation.type === NavigationKind.Popstate;
+		const backward = slide(navigation.from?.url, navigation.to?.url, popstate, popstate ? navigation.delta : 0);
+		if (backward === null || wide.value) return;
 		return new Promise((resolve) => {
 			document.startViewTransition(async () => {
 				resolve();

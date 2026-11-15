@@ -14,7 +14,7 @@
 <main class="content">
 	<LanesTable {project} />
 </main>
-<FloatingAgent agent={project.planner} owner={project.name} questionHref={questionUrl(project.id, null)} />
+<FloatingAgent agent={project.planner} source={{ project: project.id, lane: null }} owner={project.name} questionHref={questionUrl(project.id, null)} />
 
 <style>
 	.content {

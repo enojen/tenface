@@ -1,12 +1,16 @@
 <script lang="ts">
+	import { api } from '#lib/api/index.ts';
 	import type { Project, Question } from '#lib/api/types.ts';
 	import { live } from '#lib/live.svelte.ts';
+	import { LoadState, loadFor } from '#lib/load.svelte.ts';
 	import { back } from '#lib/nav.svelte.ts';
 	import DeskAgent from '#lib/ui/DeskAgent.svelte';
 	import LaneHeader from '#lib/ui/LaneHeader.svelte';
 	import LanesTable from '#lib/ui/LanesTable.svelte';
 	import LaneTree from '#lib/ui/LaneTree.svelte';
+	import LoadFailed from '#lib/ui/LoadFailed.svelte';
 	import PlanChange from '#lib/ui/PlanChange.svelte';
+	import Skeleton, { SkeletonKind } from '#lib/ui/Skeleton.svelte';
 	import TaskDetail from '#lib/ui/TaskDetail.svelte';
 	import BackHeader from './BackHeader.svelte';
 	import { laneUrl, projectUrl, questionUrl, taskUrl } from './links.ts';
@@ -19,7 +23,11 @@
 	}: { project: Project; laneId: string | null; taskId?: string | null; question?: Question | null } = $props();
 
 	const lane = $derived(project.lanes.find((candidate) => candidate.id === laneId) ?? project.lanes[0]);
-	const task = $derived(taskId ? lane?.tasks.find((candidate) => candidate.id === taskId) : undefined);
+	const tree = loadFor(
+		() => (lane ? `${project.id}/${lane.id}` : null),
+		(signal) => api.lane(project.id, lane?.id ?? '', signal)
+	);
+	const task = $derived(taskId ? tree.value?.tasks.find((candidate) => candidate.id === taskId) : undefined);
 	const close = () => back(lane ? laneUrl(project.id, lane.id) : projectUrl(project.id));
 
 	function detailLabel() {
@@ -32,7 +40,7 @@
 <div class="desk">
 	<BackHeader href="/projects" label="Back to projects">
 		<h1 class="display">{project.name}</h1>
-		<DeskAgent agent={project.planner} owner={project.name} questionHref={questionUrl(project.id, lane?.id ?? null)} />
+		<DeskAgent agent={project.planner} source={{ project: project.id, lane: null }} owner={project.name} questionHref={questionUrl(project.id, lane?.id ?? null)} />
 	</BackHeader>
 
 	<div class="columns">
@@ -44,15 +52,21 @@
 			{#if lane}
 				<div class="lane-top">
 					<LaneHeader {lane} heading="h2" />
-					<DeskAgent agent={lane.babysitter} owner={lane.name} align="right" questionHref={questionUrl(project.id, lane.id)} />
+					<DeskAgent agent={lane.babysitter} source={{ project: project.id, lane: lane.id }} owner={lane.name} align="right" questionHref={questionUrl(project.id, lane.id)} />
 				</div>
-				<LaneTree
-					{lane}
-					steps={project.steps}
-					picked={task?.id ?? null}
-					offline={!live.connection.online}
-					href={(item) => taskUrl(project.id, lane.id, item.id)}
-				/>
+				{#if tree.value}
+					<LaneTree
+						lane={tree.value}
+						steps={project.steps}
+						picked={task?.id ?? null}
+						offline={!live.connection.online}
+						href={(item) => taskUrl(project.id, lane.id, item.id)}
+					/>
+				{:else if tree.state === LoadState.Failed}
+					<LoadFailed what="the tasks of {lane.name}" onretry={() => tree.retry()} />
+				{:else}
+					<Skeleton kind={SkeletonKind.Tree} label="Loading the tasks of {lane.name}" />
+				{/if}
 			{:else}
 				<p class="muted">This project has no lanes yet.</p>
 			{/if}

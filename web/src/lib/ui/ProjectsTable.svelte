@@ -1,18 +1,26 @@
 <script lang="ts">
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
+	import { api } from '#lib/api/index.ts';
 	import type { Project } from '#lib/api/types.ts';
-	import { askers, askersLabel, laneTrio, nameMatches } from '#lib/model.ts';
+	import { LoadState, searched, searchFor } from '#lib/load.svelte.ts';
+	import { askers, askersLabel, laneTrio } from '#lib/model.ts';
 	import BotHead from './BotHead.svelte';
+	import LoadFailed from './LoadFailed.svelte';
 	import Pager from './Pager.svelte';
 	import SearchField from './SearchField.svelte';
+	import Skeleton, { SkeletonKind } from './Skeleton.svelte';
 	import Trio from './Trio.svelte';
 
 	let { projects, size = 5 }: { projects: Project[]; size?: number } = $props();
 
 	let query = $state('');
 	let page = $state(0);
-	const found = $derived(projects.filter((project) => nameMatches(project.name, query)));
-	const shown = $derived(found.slice(page * size, page * size + size));
+	const hits = searchFor(
+		() => query,
+		(text, signal) => api.searchProjects(text, signal)
+	);
+	const found = $derived(searched(projects, query, hits));
+	const shown = $derived(found?.slice(page * size, page * size + size) ?? []);
 	$effect(() => {
 		query;
 		page = 0;
@@ -24,27 +32,33 @@
 	<div class="table-head" aria-hidden="true">
 		<span>Project</span><span class="center">Lanes</span><span class="center">Needs you</span><span></span>
 	</div>
-	<ul>
-		{#each shown as project (project.id)}
-			{@const ask = askers(project)}
-			{@const lanes = laneTrio(project.lanes)}
-			<li>
-				<a class="table-row" href="/projects/{project.id}">
-					<span class="title name">{project.name}<span class="sr-only">,</span></span>
-					<span class="center"><Trio trio={lanes} noun="lanes: " /></span>
-					<span class="center heads">
-						<span class="sr-only">, {askersLabel(ask.planner, ask.babysitters)}</span>
-						{#if ask.planner > 0}<BotHead letter="P" />{/if}
-						{#if ask.babysitters > 0}<BotHead letter="B" />{/if}
-					</span>
-					<ChevronRight size={16} class="chevron" aria-hidden="true" />
-				</a>
-			</li>
-		{:else}
-			<li class="table-row label muted">No project matches “{query}”.</li>
-		{/each}
-	</ul>
-	<Pager bind:page {size} total={found.length} noun="projects" />
+	{#if found === null && hits.state === LoadState.Failed}
+		<LoadFailed what="the projects" onretry={() => hits.retry()} />
+	{:else if found === null}
+		<Skeleton kind={SkeletonKind.Table} label="Searching projects" rows={3} />
+	{:else}
+		<ul>
+			{#each shown as project (project.id)}
+				{@const ask = askers(project)}
+				{@const lanes = laneTrio(project.lanes)}
+				<li>
+					<a class="table-row" href="/projects/{project.id}">
+						<span class="title name">{project.name}<span class="sr-only">,</span></span>
+						<span class="center"><Trio trio={lanes} noun="lanes: " /></span>
+						<span class="center heads">
+							<span class="sr-only">, {askersLabel(ask.planner, ask.babysitters)}</span>
+							{#if ask.planner > 0}<BotHead letter="P" />{/if}
+							{#if ask.babysitters > 0}<BotHead letter="B" />{/if}
+						</span>
+						<ChevronRight size={16} class="chevron" aria-hidden="true" />
+					</a>
+				</li>
+			{:else}
+				<li class="table-row label muted">No project matches “{query}”.</li>
+			{/each}
+		</ul>
+	{/if}
+	<Pager bind:page {size} total={found?.length ?? 0} noun="projects" />
 </section>
 
 <style>
