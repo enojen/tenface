@@ -157,6 +157,13 @@ dialog:focus {
 	line-height: 16px;
 }
 
+.running-note {
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 600;
+	color: var(--running);
+}
+
 .muted {
 	color: var(--muted);
 }

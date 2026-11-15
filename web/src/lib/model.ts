@@ -24,14 +24,15 @@ export function tasksState(tasks: Task[]): LaneState {
 	return LaneState.Waiting;
 }
 
-export function laneTrio(lanes: LaneSummary[]): Trio {
-	const trio: Trio = { [LaneState.Done]: 0, [LaneState.Running]: 0, [LaneState.Waiting]: 0 };
-	for (const lane of lanes) trio[lane.state] += 1;
-	return trio;
-}
+export const projectRunning = (lanes: LaneSummary[]) =>
+	lanes.some((lane) => lane.state === LaneState.Running);
 
-export const trioLabel = (trio: Trio, noun = '') =>
-	`${noun}${trio.done} done, ${trio.running} running, ${trio.waiting} waiting`;
+export const tasksRunning = (count: number) => `${count} ${count === 1 ? 'task' : 'tasks'} running`;
+
+const TRIO_ORDER = [LaneState.Running, LaneState.Waiting, LaneState.Done];
+
+export const trioParts = (trio: Trio) =>
+	TRIO_ORDER.filter((state) => trio[state] > 0).map((state) => ({ state, count: trio[state] }));
 
 export function currentStep(task: Task): StepRun | null {
 	if (task.state === TaskState.Done || task.state === TaskState.Todo) return null;

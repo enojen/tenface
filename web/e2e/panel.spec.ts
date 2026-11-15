@@ -46,12 +46,16 @@ async function swipe(page: Page, selector: string, from: number, to: number) {
 	);
 }
 
-test('projects list the lanes as a trio and who asks', async ({ page }) => {
+test('projects say only whether something runs, and who asks', async ({ page }) => {
 	await page.goto('/projects');
 	const sample = page.getByRole('link', { name: /^sample\b/ });
 	await expect(sample).toHaveAccessibleName(
-		/^sample , lanes: 2 done, 4 running, 4 waiting , 2 open questions: 1 from the planner, 1 from the babysitter$/
+		/^sample running , 2 open questions: 1 from the planner, 1 from the babysitter$/
 	);
+	await expect(page.getByRole('link', { name: /^demo-shop\b/ })).toHaveAccessibleName(
+		/^demo-shop , 1 open question: 1 from the babysitter$/
+	);
+	await expect(sample.getByText('running', { exact: true })).toHaveCSS('color', 'rgb(163, 22, 28)');
 	await page.getByRole('searchbox', { name: 'Search projects' }).fill('shop');
 	await expect(page.getByRole('link', { name: /^demo-shop\b/ })).toBeVisible();
 	await expect(sample).toBeHidden();
@@ -471,4 +475,20 @@ test('the phone lane and its task sheet use the desk heads', async ({ page }, in
 	}
 	expect(lanes.band).toBe(band);
 	expect(task.band).toBe(band);
+});
+
+test('the lanes table says how many tasks run, the lane head says all', async ({ page }) => {
+	await page.goto('/projects/sample/lanes/api');
+	if (await page.getByRole('heading', { name: 'Lanes' }).isHidden())
+		await page.goto('/projects/sample');
+	const lanes = page.getByRole('region', { name: 'Lanes' });
+	await expect(lanes.getByRole('link', { name: /^api\b/ }).first()).toHaveAccessibleName(
+		/^api 1 task running ,/
+	);
+	await expect(lanes.getByRole('link', { name: /^docs\b/ })).toHaveAccessibleName(/^docs ,/);
+	await expect(lanes.getByRole('img')).toHaveCount(0);
+	await page.goto('/projects/sample/lanes/api');
+	const head = page.getByText('1 running · 5 waiting · 1 done', { exact: true });
+	await expect(head).toBeVisible();
+	await expect(head.getByText('1 running', { exact: true })).toHaveCSS('color', 'rgb(163, 22, 28)');
 });

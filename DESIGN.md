@@ -195,7 +195,7 @@ The surface is light Sepia, also on a phone or computer set to dark. The dark Se
 The phone answers "what now"; the desktop shows project, lane and task side by side.
 
 **Key Characteristics:**
-- The trio: done is a filled gray square, running a filled red square, waiting an empty square with a gray outline. The same three marks count tasks, count lanes in a project row, and draw the tree.
+- Done is a filled gray square, running a filled red square, waiting an empty square with a gray outline; these marks draw the tree. The lane progress bar uses the same gray and red.
 - Red means running and nothing else. A question for the owner is never red; it is a count on the asking agent's ring.
 - Every question has an id (Q12) that is unique across the whole system.
 - Ink marks where the owner is: the current tab, the selected row, the last pick.
@@ -208,7 +208,7 @@ The phone answers "what now"; the desktop shows project, lane and task side by s
 A warm, low-chroma Sepia neutral scale with a single blood red; each tone has a dark twin.
 
 ### Primary
-- **Blood Red** (`running`; dark twin `dark-running`): what runs now. The running square of the trio, the running tree node, the arc of a working agent, the running count. On dark Sepia the red is lighter, because the light-theme red does not read on a dark ground.
+- **Blood Red** (`running`; dark twin `dark-running`): what runs now. The running note and the running part of the lane progress, the running tree node, the arc of a working agent, the running count. On dark Sepia the red is lighter, because the light-theme red does not read on a dark ground.
 
 ### Neutral
 - **Sepia Ground** (`ground` / `dark-ground`): the page.
@@ -259,9 +259,9 @@ The phone is the first target (designed at 390 px), with a 16 px side gutter and
 
 **Phone.** Every screen has the floating capsule nav at the bottom center: two tabs, Home and Projects, 220 px wide. The agent of the page floats over it as a 56 px ring, 8 px from the right edge and 104 px from the bottom; the owner can drag it, and it snaps to the nearest edge. A lane page shows the lane's babysitter (B), a project page and a plan change show the project's planner (P), and Home, Projects and a task show no agent. Tapping the ring opens its card full width, over a page dimmed with ink at 32%: above the ring, or below it when the ring is in the upper half of the screen.
 
-**Tables.** Projects and lanes use one table kit: an optional section title, a "Search …" capsule field, a header row and rows at least 56 px high. The phone shows five rows per page with a pager ("1–5 of 10" between two arrows); a question list in an agent card shows three. Projects: Project | Lanes (a trio that counts the project's lanes) | Needs you (one agent head per asking agent, P and/or B). A project: Lane | Tasks (a trio that counts the lane's tasks) | Needs you (a B head when the lane's babysitter asks something).
+**Tables.** Projects and lanes use one table kit: an optional section title, a "Search …" capsule field, a header row and rows at least 56 px high. The phone shows five rows per page with a pager ("1–5 of 10" between two arrows); a question list in an agent card shows three. Projects: Project | Needs you (one agent head per asking agent, P and/or B); under the project name a red "running" when one of its lanes runs. A project: Lane | Needs you (a B head when the lane's babysitter asks something); under the lane name a red "1 task running" / "3 tasks running". A row with nothing running shows only its name.
 
-**Lane.** A header with the back arrow, the head "Lane · api", the one-line description of the lane and its trio, then one tree. A lane holds one root tree, because one babysitter does not take more. The tree indents only at a fork; an only child stays in its parent's column.
+**Lane.** A header with the back arrow, the head "Lane · api", the one-line description of the lane and its progress, then one tree. A lane holds one root tree, because one babysitter does not take more. The tree indents only at a fork; an only child stays in its parent's column.
 
 **Task.** A bottom sheet over the lane, dimmed with ink at 32%: a grab handle and the head band ("Task · SAM-103" and the title), the steps with the total time ("1h03 total"), PR and Tracker buttons (48 px), and the babysitter's note. The steps are a snake of eight places, four per row: plan, approve, build, debug, eval, PR, merge, close. A step a project does not use has a dashed `line-strong` tile and no time.
 
@@ -272,7 +272,7 @@ The phone is the first target (designed at 390 px), with a 16 px side gutter and
 
 **The Error Rule.** An error of the whole panel (offline, the tracker late) is an ink strip at the top of every screen, with "Try again" only when the owner's action can fix it. An error of one thing stays where that thing is. No red.
 
-**The Offline Rule.** Offline, the panel shows the last known state under the strip: the trio and the ring keep their last colors, and the strip alone says the panel is offline. Only the running node turns into a 2 px gray outline, and its step tile turns gray, "last known".
+**The Offline Rule.** Offline, the panel shows the last known state under the strip: the running notes, the lane progress and the ring keep their last colors, and the strip alone says the panel is offline. Only the running node turns into a 2 px gray outline, and its step tile turns gray, "last known".
 
 ## Elevation & Depth
 
@@ -289,7 +289,7 @@ Surfaces are flat. Tables, cards and columns are told apart by tone (ground, til
 
 ## Shapes
 
-Capsules for everything you press: buttons, the copy-id pill, tabs, the nav (999px). The agent ring is a circle. Agent cards have 18 px corners, tables and the box of a new lane 20 px, desktop columns 28 px, the task sheet 32 px top corners, a selected row 12 px. The trio marks are 14 px with 4 px corners, tree nodes 16 px with 5 px. Step icons sit on 36 px tiles with 9 px corners in the task, and on 22 px tiles with 6 px corners in a tree row; step dots are 6 px with 2 px corners. No glass, no blur, no transparency in surfaces.
+Capsules for everything you press: buttons, the copy-id pill, tabs, the nav (999px). The agent ring is a circle. Agent cards have 18 px corners, tables and the box of a new lane 20 px, desktop columns 28 px, the task sheet 32 px top corners, a selected row 12 px. The lane progress bar is 8 px high and 220 px at most, a capsule; tree nodes are 16 px with 5 px corners. Step icons sit on 36 px tiles with 9 px corners in the task, and on 22 px tiles with 6 px corners in a tree row; step dots are 6 px with 2 px corners. No glass, no blur, no transparency in surfaces.
 
 ## Components
 
@@ -300,8 +300,12 @@ Clear like a tool: the same shape for the same job on every screen.
 - **Copy id:** a 36 px capsule with the mono id and a copy icon; it copies the id for the chat.
 - A button that only repeats an action says what it does, for example "Try again: load lane billing".
 
-### The trio
-Three 14 px squares with a count after each: done (filled done mark), running (filled red), waiting (empty, 1.5 px gray-mark outline). It counts tasks in a lane row and a lane header, and lanes in a project row. The screen-reader label says the three counts in words.
+### Running notes and the lane progress
+Each place shows only what the owner needs there. A project row says only whether something runs: a red "running" under the name. A lane row says how many tasks run: a red "1 task running" under the name. Both are 12 px, 600, Blood Red, and a row with nothing running shows only its name.
+
+The lane head shows everything: the counts in words ("1 running · 5 waiting · 1 done"; running in red 600, waiting in soft ink, done muted; a zero count is left out; "No tasks yet" when the lane is empty) and under them a capsule bar 8 px high, at most 220 px: done in the done mark, running in red, waiting the empty part inside a 1.5 px gray-mark ring. The bar is hidden from screen readers; the words say it.
+
+**The Need-to-Know Rule.** A table row carries only the one fact its level needs; the full count lives in the lane head.
 
 ### Tree nodes
 16 px squares on a line from root to leaf: closed is a filled done mark, in progress is red, to do is empty with a 1.5 px gray-mark outline. A task with an open question has a 2 px ink outline on the tile color and a small question card (12 × 16 px) after its status, named "The babysitter asks you". Right of a running or waiting task: a 22 px tile with the current step's icon, the step's time beside it, and one 6 px dot per step. Done dots are filled done mark; the current dot is red while the step runs and ink-outlined while it waits; the rest have a gray-mark outline.
@@ -322,12 +326,12 @@ The floating capsule nav with Home and Projects, on the phone and the desktop; t
 An ink strip at the top with an icon, one line of what is wrong and one line of what happens now ("You see the last known state. The panel reconnects by itself."). On the desktop it is at least 56 px high with 24 px side padding.
 
 ### Loading
-What the panel already has shows at once: a lane's header and trio, the agent card's header. What comes from the server (a lane's task tree, the questions, notes and buttons of an agent card, search results) shows as a skeleton until it arrives: still bars in the Raised Sepia tone, in the shape of the rows to come (tree rows with a node square, table rows on the table's columns, card lines). No shimmer and no spinner. If the request fails, one muted line says what did not load, with "Try again". A refresh of something already shown keeps it on screen; only a new lane, a new search or a new card starts from the skeleton. On the desktop a lane pick changes the columns in place, without the phone's page slide. The desk stays one page across a project, its lanes, tasks and plan changes, so the lane search and the scroll stay.
+What the panel already has shows at once: a lane's header and progress, the agent card's header. What comes from the server (a lane's task tree, the questions, notes and buttons of an agent card, search results) shows as a skeleton until it arrives: still bars in the Raised Sepia tone, in the shape of the rows to come (tree rows with a node square, table rows on the table's columns, card lines). No shimmer and no spinner. If the request fails, one muted line says what did not load, with "Try again". A refresh of something already shown keeps it on screen; only a new lane, a new search or a new card starts from the skeleton. On the desktop a lane pick changes the columns in place, without the phone's page slide. The desk stays one page across a project, its lanes, tasks and plan changes, so the lane search and the scroll stay.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** count tasks with the trio everywhere: done, running, waiting.
+- **Do** show in a row only what runs: "running" for a project, "N tasks running" for a lane; the lane head gives all three counts.
 - **Do** put a question in the card of the agent that asked it, with its id and the waiting time.
 - **Do** close a question when the owner answers it in the chat: a hook in the asking agent's session (the babysitter's or the planner's) tells the server, and the row leaves the card.
 - **Do** show the agent on every lane and project page, and let the owner drag it out of the way.
