@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-15T20:00:00Z",
+  "generatedAt": "2026-11-15T21:00:00Z",
   "title": "Design System: Tenface",
   "extensions": {
     "colorMeta": {
@@ -120,7 +120,7 @@
     "typographyMeta": {
       "display": {
         "displayName": "Display",
-        "purpose": "Page titles: Projects, the project name."
+        "purpose": "Page titles: Home, Projects."
       },
       "headline": {
         "displayName": "Headline",
@@ -128,7 +128,7 @@
       },
       "card-head": {
         "displayName": "Card Head",
-        "purpose": "What a card is, with its short name: Lanes, Lane · api, Task · SAM-103. 12px 700, uppercase, 0.08em, soft ink."
+        "purpose": "What a card is, with its short name: Project · sample, Lane · api, Task · SAM-103. 12px 700, uppercase, 0.08em, soft ink."
       },
       "subject": {
         "displayName": "Subject",
@@ -290,8 +290,13 @@
       },
       {
         "name": "The Card Head Rule",
-        "body": "A card opens with its head on a band: the Card Head line, then the Subject, on a Raised Sepia band that runs to the card edges and top corners (lanes table, lane column, detail column, agent card, task sheet). A level below is never heavier than the level above. A Card Head outside a card has no band.",
+        "body": "A card opens with its head on a band: the Card Head line, then the Subject, on a Raised Sepia band that runs to the card edges and top corners (project card, lane card, task card, agent card, task sheet). A level below is never heavier than the level above. A Card Head outside a card has no band.",
         "section": "typography"
+      },
+      {
+        "name": "The Project Holds Rule",
+        "body": "On the desktop the project card holds the page: a full-width band (Project · sample, red running, back arrow, P ring), the lanes list without a frame, and the lane and task cards inside in Lift white, their bands on one row with the same height. The task card keeps its band when nothing is picked: Task, No task selected. On the phone each level is its own page with a back link naming the level above.",
+        "section": "layout"
       },
       {
         "name": "The Six Sizes Rule",

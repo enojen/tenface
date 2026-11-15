@@ -371,12 +371,12 @@ test('the desk fills a wide screen down to the nav', async ({ page }, info) => {
 	await page.setViewportSize({ width: 1920, height: 1080 });
 	await page.goto('/projects/sample/lanes/api');
 	await page.getByRole('list', { name: 'Tasks of api' }).waitFor();
-	const columns = page.locator('.columns > .column');
-	const first = (await columns.first().boundingBox())!;
-	const last = (await columns.last().boundingBox())!;
-	expect(first.x).toBeLessThanOrEqual(32);
-	expect(last.x + last.width).toBeGreaterThanOrEqual(1920 - 32);
-	expect(last.y + last.height).toBeGreaterThanOrEqual(1080 - 120);
+	const card = (await page.getByRole('region', { name: 'Project sample' }).boundingBox())!;
+	const last = (await page.locator('.columns > .column').last().boundingBox())!;
+	expect(card.x).toBeLessThanOrEqual(32);
+	expect(card.x + card.width).toBeGreaterThanOrEqual(1920 - 32);
+	expect(card.y + card.height).toBeGreaterThanOrEqual(1080 - 120);
+	expect(last.x + last.width).toBeGreaterThanOrEqual(1920 - 32 - 24);
 });
 
 test('the panel stays light when the browser darkens pages', async ({ browser }, info) => {
@@ -431,18 +431,28 @@ function textStyle(element: Locator): Promise<TextStyle> {
 
 const band = 'rgb(224, 217, 203)';
 
-test('the three desk cards open with the same head on a band', async ({ page }, info) => {
+test('the project card holds the lane and task cards, their bands line up', async ({
+	page
+}, info) => {
 	test.skip(phone(info.project.name), 'the desk only');
 	await page.goto('/projects/sample/lanes/api?task=SAM-103');
+	const project = page.getByRole('region', { name: 'Project sample' });
 	const heads = [
-		page.getByRole('heading', { name: 'Lanes' }),
-		page.getByText('Lane · api', { exact: true }),
-		page.getByText('Task · SAM-103', { exact: true })
+		project.getByText('Project · sample', { exact: true }),
+		project.getByText('Lane · api', { exact: true }),
+		project.getByText('Task · SAM-103', { exact: true })
 	];
 	const styles = await Promise.all(heads.map(textStyle));
 	for (const style of styles) {
 		expect(style).toEqual({ size: 12, weight: 700, transform: 'uppercase', band });
 	}
+	await expect(project.getByText('running', { exact: true }).first()).toBeVisible();
+	await expect(page.locator('.display')).toHaveCount(0);
+	const bands = page.locator('.columns > .column .band').filter({ visible: true });
+	await expect(bands).toHaveCount(2);
+	const [lane, task] = [(await bands.nth(0).boundingBox())!, (await bands.nth(1).boundingBox())!];
+	expect(task.y).toBe(lane.y);
+	expect(task.height).toBe(lane.height);
 	const subjects = [
 		page.getByText('Orders, invoices and the report job', { exact: true }),
 		page.getByRole('heading', { name: 'Add an index to the audit table and backfill the old rows' })
@@ -457,14 +467,31 @@ test('the three desk cards open with the same head on a band', async ({ page }, 
 	}
 });
 
+test('the task card says no task is selected, on a band like the lane card', async ({
+	page
+}, info) => {
+	test.skip(phone(info.project.name), 'the desk only');
+	await page.goto('/projects/sample/lanes/api');
+	const detail = page.getByRole('complementary', { name: 'Detail' });
+	await expect(detail.getByText('No task selected', { exact: true })).toBeVisible();
+	await expect(page.getByText(/Pick a task in the tree/)).toHaveCount(0);
+	expect((await textStyle(detail.getByText('Task', { exact: true }))).band).toBe(band);
+	const bands = page.locator('.columns > .column .band').filter({ visible: true });
+	const [lane, task] = [(await bands.nth(0).boundingBox())!, (await bands.nth(1).boundingBox())!];
+	expect(task.height).toBe(lane.height);
+});
+
 test('the phone lane and its task sheet use the desk heads', async ({ page }, info) => {
 	test.skip(!phone(info.project.name), 'the phone only');
 	await page.goto('/projects/sample');
-	const lanes = await textStyle(page.getByRole('heading', { name: 'Lanes' }));
+	const lanes = await textStyle(page.getByText('Project · sample', { exact: true }));
+	await expect(page.getByRole('link', { name: 'Back to projects' })).toContainText('Projects');
 	await page.goto('/projects/sample/lanes/api?task=SAM-103');
 	const sheet = page.getByRole('dialog', { name: 'Task SAM-103' });
 	await settled(sheet);
 	const lane = await textStyle(page.getByText('Lane · api', { exact: true }));
+	expect(lane.band).toBe(band);
+	await expect(page.getByRole('link', { name: 'Back to sample' })).toContainText('sample');
 	const task = await textStyle(sheet.getByText('Task · SAM-103', { exact: true }));
 	for (const style of [lanes, lane, task]) {
 		expect({ size: style.size, weight: style.weight, transform: style.transform }).toEqual({

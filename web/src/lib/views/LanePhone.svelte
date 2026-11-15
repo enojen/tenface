@@ -9,7 +9,7 @@
 	import LaneTree from '#lib/ui/LaneTree.svelte';
 	import LoadFailed from '#lib/ui/LoadFailed.svelte';
 	import Skeleton, { SkeletonKind } from '#lib/ui/Skeleton.svelte';
-	import BackHeader from './BackHeader.svelte';
+	import BackLink from './BackLink.svelte';
 	import { laneUrl, projectUrl, questionUrl, taskUrl } from './links.ts';
 	import TaskSheet from './TaskSheet.svelte';
 
@@ -22,10 +22,10 @@
 	const task = $derived(taskId ? tree.value?.tasks.find((candidate) => candidate.id === taskId) : undefined);
 </script>
 
-<BackHeader href={projectUrl(project.id)} label="Back to {project.name}">
-	<LaneHeader {lane} />
-</BackHeader>
+<header class="crumbs"><BackLink href={projectUrl(project.id)} label="Back to {project.name}" text={project.name} /></header>
 <main class="content">
+	<section class="panel-card banded">
+		<div class="band"><LaneHeader {lane} /></div>
 	{#if tree.value}
 		<LaneTree
 			lane={tree.value}
@@ -39,6 +39,7 @@
 	{:else}
 		<Skeleton kind={SkeletonKind.Tree} label="Loading the tasks of {lane.name}" />
 	{/if}
+	</section>
 </main>
 <FloatingAgent agent={lane.babysitter} source={{ project: project.id, lane: lane.id }} owner={lane.name} questionHref={questionUrl(project.id, lane.id)} />
 
@@ -49,7 +50,11 @@
 {/if}
 
 <style>
+	.crumbs {
+		padding: 12px 16px 4px 8px;
+	}
+
 	.content {
-		padding: 4px 16px 0;
+		padding: 0 16px 24px;
 	}
 </style>
