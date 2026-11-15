@@ -177,7 +177,7 @@ Tenface is a ledger that the owner reads in a few seconds. Every project, lane, 
 
 What the agents ask the owner does not sit on the page. Each question belongs to the agent that asked it: the planner of the project (P) or the babysitter of a lane (B). The agent is a ring that shows its context use, and a small card on the ring counts its open questions. Tap the ring and its card lists the questions. The owner answers in that agent's chat, for example "Q12 ok".
 
-The surface is light Sepia by day and dark Sepia by night, switched by the system setting. There is no accent color. Hierarchy comes from tone, weight and position. Shapes follow Apple's current capsule forms without the glass: capsule buttons and tabs, round agent rings, softly rounded cards, all opaque and flat.
+The surface is light Sepia, also on a phone or computer set to dark. The dark Sepia twins wait under `data-theme="dark"` for a later switch; nothing sets it yet. There is no accent color. Hierarchy comes from tone, weight and position. Shapes follow Apple's current capsule forms without the glass: capsule buttons and tabs, round agent rings, softly rounded cards, all opaque and flat.
 
 The phone answers "what now"; the desktop shows project, lane and task side by side.
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
-	import type { Agent, Question } from '#lib/api/types.ts';
+	import { type Agent, AgentRole, type Question } from '#lib/api/types.ts';
 	import { rememberCard } from '#lib/nav.svelte.ts';
 	import { page } from '$app/state';
 	import AgentCard from './AgentCard.svelte';
@@ -20,20 +20,29 @@
 		else if (page.state.agent === agent.role) rememberCard(undefined);
 	});
 	let root = $state<HTMLElement>();
+	let ring = $state<HTMLButtonElement>();
 	const id = $props.id();
-	const role = $derived(agent.role === 'planner' ? 'Planner' : 'Babysitter');
+	const role = $derived(agent.role === AgentRole.Planner ? 'Planner' : 'Babysitter');
 	const percent = $derived(Math.round((agent.context.used / agent.context.limit) * 100));
 	const count = $derived(agent.questions.length);
+
+	function closeOnEscape(event: KeyboardEvent) {
+		if (event.key !== 'Escape' || !open) return;
+		open = false;
+		if (root?.contains(document.activeElement)) ring?.focus();
+	}
 
 	function outside(event: PointerEvent) {
 		if (open && root && !root.contains(event.target as Node)) open = false;
 	}
 </script>
 
-<svelte:window onpointerdown={outside} onkeydown={(event) => event.key === 'Escape' && (open = false)} />
+<svelte:window onpointerdown={outside} onkeydown={closeOnEscape} />
 
 <div bind:this={root} class="agent">
 	<button
+		bind:this={ring}
+		type="button"
 		class="ring-button agent-button"
 		aria-label="{role} of {owner}, context {percent} percent, {count} open {count === 1 ? 'question' : 'questions'}, {agent.working ? 'working' : 'waiting'}. {open ? 'Close' : 'Open'} its card"
 		aria-expanded={open}
@@ -43,9 +52,9 @@
 		<AgentRing {agent} size={48} />
 	</button>
 	{#if open}
-		<div {id} class="card {align}" role="region" aria-label="{role} of {owner}">
+		<section {id} class="card {align}" aria-label="{role} of {owner}">
 			<AgentCard {agent} {owner} {questionHref} />
-		</div>
+		</section>
 	{/if}
 </div>
 

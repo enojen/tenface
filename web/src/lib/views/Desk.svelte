@@ -9,7 +9,7 @@
 	import PlanChange from '#lib/ui/PlanChange.svelte';
 	import TaskDetail from '#lib/ui/TaskDetail.svelte';
 	import BackHeader from './BackHeader.svelte';
-	import { laneUrl, questionUrl, taskUrl } from './links.ts';
+	import { laneUrl, projectUrl, questionUrl, taskUrl } from './links.ts';
 
 	let {
 		project,
@@ -20,7 +20,13 @@
 
 	const lane = $derived(project.lanes.find((candidate) => candidate.id === laneId) ?? project.lanes[0]);
 	const task = $derived(taskId ? lane?.tasks.find((candidate) => candidate.id === taskId) : undefined);
-	const close = () => back(laneUrl(project.id, lane.id));
+	const close = () => back(lane ? laneUrl(project.id, lane.id) : projectUrl(project.id));
+
+	function detailLabel() {
+		if (task) return `Task ${task.id}`;
+		if (question) return `Question ${question.id}`;
+		return 'Detail';
+	}
 </script>
 
 <div class="desk">
@@ -52,7 +58,7 @@
 			{/if}
 		</main>
 
-		<aside class="column detail" aria-label={task ? `Task ${task.id}` : question ? `Question ${question.id}` : 'Detail'}>
+		<aside class="column detail" aria-label={detailLabel()}>
 			{#if task}
 				{#key task.id}<TaskDetail {task} steps={project.steps} onclose={close} />{/key}
 			{:else if question?.change}
