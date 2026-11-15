@@ -1,0 +1,30 @@
+import { describe, expect, it } from 'vitest';
+import { sampleState } from './api/sample.ts';
+import { currentMark, placeLabel, StepMark, stepPlaces } from './steps.ts';
+
+const now = Date.parse('2026-11-15T12:00:00Z');
+const project = sampleState(now).projects[0];
+const api = project.lanes[0];
+const byId = (id: string) => api.tasks.find((task) => task.id === id) ?? api.tasks[0];
+
+describe('steps', () => {
+	it('marks the step a task waits in, and the steps a project skips', () => {
+		const places = stepPlaces(byId('SAM-102'), project.steps, now);
+		expect(places.map((place) => place.mark)).toEqual([
+			StepMark.Done,
+			StepMark.Done,
+			StepMark.Done,
+			StepMark.Unused,
+			StepMark.Unused,
+			StepMark.Done,
+			StepMark.Asking,
+			StepMark.Later
+		]);
+		expect(places.map(placeLabel).slice(-2)).toEqual(['merge 12 min waiting', 'close not started']);
+	});
+
+	it('shows offline before any other state', () => {
+		expect(currentMark(byId('SAM-102'), true)).toBe(StepMark.Offline);
+		expect(currentMark(byId('SAM-103'), false)).toBe(StepMark.Running);
+	});
+});
