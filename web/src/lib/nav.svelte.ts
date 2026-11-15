@@ -1,4 +1,5 @@
-import { goto, type AfterNavigate } from '$app/navigation';
+import { goto, replaceState, type AfterNavigate } from '$app/navigation';
+import { page } from '$app/state';
 
 // The in-app history, so that "back" returns to the page before instead of adding a new entry.
 const stack: string[] = [];
@@ -50,3 +51,8 @@ export function slide(from: URL | undefined, to: URL | undefined, popstate: bool
 	return backward;
 }
 
+/** Keeps the open agent card in the history entry, so that "back" brings it back open. */
+export function rememberCard(role: App.PageState['agent']) {
+	if (page.state.agent === role) return;
+	replaceState('', { ...page.state, agent: role });
+}

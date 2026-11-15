@@ -7,6 +7,7 @@
 	import { slide, track } from '#lib/nav.svelte.ts';
 	import ErrorStrip from '#lib/ui/ErrorStrip.svelte';
 	import Nav from '#lib/ui/Nav.svelte';
+	import Toast from '#lib/ui/Toast.svelte';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
@@ -46,6 +47,7 @@
 	{/if}
 </div>
 <Nav />
+<Toast />
 
 <style>
 	.page {
