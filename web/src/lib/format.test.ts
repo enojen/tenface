@@ -3,7 +3,14 @@ import { clock, minutesBetween, stepTime, waitTime } from './format.ts';
 
 describe('times', () => {
 	it('writes a step time short', () => {
-		expect([0, 7, 59, 60, 63, 125].map(stepTime)).toEqual(['0m', '7m', '59m', '1h00', '1h03', '2h05']);
+		expect([0, 7, 59, 60, 63, 125].map(stepTime)).toEqual([
+			'0m',
+			'7m',
+			'59m',
+			'1h00',
+			'1h03',
+			'2h05'
+		]);
 	});
 
 	it('writes a waiting time in words', () => {

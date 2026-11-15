@@ -36,7 +36,12 @@ export interface Lane {
 	tasks: Task[];
 }
 
-export const TaskState = { Todo: 'todo', Running: 'running', Asking: 'asking', Done: 'done' } as const;
+export const TaskState = {
+	Todo: 'todo',
+	Running: 'running',
+	Asking: 'asking',
+	Done: 'done'
+} as const;
 export type TaskState = (typeof TaskState)[keyof typeof TaskState];
 
 export interface Task {
@@ -111,5 +116,8 @@ export interface PlanChange {
 export type Connection = { online: true } | { online: false; since: string };
 
 export interface Api {
-	subscribe(onState: (state: State) => void, onConnection: (connection: Connection) => void): () => void;
+	subscribe(
+		onState: (state: State) => void,
+		onConnection: (connection: Connection) => void
+	): () => void;
 }

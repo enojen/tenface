@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { live } from '#lib/live.svelte.ts';
 	import Missing from '#lib/views/Missing.svelte';
 	import ProjectPhone from '#lib/views/ProjectPhone.svelte';
+	import { page } from '$app/state';
 
 	const project = $derived(live.project(page.params.project ?? ''));
 </script>

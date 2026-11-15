@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { trioLabel, type Trio } from '#lib/model.ts';
+	import { type Trio, trioLabel } from '#lib/model.ts';
 
 	let { trio, noun = '' }: { trio: Trio; noun?: string } = $props();
 </script>
