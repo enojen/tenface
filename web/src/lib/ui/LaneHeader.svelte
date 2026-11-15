@@ -6,8 +6,8 @@
 </script>
 
 <div class="lane-head">
-	<svelte:element this={heading} class="headline">{lane.name}</svelte:element>
-	<p>{lane.description}</p>
+	<svelte:element this={heading} class="card-head"><span aria-hidden="true">Lane ·</span> {lane.name}</svelte:element>
+	<p class="subject">{lane.description}</p>
 	<Trio trio={lane.trio} noun="tasks: " />
 </div>
 
@@ -18,9 +18,5 @@
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
-	}
-
-	p {
-		color: var(--ink-soft);
 	}
 </style>

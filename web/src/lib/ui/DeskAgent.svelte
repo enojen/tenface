@@ -59,7 +59,7 @@
 		<AgentRing {agent} size={48} />
 	</button>
 	{#if open}
-		<section {id} class="card {align}" aria-label="{role} of {owner}">
+		<section {id} class="card banded {align}" aria-label="{role} of {owner}">
 			<AgentCard {agent} {source} {owner} {questionHref} />
 		</section>
 	{/if}
@@ -89,6 +89,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
+		--band-pad: 14px;
+		--band-radius: 17px;
 		padding: 14px;
 		border-radius: 18px;
 		background: var(--tile);

@@ -59,13 +59,16 @@
 
 {#if change}
 	<article class="plan">
-		<header>
+		<header class="band">
 			<div class="top">
-				<svelte:element this={heading} class="headline">{question.topic}</svelte:element>
+				<div class="names">
+					<p class="card-head">Plan change · {question.id}</p>
+					<svelte:element this={heading} class="subject">{question.topic}</svelte:element>
+				</div>
 				{#if onclose}<button type="button" class="icon-button close" aria-label="Close" onclick={onclose}><X size={20} /></button>{/if}
 			</div>
 			<p class="label muted">
-				<span class="mono id">{question.id}</span> · from the planner · {waitTime(minutesBetween(question.openedAt, live.now))}
+				From the planner · {waitTime(minutesBetween(question.openedAt, live.now))}
 			</p>
 		</header>
 
@@ -119,11 +122,16 @@
 		overflow-wrap: anywhere;
 	}
 
+	.names {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
 	.close {
 		margin-right: -12px;
 	}
 
-	.id,
 	.strong {
 		font-weight: 600;
 		color: var(--ink);
@@ -267,8 +275,8 @@
 	}
 
 	.name {
-		font-size: 16px;
-		line-height: 22px;
+		font-size: 15px;
+		line-height: 20px;
 		overflow-wrap: anywhere;
 	}
 

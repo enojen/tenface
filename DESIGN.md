@@ -45,11 +45,22 @@ typography:
     fontSize: "20px"
     fontWeight: 700
     lineHeight: "26px"
-  title:
+  card-head:
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "12px"
+    fontWeight: 700
+    lineHeight: "16px"
+    letterSpacing: "0.08em"
+  subject:
     fontFamily: "Inter, system-ui, sans-serif"
     fontSize: "16px"
-    fontWeight: 600
+    fontWeight: 500
     lineHeight: "22px"
+  title:
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "15px"
+    fontWeight: 500
+    lineHeight: "20px"
   body:
     fontFamily: "Inter, system-ui, sans-serif"
     fontSize: "14px"
@@ -229,14 +240,18 @@ A warm, low-chroma Sepia neutral scale with a single blood red; each tone has a 
 
 ### Hierarchy
 - **Display** (700, 28px, 34px): page titles: Projects, the project name.
-- **Headline** (700, 20px, 26px): the lane name in a header, a task title in its sheet.
-- **Title** (600, 16px, 22px): the name in a table row, a task or question title, a section title.
+- **Headline** (700, 20px, 26px): the title of the "not here" page.
+- **Card Head** (700, 12px, 16px, uppercase, 0.08em, soft ink): what a card is, with its short name: "Lanes", "Lane · api", "Task · SAM-103", "Plan change · Q16", "Babysitter · api". The phone lane page opens with it too.
+- **Subject** (500, 16px, 22px): the sentence under a card head: the lane's description, the task title, the plan change topic.
+- **Title** (500, 15px, 20px): the name in a table row, a question title, a new lane in a plan change. A task in the tree is 15px at 400; the picked one is 600.
 - **Body** (400, 14px, 20px): notes, button text, error text.
 - **Label** (600, 12px, 16px): table headers, meta, times, counts, step names, nav labels. Weight 400–500 for muted meta.
 - **Id** (JetBrains Mono 500–600, the size of its line): SAM-102, Q12, PR #418.
 
 ### Named Rules
-**The Five Sizes Rule.** Only 12, 14, 16, 20 and 28 px exist. The one exception is the 9 px mark drawn inside a small icon: the letter or count of an agent icon, and the "?" of the question card in a tree row. A long title wraps; it is never cut with "…".
+**The Card Head Rule.** A card opens with its head on a band: the Card Head line, then the Subject, on a Raised Sepia band that runs to the card's edges and its top corners. The lanes table, the lane column, the detail column, the agent card and the task sheet have it. The head is the strongest line of its card and the Subject sits under it, quieter; a level below is never heavier than the level above. A Card Head outside a card (the phone lane page, the phone plan change) has no band.
+
+**The Six Sizes Rule.** Only 12, 14, 15, 16, 20 and 28 px exist. The one exception is the 9 px mark drawn inside a small icon: the letter or count of an agent icon, and the "?" of the question card in a tree row. A long title wraps; it is never cut with "…".
 
 ## Layout
 
@@ -246,9 +261,9 @@ The phone is the first target (designed at 390 px), with a 16 px side gutter and
 
 **Tables.** Projects and lanes use one table kit: an optional section title, a "Search …" capsule field, a header row and rows at least 56 px high. The phone shows five rows per page with a pager ("1–5 of 10" between two arrows); a question list in an agent card shows three. Projects: Project | Lanes (a trio that counts the project's lanes) | Needs you (one agent head per asking agent, P and/or B). A project: Lane | Tasks (a trio that counts the lane's tasks) | Needs you (a B head when the lane's babysitter asks something).
 
-**Lane.** A header with the back arrow, the lane name, a one-line description of the lane and its trio, then one tree. A lane holds one root tree, because one babysitter does not take more. The tree indents only at a fork; an only child stays in its parent's column.
+**Lane.** A header with the back arrow, the head "Lane · api", the one-line description of the lane and its trio, then one tree. A lane holds one root tree, because one babysitter does not take more. The tree indents only at a fork; an only child stays in its parent's column.
 
-**Task.** A bottom sheet over the lane, dimmed with ink at 32%: a grab handle, the title, the steps with the total time ("1h03 total"), PR and Tracker buttons (48 px), and the babysitter's note. The steps are a snake of eight places, four per row: plan, approve, build, debug, eval, PR, merge, close. A step a project does not use has a dashed `line-strong` tile and no time.
+**Task.** A bottom sheet over the lane, dimmed with ink at 32%: a grab handle and the head band ("Task · SAM-103" and the title), the steps with the total time ("1h03 total"), PR and Tracker buttons (48 px), and the babysitter's note. The steps are a snake of eight places, four per row: plan, approve, build, debug, eval, PR, merge, close. A step a project does not use has a dashed `line-strong` tile and no time.
 
 **Desktop.** The floating nav sits at the bottom center here too. The projects page is the same table, wide, with every row on one page. A project page is three phone-like columns side by side: the project (its lanes table and the P ring), the lane (its tree and the B ring) and the detail. The columns fill the whole screen width with 32 px side gutters and reach down to the nav: the lanes column is 24% of the screen (360 to 440 px), and the lane and the detail share the rest equally; below 1200 px the gap and the gutters are 16 px and the first column is 380 px. The detail column shows whatever the owner picked last: a task, or the plan change of a planner question. An agent card opens in place under its ring, without dimming the page.
 
@@ -295,7 +310,7 @@ Three 14 px squares with a count after each: done (filled done mark), running (f
 A robot head with P (planner) or B (babysitter), in a ring that fills with the context use. The arc is red while the agent works and ink while it waits. A fixed tick at 35% marks where an idle agent hands over to a new session; the Copy handover prompt button copies that prompt. A small card on the orbit, at the upper right, counts its open questions: "1", "2" … "9+". 48 px in a desktop header, 56 px floating on the phone.
 
 ### Agent card (signature)
-Opens from the ring. A header with a 40 px ring, the name ("Babysitter · api"), the context line ("Context 62% · 124k / 200k") and a notes button; no state word, the ring's color says it. Then "Needs you" (a 14 px section title): a table of Question | ID | Waiting, oldest first, where the id is a copy-id pill; the title of a planner question opens its plan change, other titles are plain text. Then Chat and Copy handover prompt. The notes view has a back button and lists what the agent did, with times and a kind (stuck, idea, handover).
+Opens from the ring. A head band with a 40 px ring, the Card Head ("Babysitter · api"), the context line ("Context 62% · 124k / 200k") and a notes button; no state word, the ring's color says it. Then "Needs you" (a 14 px section title): a table of Question | ID | Waiting, oldest first, where the id is a copy-id pill; the title of a planner question opens its plan change, other titles are plain text. Then Chat and Copy handover prompt. The notes view has a back button and lists what the agent did, with times and a kind (stuck, idea, handover).
 
 ### Plan change (signature)
 The planner's change to the lanes is read-only. The lane's tree with a sign column: "+" added (the row in a 1 px ink outline), "−" removed (struck through, on the ground color), "→" moved (with where it goes), "~" changed (the old text struck under the new). A new lane is its own tree in a 1 px ink box with 20 px corners. The signs are images with a name for screen readers. No Approve and no Reject: the page ends with "Answer in the planner chat with the id, for example Q16 ok."
@@ -326,7 +341,7 @@ What the panel already has shows at once: a lane's header and trio, the agent ca
 - **Don't** put a list of questions on a page; questions live in the agent card.
 - **Don't** write a state word ("asleep", "working") next to an agent; the ring says it.
 - **Don't** add Approve or Reject to a plan change.
-- **Don't** use a font size outside 12, 14, 16, 20 and 28 px, or cut a title with "…".
+- **Don't** use a font size outside 12, 14, 15, 16, 20 and 28 px, or cut a title with "…".
 - **Don't** draw drag handles or drop zones for tasks; the tree is never edited by hand.
 - **Don't** use real client, project or task names in designs or code; sample data is made up.
 

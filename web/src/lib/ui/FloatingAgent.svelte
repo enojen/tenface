@@ -191,7 +191,7 @@
 	}}
 	onclick={(event) => event.target === dialog && dialog?.close()}
 >
-	<div class="card" class:below={cardBelow} style={cardStyle}>
+	<div class="card banded" class:below={cardBelow} style={cardStyle}>
 		{#if open}<AgentCard {agent} {source} {owner} {questionHref} />{/if}
 	</div>
 	<button type="button" class="float agent-button" {style} aria-label={label} aria-expanded="true" onclick={() => dialog?.close()}>
@@ -263,6 +263,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
+		--band-pad: 14px;
+		--band-radius: 17px;
 		padding: 14px;
 		border-radius: 18px;
 		background: var(--tile);

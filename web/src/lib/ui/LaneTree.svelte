@@ -164,8 +164,8 @@
 	}
 
 	.name {
-		font-size: 16px;
-		line-height: 22px;
+		font-size: 15px;
+		line-height: 20px;
 		overflow-wrap: anywhere;
 	}
 

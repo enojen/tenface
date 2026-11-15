@@ -406,3 +406,69 @@ test('a picked lane and a picked task are raised light cards', async ({ page }, 
 	}
 	await expect(task.locator('.name')).toHaveCSS('font-weight', '600');
 });
+
+type TextStyle = { size: number; weight: number; transform: string; band: string };
+
+function textStyle(element: Locator): Promise<TextStyle> {
+	return element.evaluate((node) => {
+		const style = getComputedStyle(node);
+		let holder: Element | null = node;
+		while (holder && getComputedStyle(holder).backgroundColor === 'rgba(0, 0, 0, 0)') {
+			holder = holder.parentElement;
+		}
+		return {
+			size: Number.parseFloat(style.fontSize),
+			weight: Number(style.fontWeight),
+			transform: style.textTransform,
+			band: holder ? getComputedStyle(holder).backgroundColor : ''
+		};
+	});
+}
+
+const band = 'rgb(224, 217, 203)';
+
+test('the three desk cards open with the same head on a band', async ({ page }, info) => {
+	test.skip(phone(info.project.name), 'the desk only');
+	await page.goto('/projects/sample/lanes/api?task=SAM-103');
+	const heads = [
+		page.getByRole('heading', { name: 'Lanes' }),
+		page.getByText('Lane · api', { exact: true }),
+		page.getByText('Task · SAM-103', { exact: true })
+	];
+	const styles = await Promise.all(heads.map(textStyle));
+	for (const style of styles) {
+		expect(style).toEqual({ size: 12, weight: 700, transform: 'uppercase', band });
+	}
+	const subjects = [
+		page.getByText('Orders, invoices and the report job', { exact: true }),
+		page.getByRole('heading', { name: 'Add an index to the audit table and backfill the old rows' })
+	];
+	const row = await textStyle(
+		page.getByRole('link', { name: /Retry failed webhooks/ }).locator('.name')
+	);
+	for (const subject of subjects) {
+		const style = await textStyle(subject);
+		expect(style.weight).toBeLessThan(styles[0].weight);
+		expect(style.size).toBeGreaterThan(row.size);
+	}
+});
+
+test('the phone lane and its task sheet use the desk heads', async ({ page }, info) => {
+	test.skip(!phone(info.project.name), 'the phone only');
+	await page.goto('/projects/sample');
+	const lanes = await textStyle(page.getByRole('heading', { name: 'Lanes' }));
+	await page.goto('/projects/sample/lanes/api?task=SAM-103');
+	const sheet = page.getByRole('dialog', { name: 'Task SAM-103' });
+	await settled(sheet);
+	const lane = await textStyle(page.getByText('Lane · api', { exact: true }));
+	const task = await textStyle(sheet.getByText('Task · SAM-103', { exact: true }));
+	for (const style of [lanes, lane, task]) {
+		expect({ size: style.size, weight: style.weight, transform: style.transform }).toEqual({
+			size: 12,
+			weight: 700,
+			transform: 'uppercase'
+		});
+	}
+	expect(lanes.band).toBe(band);
+	expect(task.band).toBe(band);
+});
