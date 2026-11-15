@@ -1,7 +1,20 @@
 // The contract with the server. Later these types come from the Rust server.
 
-export const STEP_NAMES = ['plan', 'approve', 'build', 'debug', 'eval', 'PR', 'merge', 'close'] as const;
-export type StepName = (typeof STEP_NAMES)[number];
+// Each set of states is a const object: code writes TaskState.Done, the JSON carries 'done'.
+
+export const Step = {
+	Plan: 'plan',
+	Approve: 'approve',
+	Build: 'build',
+	Debug: 'debug',
+	Eval: 'eval',
+	PR: 'PR',
+	Merge: 'merge',
+	Close: 'close'
+} as const;
+export type StepName = (typeof Step)[keyof typeof Step];
+/** Every step in its order. */
+export const STEP_NAMES: readonly StepName[] = Object.values(Step);
 
 export interface State {
 	projects: Project[];
@@ -23,7 +36,8 @@ export interface Lane {
 	tasks: Task[];
 }
 
-export type TaskState = 'todo' | 'running' | 'asking' | 'done';
+export const TaskState = { Todo: 'todo', Running: 'running', Asking: 'asking', Done: 'done' } as const;
+export type TaskState = (typeof TaskState)[keyof typeof TaskState];
 
 export interface Task {
 	id: string;
@@ -42,7 +56,8 @@ export interface StepRun {
 	endedAt: string | null;
 }
 
-export type AgentRole = 'planner' | 'babysitter';
+export const AgentRole = { Planner: 'planner', Babysitter: 'babysitter' } as const;
+export type AgentRole = (typeof AgentRole)[keyof typeof AgentRole];
 
 export interface Agent {
 	role: AgentRole;
@@ -69,7 +84,8 @@ export interface Note {
 	text: string;
 }
 
-export type PlanSign = '+' | '−' | '→' | '~';
+export const PlanSign = { Added: '+', Removed: '−', Moved: '→', Changed: '~' } as const;
+export type PlanSign = (typeof PlanSign)[keyof typeof PlanSign];
 
 export interface PlanNode {
 	ref: string;

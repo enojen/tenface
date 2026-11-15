@@ -1,29 +1,29 @@
 import { minutesBetween } from './format.ts';
-import type { Lane, Project, StepRun, Task } from './api/types.ts';
+import { TaskState, type Lane, type Project, type StepRun, type Task } from './api/types.ts';
 
-export interface Trio {
-	done: number;
-	running: number;
-	waiting: number;
-}
+/** The three marks of the trio; each is also a key of Trio. */
+export const LaneState = { Done: 'done', Running: 'running', Waiting: 'waiting' } as const;
+export type LaneState = (typeof LaneState)[keyof typeof LaneState];
+
+export type Trio = Record<LaneState, number>;
 
 /** Tasks that wait for the owner are counted on the agent's ring, not here. */
 export function taskTrio(tasks: Task[]): Trio {
 	return {
-		done: tasks.filter((task) => task.state === 'done').length,
-		running: tasks.filter((task) => task.state === 'running').length,
-		waiting: tasks.filter((task) => task.state === 'todo').length
+		[LaneState.Done]: tasks.filter((task) => task.state === TaskState.Done).length,
+		[LaneState.Running]: tasks.filter((task) => task.state === TaskState.Running).length,
+		[LaneState.Waiting]: tasks.filter((task) => task.state === TaskState.Todo).length
 	};
 }
 
-export function laneState(lane: Lane): keyof Trio {
-	if (lane.tasks.some((task) => task.state === 'running')) return 'running';
-	if (lane.tasks.length > 0 && lane.tasks.every((task) => task.state === 'done')) return 'done';
-	return 'waiting';
+export function laneState(lane: Lane): LaneState {
+	if (lane.tasks.some((task) => task.state === TaskState.Running)) return LaneState.Running;
+	if (lane.tasks.length > 0 && lane.tasks.every((task) => task.state === TaskState.Done)) return LaneState.Done;
+	return LaneState.Waiting;
 }
 
 export function laneTrio(lanes: Lane[]): Trio {
-	const trio: Trio = { done: 0, running: 0, waiting: 0 };
+	const trio: Trio = { [LaneState.Done]: 0, [LaneState.Running]: 0, [LaneState.Waiting]: 0 };
 	for (const lane of lanes) trio[laneState(lane)] += 1;
 	return trio;
 }
@@ -32,7 +32,7 @@ export const trioLabel = (trio: Trio, noun = '') =>
 	`${noun}${trio.done} done, ${trio.running} running, ${trio.waiting} waiting`;
 
 export function currentStep(task: Task): StepRun | null {
-	if (task.state === 'done' || task.state === 'todo') return null;
+	if (task.state === TaskState.Done || task.state === TaskState.Todo) return null;
 	return task.steps.find((run) => run.endedAt === null) ?? null;
 }
 
