@@ -123,15 +123,17 @@
 		phase = Phase.Rest;
 	}
 
+	const MARGIN = 16;
+	const GAP = 12;
+
 	let cardBelow = $state(false);
-	let cardStyle = $state('');
+	let gapStyle = $state('');
 
 	function placeCard() {
 		const top = rest.y;
 		cardBelow = top + SIZE / 2 < height / 2;
-		cardStyle = cardBelow
-			? `top: ${top + SIZE + 12}px; max-height: ${height - top - SIZE - 28}px`
-			: `bottom: ${height - top + 12}px; max-height: ${top - 28}px`;
+		const gap = cardBelow ? top + SIZE + GAP - MARGIN : height - top + GAP - MARGIN;
+		gapStyle = `flex-basis: ${gap}px`;
 	}
 
 	function toggle() {
@@ -191,8 +193,11 @@
 	}}
 	onclick={(event) => event.target === dialog && dialog?.close()}
 >
-	<div class="card banded" class:below={cardBelow} style={cardStyle}>
-		{#if open}<AgentCard {agent} {source} {owner} {questionHref} />{/if}
+	<div class="place" class:below={cardBelow}>
+		<span class="gap" style={gapStyle}></span>
+		<div class="card banded">
+			{#if open}<AgentCard {agent} {source} {owner} {questionHref} />{/if}
+		</div>
 	</div>
 	<button type="button" class="float agent-button" {style} aria-label={label} aria-expanded="true" onclick={() => dialog?.close()}>
 		{@render ring()}
@@ -254,10 +259,27 @@
 		background: var(--dim);
 	}
 
-	.card {
+	.place {
 		position: absolute;
-		left: 16px;
-		right: 16px;
+		inset: 16px;
+		display: flex;
+		flex-direction: column-reverse;
+		pointer-events: none;
+	}
+
+	.place.below {
+		flex-direction: column;
+	}
+
+	.gap {
+		flex: 0 1 auto;
+		min-height: 0;
+	}
+
+	.card {
+		flex: none;
+		max-height: 100%;
+		pointer-events: auto;
 		overflow-y: auto;
 		transform-origin: bottom right;
 		display: flex;
@@ -272,16 +294,16 @@
 		box-shadow: var(--shadow-card);
 	}
 
+	.below .card {
+		transform-origin: top right;
+	}
+
 	dialog[open] .card {
 		animation: card-in 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
 	}
 
 	dialog[open]::backdrop {
 		animation: dim-in 200ms ease;
-	}
-
-	.card.below {
-		transform-origin: top right;
 	}
 
 	@keyframes card-in {
