@@ -22,7 +22,9 @@ export type TreeRow<T> =
 
 /** The cells of the rows under a node: a branch goes on as a line, the last branch ends. */
 const cellsBelow = (cells: Cell[]): Cell[] =>
-	cells.map((cell) => (cell === Cell.Branch ? Cell.Pass : cell === Cell.LastBranch ? Cell.Empty : cell));
+	cells.map((cell) =>
+		cell === Cell.Branch ? Cell.Pass : cell === Cell.LastBranch ? Cell.Empty : cell
+	);
 
 /** The rows to draw, depth first, in the order of the children. */
 export function treeRows<T>(roots: T[], childrenOf: (item: T) => T[]): TreeRow<T>[] {
@@ -36,8 +38,13 @@ export function treeRows<T>(roots: T[], childrenOf: (item: T) => T[]): TreeRow<T
 			return;
 		}
 		children.forEach((child, index) => {
-			if (index > 0) rows.push({ kind: RowKind.Gap, cells: [...next, Cell.Pass], betweenRoots: false });
-			addSubtree(child, [...next, index === children.length - 1 ? Cell.LastBranch : Cell.Branch], false);
+			if (index > 0)
+				rows.push({ kind: RowKind.Gap, cells: [...next, Cell.Pass], betweenRoots: false });
+			addSubtree(
+				child,
+				[...next, index === children.length - 1 ? Cell.LastBranch : Cell.Branch],
+				false
+			);
 		});
 	};
 	roots.forEach((root, index) => {

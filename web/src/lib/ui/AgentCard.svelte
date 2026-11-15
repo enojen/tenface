@@ -1,6 +1,6 @@
 <script lang="ts">
-	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
 	import Check from '@lucide/svelte/icons/check';
+	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
 	import Copy from '@lucide/svelte/icons/copy';
 	import Info from '@lucide/svelte/icons/info';
 	import MessageSquare from '@lucide/svelte/icons/message-square';

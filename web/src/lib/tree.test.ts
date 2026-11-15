@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { groupByParent, RowKind, treeRows, type TreeRow } from './tree.ts';
+import { groupByParent, RowKind, type TreeRow, treeRows } from './tree.ts';
 
 const task = (id: string, parent: string | null = null) => ({ id, parent });
 
@@ -41,11 +41,19 @@ describe('treeRows', () => {
 	});
 
 	it('keeps a straight chain in one column', () => {
-		expect(draw(rowsOf([task('a'), task('b', 'a'), task('c', 'b')]))).toEqual(['a  below', 'b  above below', 'c  above']);
+		expect(draw(rowsOf([task('a'), task('b', 'a'), task('c', 'b')]))).toEqual([
+			'a  below',
+			'b  above below',
+			'c  above'
+		]);
 	});
 
 	it('puts a gap between roots', () => {
-		expect(rowsOf([task('a'), task('b')]).map((row) => row.kind)).toEqual([RowKind.Node, RowKind.Gap, RowKind.Node]);
+		expect(rowsOf([task('a'), task('b')]).map((row) => row.kind)).toEqual([
+			RowKind.Node,
+			RowKind.Gap,
+			RowKind.Node
+		]);
 	});
 });
 

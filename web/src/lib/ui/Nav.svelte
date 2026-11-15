@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import House from '@lucide/svelte/icons/house';
 	import LayoutGrid from '@lucide/svelte/icons/layout-grid';
+	import { page } from '$app/state';
 
 	const home = $derived(page.url.pathname === '/');
 </script>

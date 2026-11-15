@@ -1,10 +1,10 @@
 <script lang="ts">
+	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
 	import type { Project, Question } from '#lib/api/types.ts';
+	import { back } from '#lib/nav.svelte.ts';
 	import FloatingAgent from '#lib/ui/FloatingAgent.svelte';
 	import PlanChange from '#lib/ui/PlanChange.svelte';
 	import { projectUrl, questionUrl } from './links.ts';
-	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
-	import { back } from '#lib/nav.svelte.ts';
 
 	let { project, question }: { project: Project; question: Question } = $props();
 </script>
