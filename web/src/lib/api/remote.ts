@@ -23,6 +23,8 @@ export function createRemoteApi(base: string): Api {
 		lane: (project, lane, signal) =>
 			getJson(`${base}/projects/${part(project)}/lanes/${part(lane)}`, signal),
 		agent: (source, signal) => getJson(`${base}${agentPath(source)}`, signal),
+		question: (project, id, signal) =>
+			getJson(`${base}/projects/${part(project)}/questions/${part(id)}`, signal),
 		searchProjects: (query, signal) => getJson(`${base}/projects?q=${part(query)}`, signal),
 		searchLanes: (project, query, signal) =>
 			getJson(`${base}/projects/${part(project)}/lanes?q=${part(query)}`, signal)

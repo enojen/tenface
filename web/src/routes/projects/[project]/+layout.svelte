@@ -12,7 +12,7 @@
 </script>
 
 {#if project && view}
-	<Desk {project} laneId={view.laneId} taskId={view.taskId} question={view.question} />
+	<Desk {project} laneId={view.laneId} taskId={view.taskId} questionId={view.questionId} />
 {:else}
 	{@render children()}
 {/if}

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { api } from '#lib/api/index.ts';
-	import type { Lane, Project } from '#lib/api/types.ts';
+	import type { LaneSummary, Project } from '#lib/api/types.ts';
 	import { live } from '#lib/live.svelte.ts';
 	import { LoadState, loadFor } from '#lib/load.svelte.ts';
 	import { back } from '#lib/nav.svelte.ts';
@@ -13,7 +13,7 @@
 	import { laneUrl, projectUrl, questionUrl, taskUrl } from './links.ts';
 	import TaskSheet from './TaskSheet.svelte';
 
-	let { project, lane, taskId }: { project: Project; lane: Lane; taskId: string | null } = $props();
+	let { project, lane, taskId }: { project: Project; lane: LaneSummary; taskId: string | null } = $props();
 
 	const tree = loadFor(
 		() => `${project.id}/${lane.id}`,

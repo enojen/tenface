@@ -6,7 +6,7 @@
 	import MessageSquare from '@lucide/svelte/icons/message-square';
 	import type { Snippet } from 'svelte';
 	import { api } from '#lib/api/index.ts';
-	import { type Agent, AgentRole, type AgentSource, type Question } from '#lib/api/types.ts';
+	import { type Agent, AgentRole, type AgentSource, type AgentSummary, type Question } from '#lib/api/types.ts';
 	import { clock, minutesBetween, waitTime } from '#lib/format.ts';
 	import { live } from '#lib/live.svelte.ts';
 	import { LoadState, loadFor } from '#lib/load.svelte.ts';
@@ -21,7 +21,7 @@
 		source,
 		owner,
 		questionHref
-	}: { agent: Agent; source: AgentSource; owner: string; questionHref: (question: Question) => string } = $props();
+	}: { agent: AgentSummary; source: AgentSource; owner: string; questionHref: (question: Question) => string } = $props();
 
 	const PAGE = 3;
 	const role = $derived(agent.role === AgentRole.Planner ? 'Planner' : 'Babysitter');

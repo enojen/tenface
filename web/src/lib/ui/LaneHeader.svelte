@@ -1,15 +1,14 @@
 <script lang="ts">
-	import type { Lane } from '#lib/api/types.ts';
-	import { taskTrio } from '#lib/model.ts';
+	import type { LaneSummary } from '#lib/api/types.ts';
 	import Trio from './Trio.svelte';
 
-	let { lane, heading = 'h1' }: { lane: Lane; heading?: 'h1' | 'h2' } = $props();
+	let { lane, heading = 'h1' }: { lane: LaneSummary; heading?: 'h1' | 'h2' } = $props();
 </script>
 
 <div class="lane-head">
 	<svelte:element this={heading} class="headline">{lane.name}</svelte:element>
 	<p>{lane.description}</p>
-	<Trio trio={taskTrio(lane.tasks)} noun="tasks: " />
+	<Trio trio={lane.trio} noun="tasks: " />
 </div>
 
 <style>
