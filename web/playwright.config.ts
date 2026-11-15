@@ -9,6 +9,7 @@ export default defineConfig({
 	},
 	use: { baseURL: 'http://localhost:4173' },
 	projects: [
+		{ name: 'desktop', use: { channel: 'chrome', viewport: { width: 1280, height: 900 } } },
 		// The owner uses an iPhone, so the phone runs in WebKit, the engine of Safari.
 		{ name: 'phone', use: { ...devices['iPhone 14'] } }
 	]
