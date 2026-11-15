@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { live, wide } from '#lib/live.svelte.ts';
 	import { findQuestion } from '#lib/model.ts';
 	import Desk from '#lib/views/Desk.svelte';
 	import { projectUrl } from '#lib/views/links.ts';
 	import Missing from '#lib/views/Missing.svelte';
 	import PlanPhone from '#lib/views/PlanPhone.svelte';
+	import { page } from '$app/state';
 
 	const project = $derived(live.project(page.params.project ?? ''));
 	const question = $derived(project ? findQuestion(project, page.params.question ?? '') : undefined);

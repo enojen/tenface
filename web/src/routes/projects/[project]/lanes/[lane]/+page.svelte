@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { live, wide } from '#lib/live.svelte.ts';
 	import { findLane } from '#lib/model.ts';
 	import Desk from '#lib/views/Desk.svelte';
 	import LanePhone from '#lib/views/LanePhone.svelte';
 	import { projectUrl } from '#lib/views/links.ts';
 	import Missing from '#lib/views/Missing.svelte';
+	import { page } from '$app/state';
 
 	const project = $derived(live.project(page.params.project ?? ''));
 	const lane = $derived(project ? findLane(project, page.params.lane ?? '') : undefined);
