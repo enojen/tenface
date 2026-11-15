@@ -18,8 +18,8 @@
 	--on-running: #e7e1d4;
 	--shade: 31, 28, 23;
 
-	--sans: 'Inter Variable', Inter, system-ui, sans-serif;
-	--mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+	--sans: "Inter Variable", Inter, system-ui, sans-serif;
+	--mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace;
 
 	--shadow-nav: 0 6px 20px rgba(var(--shade), 0.12);
 	--shadow-ring: 0 6px 18px rgba(var(--shade), 0.22);

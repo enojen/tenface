@@ -1,5 +1,5 @@
+import { type Lane, type Project, type StepRun, type Task, TaskState } from './api/types.ts';
 import { minutesBetween } from './format.ts';
-import { TaskState, type Lane, type Project, type StepRun, type Task } from './api/types.ts';
 
 /** The three marks of the trio; each is also a key of Trio. */
 export const LaneState = { Done: 'done', Running: 'running', Waiting: 'waiting' } as const;
@@ -18,7 +18,8 @@ export function taskTrio(tasks: Task[]): Trio {
 
 export function laneState(lane: Lane): LaneState {
 	if (lane.tasks.some((task) => task.state === TaskState.Running)) return LaneState.Running;
-	if (lane.tasks.length > 0 && lane.tasks.every((task) => task.state === TaskState.Done)) return LaneState.Done;
+	if (lane.tasks.length > 0 && lane.tasks.every((task) => task.state === TaskState.Done))
+		return LaneState.Done;
 	return LaneState.Waiting;
 }
 
@@ -54,13 +55,16 @@ const plural = (count: number, word: string) => `${count} ${word}${count === 1 ?
 export function askersLabel(planner: number, babysitters: number): string {
 	const parts = [
 		planner > 0 ? `${planner} from the planner` : '',
-		babysitters > 0 ? `${babysitters} from the ${babysitters === 1 ? 'babysitter' : 'babysitters'}` : ''
+		babysitters > 0
+			? `${babysitters} from the ${babysitters === 1 ? 'babysitter' : 'babysitters'}`
+			: ''
 	].filter(Boolean);
 	if (parts.length === 0) return 'no open questions';
 	return `${plural(planner + babysitters, 'open question')}: ${parts.join(', ')}`;
 }
 
-export const findLane = (project: Project, id: string) => project.lanes.find((lane) => lane.id === id);
+export const findLane = (project: Project, id: string) =>
+	project.lanes.find((lane) => lane.id === id);
 
 export function findQuestion(project: Project, id: string) {
 	const all = [project.planner, ...project.lanes.map((lane) => lane.babysitter)];

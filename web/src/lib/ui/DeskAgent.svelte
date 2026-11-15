@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
-	import { page } from '$app/state';
 	import type { Agent, Question } from '#lib/api/types.ts';
 	import { rememberCard } from '#lib/nav.svelte.ts';
+	import { page } from '$app/state';
 	import AgentCard from './AgentCard.svelte';
 	import AgentRing from './AgentRing.svelte';
 

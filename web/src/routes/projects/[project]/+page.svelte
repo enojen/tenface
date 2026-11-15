@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { live, wide } from '#lib/live.svelte.ts';
 	import Desk from '#lib/views/Desk.svelte';
 	import Missing from '#lib/views/Missing.svelte';
 	import ProjectPhone from '#lib/views/ProjectPhone.svelte';
+	import { page } from '$app/state';
 
 	const project = $derived(live.project(page.params.project ?? ''));
 </script>

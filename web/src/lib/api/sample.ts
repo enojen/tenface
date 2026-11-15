@@ -1,5 +1,18 @@
 // Made-up data in the shape of the server state. No real names.
-import { AgentRole, PlanSign, Step, TaskState, type Agent, type Lane, type PlanChange, type Project, type State, type StepName, type StepRun, type Task } from './types.ts';
+import {
+	type Agent,
+	AgentRole,
+	type Lane,
+	type PlanChange,
+	PlanSign,
+	type Project,
+	type State,
+	Step,
+	type StepName,
+	type StepRun,
+	type Task,
+	TaskState
+} from './types.ts';
 
 const STEPS: StepName[] = [Step.Plan, Step.Approve, Step.Build, Step.PR, Step.Merge, Step.Close];
 
@@ -36,7 +49,12 @@ export function sampleState(now: number): State {
 		state: TaskState,
 		rest: Partial<Task> = {}
 	): Task {
-		const status = { [TaskState.Todo]: 'to do', [TaskState.Running]: 'in progress', [TaskState.Asking]: 'in review', [TaskState.Done]: 'closed' }[state];
+		const status = {
+			[TaskState.Todo]: 'to do',
+			[TaskState.Running]: 'in progress',
+			[TaskState.Asking]: 'in review',
+			[TaskState.Done]: 'closed'
+		}[state];
 		return {
 			id,
 			title,
@@ -50,7 +68,12 @@ export function sampleState(now: number): State {
 		};
 	}
 
-	function agent(role: Agent['role'], working: boolean, used: number, rest: Partial<Agent> = {}): Agent {
+	function agent(
+		role: Agent['role'],
+		working: boolean,
+		used: number,
+		rest: Partial<Agent> = {}
+	): Agent {
 		return {
 			role,
 			working,
@@ -76,13 +99,24 @@ export function sampleState(now: number): State {
 			let parent: string | null = null;
 			const next = (state: TaskState, title: string) => {
 				const made = task(`${prefix}-${number++}`, title, parent, state);
-				if (state === TaskState.Running) made.steps = runs([[Step.Plan, 5], [Step.Approve, 2], [Step.Build, 9 + number]], true);
+				if (state === TaskState.Running)
+					made.steps = runs(
+						[
+							[Step.Plan, 5],
+							[Step.Approve, 2],
+							[Step.Build, 9 + number]
+						],
+						true
+					);
 				tasks.push(made);
 				parent = made.id;
 			};
-			for (let index = 0; index < done; index++) next(TaskState.Done, `Finished part ${index + 1} of ${id}`);
-			for (let index = 0; index < running; index++) next(TaskState.Running, `Current work in ${id}`);
-			for (let index = 0; index < waiting; index++) next(TaskState.Todo, `Next part ${index + 1} of ${id}`);
+			for (let index = 0; index < done; index++)
+				next(TaskState.Done, `Finished part ${index + 1} of ${id}`);
+			for (let index = 0; index < running; index++)
+				next(TaskState.Running, `Current work in ${id}`);
+			for (let index = 0; index < waiting; index++)
+				next(TaskState.Todo, `Next part ${index + 1} of ${id}`);
 		}
 		const used = 40_000 + id.length * 9_000;
 		return {
@@ -94,25 +128,60 @@ export function sampleState(now: number): State {
 		};
 	}
 
-	const api = lane('api', 'Orders, invoices and the report job', 'SAM', [1, 1, 5], [
-		task('SAM-101', 'Rate limit the login endpoint', null, TaskState.Done),
-		task('SAM-102', 'Paginate the orders list', 'SAM-101', TaskState.Asking, {
-			pr: { number: 418, url: 'https://example.com/pr/418' },
-			steps: runs([[Step.Plan, 7], [Step.Approve, 2], [Step.Build, 38], [Step.PR, 4], [Step.Merge, 12]], true),
-			note: 'The change is in src/orders/list.ts:48. The page size of the old route must not change.'
-		}),
-		task('SAM-103', 'Add an index to the audit table and backfill the old rows', 'SAM-101', TaskState.Running, {
-			steps: runs([[Step.Plan, 6], [Step.Approve, 2], [Step.Build, 14]], true)
-		}),
-		task('SAM-105', 'Retry failed webhooks', 'SAM-103', TaskState.Todo),
-		task('SAM-108', 'Split the report job', 'SAM-105', TaskState.Todo),
-		task('SAM-112', 'Queue the report parts', 'SAM-108', TaskState.Todo),
-		task('SAM-113', 'Send the report by email', 'SAM-112', TaskState.Todo),
-		task('SAM-106', 'Cache the price lookup', 'SAM-103', TaskState.Todo)
-	]);
+	const api = lane(
+		'api',
+		'Orders, invoices and the report job',
+		'SAM',
+		[1, 1, 5],
+		[
+			task('SAM-101', 'Rate limit the login endpoint', null, TaskState.Done),
+			task('SAM-102', 'Paginate the orders list', 'SAM-101', TaskState.Asking, {
+				pr: { number: 418, url: 'https://example.com/pr/418' },
+				steps: runs(
+					[
+						[Step.Plan, 7],
+						[Step.Approve, 2],
+						[Step.Build, 38],
+						[Step.PR, 4],
+						[Step.Merge, 12]
+					],
+					true
+				),
+				note: 'The change is in src/orders/list.ts:48. The page size of the old route must not change.'
+			}),
+			task(
+				'SAM-103',
+				'Add an index to the audit table and backfill the old rows',
+				'SAM-101',
+				TaskState.Running,
+				{
+					steps: runs(
+						[
+							[Step.Plan, 6],
+							[Step.Approve, 2],
+							[Step.Build, 14]
+						],
+						true
+					)
+				}
+			),
+			task('SAM-105', 'Retry failed webhooks', 'SAM-103', TaskState.Todo),
+			task('SAM-108', 'Split the report job', 'SAM-105', TaskState.Todo),
+			task('SAM-112', 'Queue the report parts', 'SAM-108', TaskState.Todo),
+			task('SAM-113', 'Send the report by email', 'SAM-112', TaskState.Todo),
+			task('SAM-106', 'Cache the price lookup', 'SAM-103', TaskState.Todo)
+		]
+	);
 	api.babysitter = agent(AgentRole.Babysitter, true, 124_000, {
 		questions: [
-			{ id: 'Q12', topic: 'Merge PR #418?', openedAt: ago(12), task: 'SAM-102', lane: 'api', change: null }
+			{
+				id: 'Q12',
+				topic: 'Merge PR #418?',
+				openedAt: ago(12),
+				task: 'SAM-102',
+				lane: 'api',
+				change: null
+			}
 		],
 		notes: [
 			{ at: ago(18), kind: 'stuck', text: 'tenbox check ran 9 min on a large diff' },
@@ -121,25 +190,56 @@ export function sampleState(now: number): State {
 		]
 	});
 
-	const web = lane('web', 'The customer web app', 'SAM', [0, 1, 1], [
-		task('SAM-201', 'Empty state for the inbox', null, TaskState.Running, {
-			steps: runs([[Step.Plan, 4], [Step.Approve, 1], [Step.Build, 22]], true)
-		}),
-		task('SAM-204', 'Table column resize', 'SAM-201', TaskState.Todo)
-	]);
+	const web = lane(
+		'web',
+		'The customer web app',
+		'SAM',
+		[0, 1, 1],
+		[
+			task('SAM-201', 'Empty state for the inbox', null, TaskState.Running, {
+				steps: runs(
+					[
+						[Step.Plan, 4],
+						[Step.Approve, 1],
+						[Step.Build, 22]
+					],
+					true
+				)
+			}),
+			task('SAM-204', 'Table column resize', 'SAM-201', TaskState.Todo)
+		]
+	);
 	web.babysitter = agent(AgentRole.Babysitter, true, 82_000);
 
-	const search = lane('search', 'Search over orders and customers', 'SAM', [1, 1, 8], [
-		task('SAM-301', 'Search index schema', null, TaskState.Done),
-		task('SAM-302', 'Index the orders', 'SAM-301', TaskState.Running, {
-			steps: runs([[Step.Plan, 8], [Step.Approve, 2], [Step.Build, 31]], true)
-		}),
-		task('SAM-303', 'Search by customer name', 'SAM-302', TaskState.Todo),
-		task('SAM-304', 'Rebuild the index every night', 'SAM-302', TaskState.Todo),
-		...[5, 6, 7, 8, 9, 10].map((n) =>
-			task(`SAM-3${String(n).padStart(2, '0')}`, `Index job part ${n - 4}`, n === 5 ? 'SAM-304' : `SAM-3${String(n - 1).padStart(2, '0')}`, TaskState.Todo)
-		)
-	]);
+	const search = lane(
+		'search',
+		'Search over orders and customers',
+		'SAM',
+		[1, 1, 8],
+		[
+			task('SAM-301', 'Search index schema', null, TaskState.Done),
+			task('SAM-302', 'Index the orders', 'SAM-301', TaskState.Running, {
+				steps: runs(
+					[
+						[Step.Plan, 8],
+						[Step.Approve, 2],
+						[Step.Build, 31]
+					],
+					true
+				)
+			}),
+			task('SAM-303', 'Search by customer name', 'SAM-302', TaskState.Todo),
+			task('SAM-304', 'Rebuild the index every night', 'SAM-302', TaskState.Todo),
+			...[5, 6, 7, 8, 9, 10].map((n) =>
+				task(
+					`SAM-3${String(n).padStart(2, '0')}`,
+					`Index job part ${n - 4}`,
+					n === 5 ? 'SAM-304' : `SAM-3${String(n - 1).padStart(2, '0')}`,
+					TaskState.Todo
+				)
+			)
+		]
+	);
 
 	const change: PlanChange = {
 		reason: 'The branch under SAM-304 has 7 open tasks, and the limit is 6.',
@@ -151,7 +251,9 @@ export function sampleState(now: number): State {
 				roots: [
 					node('SAM-301', 'Search index schema', null, [
 						node('SAM-302', 'Index the orders', null, [
-							node('SAM-303', 'Search by name and email', PlanSign.Changed, [], { old: 'Search by customer name' }),
+							node('SAM-303', 'Search by name and email', PlanSign.Changed, [], {
+								old: 'Search by customer name'
+							}),
 							node('SAM-311', 'Page the search results', PlanSign.Added),
 							node('SAM-299', 'Old search page', PlanSign.Removed),
 							node('SAM-304', 'SAM-304 and 6 tasks under it', PlanSign.Moved, [], {
@@ -180,7 +282,14 @@ export function sampleState(now: number): State {
 		steps: STEPS,
 		planner: agent(AgentRole.Planner, false, 56_000, {
 			questions: [
-				{ id: 'Q16', topic: 'Split search into a new lane', openedAt: ago(25), task: null, lane: 'search', change }
+				{
+					id: 'Q16',
+					topic: 'Split search into a new lane',
+					openedAt: ago(25),
+					task: null,
+					lane: 'search',
+					change
+				}
 			],
 			notes: [{ at: ago(40), kind: 'idea', text: 'Lane search grows fast; watch the open tasks' }]
 		}),
@@ -200,13 +309,26 @@ export function sampleState(now: number): State {
 
 	const shop = lane('storefront', 'The shop pages', 'DEM', [0, 0, 2]);
 	shop.babysitter.questions = [
-		{ id: 'Q9', topic: 'Use the new checkout?', openedAt: ago(70), task: 'DEM-1', lane: 'storefront', change: null }
+		{
+			id: 'Q9',
+			topic: 'Use the new checkout?',
+			openedAt: ago(70),
+			task: 'DEM-1',
+			lane: 'storefront',
+			change: null
+		}
 	];
 
 	return {
 		projects: [
 			sample,
-			{ id: 'demo-shop', name: 'demo-shop', steps: STEPS, planner: agent(AgentRole.Planner, false, 30_000), lanes: [shop] },
+			{
+				id: 'demo-shop',
+				name: 'demo-shop',
+				steps: STEPS,
+				planner: agent(AgentRole.Planner, false, 30_000),
+				lanes: [shop]
+			},
 			{
 				id: 'demo-docs',
 				name: 'demo-docs',

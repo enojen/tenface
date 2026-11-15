@@ -21,7 +21,7 @@ class FakeSource {
 		this.readyState = FakeSource.CLOSED;
 	}
 	send(data: string) {
-		this.listeners.forEach((listener) => listener({ data }));
+		for (const listener of this.listeners) listener({ data });
 	}
 }
 
@@ -38,7 +38,10 @@ describe('the stream', () => {
 
 	it('opens a new stream when the browser gives up', () => {
 		const connections: Connection[] = [];
-		createStreamApi('/events').subscribe(() => {}, (connection) => connections.push(connection));
+		createStreamApi('/events').subscribe(
+			() => {},
+			(connection) => connections.push(connection)
+		);
 		const first = FakeSource.made[0];
 		first.readyState = FakeSource.CLOSED;
 		first.onerror!();
@@ -50,7 +53,10 @@ describe('the stream', () => {
 	});
 
 	it('leaves a retry of the browser to the browser', () => {
-		createStreamApi('/events').subscribe(() => {}, () => {});
+		createStreamApi('/events').subscribe(
+			() => {},
+			() => {}
+		);
 		FakeSource.made[0].onerror!();
 		vi.advanceTimersByTime(60_000);
 		expect(FakeSource.made).toHaveLength(1);
@@ -58,14 +64,20 @@ describe('the stream', () => {
 
 	it('skips a broken event and keeps the next one', () => {
 		const states: State[] = [];
-		createStreamApi('/events').subscribe((state) => states.push(state), () => {});
+		createStreamApi('/events').subscribe(
+			(state) => states.push(state),
+			() => {}
+		);
 		FakeSource.made[0].send('{broken');
 		FakeSource.made[0].send('{"projects":[]}');
 		expect(states).toEqual([{ projects: [] }]);
 	});
 
 	it('stops retrying after unsubscribe', () => {
-		const stop = createStreamApi('/events').subscribe(() => {}, () => {});
+		const stop = createStreamApi('/events').subscribe(
+			() => {},
+			() => {}
+		);
 		FakeSource.made[0].readyState = FakeSource.CLOSED;
 		FakeSource.made[0].onerror!();
 		stop();
