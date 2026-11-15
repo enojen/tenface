@@ -1,0 +1,325 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-15T13:00:00Z",
+  "title": "Design System: Tenface",
+  "extensions": {
+    "colorMeta": {
+      "running": {
+        "role": "primary",
+        "displayName": "Blood Red",
+        "tonalRamp": [
+          "#3d0709",
+          "#5c0b0f",
+          "#7d1015",
+          "#a3161c",
+          "#c23a3f",
+          "#d9686b",
+          "#ec9c9d",
+          "#f8d2d2"
+        ]
+      },
+      "dark-running": {
+        "role": "primary",
+        "displayName": "Blood Red (dark Sepia)",
+        "tonalRamp": [
+          "#5c1a1c",
+          "#8a2629",
+          "#c23a3e",
+          "#ff5a5f",
+          "#ff7c80",
+          "#ff9fa2",
+          "#ffc2c4",
+          "#ffe3e4"
+        ]
+      },
+      "ground": {
+        "role": "neutral",
+        "displayName": "Sepia Ground",
+        "tonalRamp": [
+          "#2a2620",
+          "#3c362e",
+          "#5e574b",
+          "#857c6c",
+          "#c4bba9",
+          "#d6cebe",
+          "#e7e1d4",
+          "#f1ece2"
+        ]
+      },
+      "tile": {
+        "role": "neutral",
+        "displayName": "Paper Tile"
+      },
+      "raised": {
+        "role": "neutral",
+        "displayName": "Raised Sepia"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink"
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Soft Ink"
+      },
+      "on-ink-muted": {
+        "role": "neutral",
+        "displayName": "Muted on Ink"
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted"
+      },
+      "muted-soft": {
+        "role": "neutral",
+        "displayName": "Muted Soft"
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line"
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Strong Line"
+      },
+      "mark": {
+        "role": "neutral",
+        "displayName": "Gray Mark"
+      },
+      "mark-done": {
+        "role": "neutral",
+        "displayName": "Done Mark"
+      },
+      "mark-empty": {
+        "role": "neutral",
+        "displayName": "Empty Mark"
+      },
+      "dark-ground": {
+        "role": "neutral",
+        "displayName": "Dark Sepia Ground",
+        "tonalRamp": [
+          "#1d1a16",
+          "#2a2620",
+          "#332e27",
+          "#3c362e",
+          "#474036",
+          "#534b3f",
+          "#807666",
+          "#b8ae9d"
+        ]
+      },
+      "on-running": {
+        "role": "neutral",
+        "displayName": "On Running"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page titles: Projects, the project name."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "The lane name in a header, a task title in its sheet."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "The name in a table row, a task or question title, a section title."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Notes, button text, error text."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Table headers, meta, times, counts, step names, nav labels."
+      },
+      "id": {
+        "displayName": "Id",
+        "purpose": "Task ids, question ids, PR numbers; takes the size of its line."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Button text, 600 weight."
+      },
+      "id-button": {
+        "displayName": "Id Button",
+        "purpose": "The id in a copy-id pill."
+      }
+    },
+    "shadows": [
+      {
+        "name": "nav",
+        "value": "0 6px 20px rgba(31, 28, 23, 0.12)",
+        "purpose": "The floating nav."
+      },
+      {
+        "name": "ring",
+        "value": "0 6px 18px rgba(31, 28, 23, 0.22)",
+        "purpose": "The floating agent ring on the phone."
+      },
+      {
+        "name": "card",
+        "value": "0 10px 28px rgba(31, 28, 23, 0.16)",
+        "purpose": "An open agent card."
+      },
+      {
+        "name": "sheet",
+        "value": "0 -8px 24px rgba(31, 28, 23, 0.12)",
+        "purpose": "The task sheet."
+      }
+    ],
+    "motion": [],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "390px"
+      },
+      {
+        "name": "desk-compact",
+        "value": "1199px",
+        "purpose": "Below 1200 px the three desktop columns keep a 16 px gap and a 380 px first column."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Every action: Chat, Copy handover prompt, PR, Tracker, Try again. A gray-mark edge, never a fill.",
+      "html": "<a class=\"ds-btn\" href=\"#\"><svg aria-hidden=\"true\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"></path></svg>Chat</a>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:44px;box-sizing:border-box;padding:0 12px;border-radius:999px;border:1px solid #857c6c;background:none;color:#1f1c17;font:600 14px/20px Inter,system-ui,sans-serif;text-decoration:none}.ds-btn:focus-visible{outline:2px solid #1f1c17;outline-offset:2px}"
+    },
+    {
+      "name": "Copy Id",
+      "kind": "button",
+      "refersTo": "copy-id",
+      "description": "Copies a question id for the chat answer.",
+      "html": "<button class=\"ds-copy\" aria-label=\"Copy Q12\">Q12<svg aria-hidden=\"true\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\"></rect><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"></path></svg></button>",
+      "css": ".ds-copy{display:inline-flex;align-items:center;gap:4px;height:36px;box-sizing:border-box;padding:0 8px;border-radius:999px;border:1px solid #857c6c;background:none;color:#1f1c17;font:600 14px/20px 'JetBrains Mono',ui-monospace,monospace}.ds-copy:focus-visible{outline:2px solid #1f1c17;outline-offset:2px}"
+    },
+    {
+      "name": "Trio",
+      "kind": "custom",
+      "refersTo": "mark-running",
+      "description": "Done, running and waiting counts: filled gray, filled red, empty outline. Counts tasks in a lane row, lanes in a project row.",
+      "html": "<span class=\"ds-trio\" role=\"img\" aria-label=\"1 done, 1 running, 5 waiting\"><span><i class=\"d\"></i>1</span><span><i class=\"r\"></i>1</span><span><i class=\"w\"></i>5</span></span>",
+      "css": ".ds-trio{display:inline-flex;gap:8px;font:400 12px/16px Inter,system-ui,sans-serif;color:#5e574b}.ds-trio>span{display:inline-flex;align-items:center;gap:4px}.ds-trio i{width:14px;height:14px;box-sizing:border-box;border-radius:4px}.ds-trio .d{background:#7a7262}.ds-trio .r{background:#a3161c}.ds-trio .w{border:1.5px solid #857c6c}"
+    },
+    {
+      "name": "Agent Ring",
+      "kind": "button",
+      "refersTo": "agent-ring",
+      "description": "P or B in a robot head; the arc is the context use (red while working, ink while waiting); a tick at 35%; a count card on the orbit for open questions.",
+      "html": "<button class=\"ds-ring\" aria-label=\"Babysitter of api, working, context 62 percent, 1 open question, open its card\" aria-haspopup=\"dialog\"><svg aria-hidden=\"true\" width=\"48\" height=\"48\" viewBox=\"0 0 48 48\"><circle cx=\"24\" cy=\"24\" r=\"20\" fill=\"none\" stroke=\"#c4bba9\" stroke-width=\"3\"></circle><circle cx=\"24\" cy=\"24\" r=\"20\" fill=\"none\" stroke=\"#a3161c\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-dasharray=\"77.9 125.7\" transform=\"rotate(-90 24 24)\"></circle><line x1=\"38.9\" y1=\"34.9\" x2=\"41.3\" y2=\"36.6\" stroke=\"#1f1c17\" stroke-width=\"2\" stroke-linecap=\"round\"></line><g transform=\"translate(12 12)\" fill=\"none\" stroke=\"#1f1c17\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 8V4H8\"></path><rect width=\"16\" height=\"12\" x=\"4\" y=\"8\" rx=\"2\"></rect><path d=\"M2 14h2\"></path><path d=\"M20 14h2\"></path><text x=\"12\" y=\"17.4\" text-anchor=\"middle\" fill=\"#1f1c17\" stroke=\"none\" font-family=\"Inter,system-ui,sans-serif\" font-size=\"9\" font-weight=\"700\">B</text></g><rect x=\"32.6\" y=\"2.9\" width=\"11\" height=\"14\" rx=\"2.5\" fill=\"#f1ece2\" stroke=\"#e7e1d4\" stroke-width=\"3\"></rect><rect x=\"32.6\" y=\"2.9\" width=\"11\" height=\"14\" rx=\"2.5\" fill=\"#f1ece2\" stroke=\"#1f1c17\" stroke-width=\"1.5\"></rect><text x=\"38.1\" y=\"13.1\" text-anchor=\"middle\" fill=\"#1f1c17\" font-family=\"Inter,system-ui,sans-serif\" font-size=\"9\" font-weight=\"700\">1</text></svg></button>",
+      "css": ".ds-ring{width:48px;height:48px;padding:0;border:none;border-radius:999px;background:#f1ece2;cursor:pointer}.ds-ring:focus-visible{outline:2px solid #1f1c17;outline-offset:2px}"
+    },
+    {
+      "name": "Agent Card Questions",
+      "kind": "card",
+      "refersTo": "agent-card",
+      "description": "The agent's open questions: Question | ID | Waiting, oldest first; three per page on the phone.",
+      "html": "<section class=\"ds-card\" aria-labelledby=\"q-t\"><h3 id=\"q-t\">Needs you</h3><ol><li><a href=\"#\"><span class=\"t\">Merge PR #418?</span><span class=\"s\">SAM-102</span></a><button class=\"ds-copy\" aria-label=\"Copy Q12\">Q12</button><span class=\"w\">12 min</span></li></ol></section>",
+      "css": ".ds-card{padding:14px;border-radius:18px;background:#f1ece2;border:1px solid #c4bba9;font-family:Inter,system-ui,sans-serif;color:#1f1c17}.ds-card h3{margin:0;padding:0 4px;font:600 14px/20px Inter,system-ui,sans-serif}.ds-card ol{list-style:none;margin:4px 0 0;padding:0}.ds-card li{display:grid;grid-template-columns:1fr 72px 64px;gap:8px;align-items:center;min-height:56px;padding:8px 4px;border-top:1px solid #d6cebe}.ds-card a{display:flex;flex-direction:column;gap:2px;color:inherit;text-decoration:none}.ds-card .t{font:600 16px/22px Inter,system-ui,sans-serif}.ds-card .s{font:500 12px/16px 'JetBrains Mono',ui-monospace,monospace;color:#5e574b}.ds-card .w{text-align:center;font:400 12px/16px Inter,system-ui,sans-serif;color:#5e574b}.ds-copy{height:36px;padding:0 8px;border-radius:999px;border:1px solid #857c6c;background:none;font:600 14px/20px 'JetBrains Mono',ui-monospace,monospace}"
+    },
+    {
+      "name": "Bottom Nav",
+      "kind": "nav",
+      "refersTo": "tab-current",
+      "description": "Floating capsule nav on every phone and desktop screen: Home and Projects; the current tab is raised with a 1.5 px ink border.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Main\"><a href=\"#\">Home</a><a href=\"#\" aria-current=\"page\">Projects</a></nav>",
+      "css": ".ds-nav{width:220px;box-sizing:border-box;display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:999px;background:#f1ece2;border:1px solid #d6cebe;box-shadow:0 6px 20px rgba(31,28,23,0.12)}.ds-nav a{height:56px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;border-radius:999px;color:#5e574b;font:600 12px/16px Inter,system-ui,sans-serif;text-decoration:none}.ds-nav a[aria-current=page]{background:#e0d9cb;border:1.5px solid #1f1c17;color:#1f1c17}.ds-nav a:focus-visible{outline:2px solid #1f1c17;outline-offset:2px}"
+    },
+    {
+      "name": "Error Strip",
+      "kind": "custom",
+      "refersTo": "error-strip",
+      "description": "An error of the whole panel, at the top of every screen. Ink, never red.",
+      "html": "<div class=\"ds-err\" role=\"status\"><strong>Offline since 11:02</strong><span>You see the last known state. The panel reconnects by itself.</span></div>",
+      "css": ".ds-err{display:flex;flex-direction:column;min-height:44px;box-sizing:border-box;padding:8px 16px;background:#1f1c17;color:#e7e1d4;font:400 14px/20px Inter,system-ui,sans-serif}.ds-err strong{font-weight:600}.ds-err span{font-size:12px;line-height:16px;color:#d8d0c2}"
+    },
+    {
+      "name": "Plan Signs",
+      "kind": "custom",
+      "refersTo": "mark-waiting",
+      "description": "The sign column of a read-only plan change: + added, − removed, → moved, ~ changed.",
+      "html": "<span class=\"ds-sign\" role=\"img\" aria-label=\"added\">+</span><span class=\"ds-sign\" role=\"img\" aria-label=\"removed\">−</span><span class=\"ds-sign\" role=\"img\" aria-label=\"moved\">→</span><span class=\"ds-sign\" role=\"img\" aria-label=\"changed\">~</span>",
+      "css": ".ds-sign{display:inline-flex;width:16px;justify-content:center;font:600 14px/20px 'JetBrains Mono',ui-monospace,monospace;color:#1f1c17}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Quiet Ledger",
+    "overview": "Tenface is a ledger that the owner reads in a few seconds. Every project, lane, task and step is written down in warm, paper-like Sepia tones, in tables and trees that read like a well-kept book. The page does not glow or decorate. Its one color, a blood red, says \"this runs now\". What the agents ask the owner does not sit on the page. Each question belongs to the agent that asked it: the planner of the project (P) or the babysitter of a lane (B). The agent is a ring that shows its context use, and a small card on the ring counts its open questions. Tap the ring and its card lists the questions. The owner answers in that agent's chat, for example \"Q12 ok\". The surface is light Sepia by day and dark Sepia by night. There is no accent color. Shapes follow Apple's current capsule forms without the glass. The phone answers \"what now\"; the desktop shows project, lane and task side by side.",
+    "keyCharacteristics": [
+      "The trio: done is a filled gray square, running a filled red square, waiting an empty square with a gray outline; it counts tasks, and lanes in a project row.",
+      "Red means running and nothing else; a question is a count on the asking agent's ring.",
+      "Every question has an id (Q12) that is unique across the whole system.",
+      "Ink marks where the owner is: the current tab, the selected row, the selected desktop lane.",
+      "An error of the whole panel is an ink strip at the top of every screen.",
+      "A plan change is read-only; the owner answers it in the planner's chat.",
+      "A lane is one tree with lines from root to leaf."
+    ],
+    "rules": [
+      {
+        "name": "The Red Means Running Rule",
+        "body": "Red marks what runs now and nothing else. No red for a question, an error, a link, a brand or decoration.",
+        "section": "colors"
+      },
+      {
+        "name": "The No Accent Rule",
+        "body": "There is no second color. Selection, focus and \"current\" are shown with ink, weight and tone.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink Means Here Rule",
+        "body": "Ink marks where the owner is: the current tab has a 1.5 px ink border, a selected tree row a 2 px ink outline, and the selected lane row in the desktop lanes table an ink fill. In a plan change, a 1 px ink outline marks an added row and the box of a new lane.",
+        "section": "colors"
+      },
+      {
+        "name": "The Five Sizes Rule",
+        "body": "Only 12, 14, 16, 20 and 28 px exist, except the 9 px letter or count inside an agent icon. A long title wraps; it is never cut.",
+        "section": "typography"
+      },
+      {
+        "name": "The Last Pick Rule",
+        "body": "The desktop detail column shows the last pick. The picked task keeps a 2 px ink outline; the selected lane row has the ink fill while its task is shown, and only a 2 px outline while the detail column shows a plan change.",
+        "section": "layout"
+      },
+      {
+        "name": "The Error Rule",
+        "body": "An error of the whole panel is an ink strip at the top of every screen; an error of one thing stays in place; a button only when the owner's action fixes it.",
+        "section": "layout"
+      },
+      {
+        "name": "The Offline Rule",
+        "body": "Offline, the panel shows the last known state under the strip: the trio and the ring keep their last colors, and the strip alone says the panel is offline. Only the running node turns into a 2 px gray outline and its step tile turns gray.",
+        "section": "layout"
+      },
+      {
+        "name": "The Flat Unless Floating Rule",
+        "body": "No shadow on anything that lies in the page; only the nav, the agent ring, the agent card and the task sheet float. On the phone, behind an open agent card or the task sheet, the page and the nav are dimmed with ink at 32%.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do count tasks with the trio everywhere: done, running, waiting.",
+      "Do put a question in the card of the agent that asked it, with its id and the waiting time.",
+      "Do close a question when the owner answers it in the chat: a hook in the asking agent's session (the babysitter's or the planner's) tells the server, and the row leaves the card.",
+      "Do show the agent on every lane and project page, and let the owner drag it out of the way.",
+      "Do show a plan change before it is applied, with + − → ~ signs.",
+      "Do give every focusable element a 2 px ink focus ring with a 2 px offset.",
+      "Do write times as \"11:20\" for today and \"Nov 13, 20:30\" for another day."
+    ],
+    "donts": [
+      "Don't use red for a question, an error or anything that does not run.",
+      "Don't add an accent color, a gradient, glass, blur or a second attention color.",
+      "Don't put a list of questions on a page; questions live in the agent card.",
+      "Don't write a state word next to an agent; the ring says it.",
+      "Don't add Approve or Reject to a plan change.",
+      "Don't use a font size outside 12, 14, 16, 20 and 28 px, or cut a title with \"…\".",
+      "Don't draw drag handles or drop zones for tasks; the tree is never edited by hand.",
+      "Don't use real client, project or task names in designs or code; sample data is made up."
+    ]
+  }
+}
