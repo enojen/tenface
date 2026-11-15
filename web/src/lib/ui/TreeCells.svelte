@@ -15,31 +15,31 @@
 		flex: none;
 	}
 
-	.line::before,
-	.tee::before,
-	.tee::after,
-	.corner::before {
+	.pass::before,
+	.branch::before,
+	.branch::after,
+	.last-branch::before {
 		content: '';
 		position: absolute;
 		left: 10px;
 	}
 
-	.line::before,
-	.tee::before {
+	.pass::before,
+	.branch::before {
 		top: 0;
 		bottom: 0;
 		width: 2px;
 		background: var(--mark);
 	}
 
-	.tee::after {
+	.branch::after {
 		top: 31px;
 		width: 15px;
 		height: 2px;
 		background: var(--mark);
 	}
 
-	.corner::before {
+	.last-branch::before {
 		top: 0;
 		width: 15px;
 		height: 33px;
