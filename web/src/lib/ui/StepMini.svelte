@@ -1,34 +1,31 @@
 <script lang="ts">
-	import { type StepName, type Task, TaskState } from '#lib/api/types.ts';
+	import type { StepName, StepRun, Task } from '#lib/api/types.ts';
 	import { stepTime } from '#lib/format.ts';
 	import { live } from '#lib/live.svelte.ts';
 	import { currentStep, runMinutes } from '#lib/model.ts';
+	import { currentMark, iconColor, StepMark, statusWords } from '#lib/steps.ts';
 	import StepIcon from './StepIcon.svelte';
-	import { StepMark } from './step-mark.ts';
 
 	let { task, steps, offline }: { task: Task; steps: StepName[]; offline: boolean } = $props();
 
 	const run = $derived(currentStep(task));
 	const at = $derived(run ? steps.indexOf(run.step) : -1);
-	const kind = $derived(offline ? StepMark.Offline : task.state === TaskState.Asking ? StepMark.Asking : StepMark.Running);
-	const label = $derived(
-		'Steps: ' +
-			task.steps
-				.map((step) => `${step.step} ${runMinutes(step, live.now)} min${step === run ? (kind === StepMark.Asking ? ' waiting' : kind === StepMark.Offline ? ', last known' : ' running') : ''}`)
-				.join(', ')
-	);
+	const mark = $derived(currentMark(task, offline));
+	const stepLabel = (step: StepRun) =>
+		`${step.step} ${runMinutes(step, live.now)} min${step === run ? statusWords(mark) : ''}`;
+	const label = $derived(`Steps: ${task.steps.map(stepLabel).join(', ')}`);
 </script>
 
 {#if run}
 	<span class="steps" role="img" aria-label={label}>
-		<span class="tile {kind}">
-			<StepIcon step={run.step} size={12} width={2.2} color={kind === StepMark.Running ? 'var(--on-running)' : kind === StepMark.Asking ? 'var(--ink)' : 'var(--mark)'} />
+		<span class="tile {mark}">
+			<StepIcon step={run.step} size={12} width={2.2} color={iconColor(mark)} />
 		</span>
 		<span class="side">
-			<span class="label time {kind}">{stepTime(runMinutes(run, live.now))}</span>
+			<span class="label time {mark}">{stepTime(runMinutes(run, live.now))}</span>
 			<span class="dots">
 				{#each steps as step, index (step)}
-					<span class="dot" class:done={index < at} class:now={index === at} class:asking={index === at && kind === StepMark.Asking} class:offline={index === at && kind === StepMark.Offline}></span>
+					<span class="dot" class:done={index < at} class:now={index === at} class:asking={index === at && mark === StepMark.Asking} class:offline={index === at && mark === StepMark.Offline}></span>
 				{/each}
 			</span>
 		</span>

@@ -12,10 +12,14 @@ export type TreeRow<T> =
 	| { kind: typeof RowKind.Node; item: T; cells: Cell[]; lineAbove: boolean; lineBelow: boolean }
 	| { kind: typeof RowKind.Gap; cells: Cell[]; betweenRoots: boolean };
 
-const cellsBelow = (cells: Cell[]): Cell[] =>
-	cells.map((cell) =>
-		cell === Cell.Branch ? Cell.Pass : cell === Cell.LastBranch ? Cell.Empty : cell
-	);
+const CELL_BELOW: Record<Cell, Cell> = {
+	[Cell.Empty]: Cell.Empty,
+	[Cell.Pass]: Cell.Pass,
+	[Cell.Branch]: Cell.Pass,
+	[Cell.LastBranch]: Cell.Empty
+};
+
+const cellsBelow = (cells: Cell[]): Cell[] => cells.map((cell) => CELL_BELOW[cell]);
 
 export function treeRows<T>(roots: T[], childrenOf: (item: T) => T[]): TreeRow<T>[] {
 	const rows: TreeRow<T>[] = [];
