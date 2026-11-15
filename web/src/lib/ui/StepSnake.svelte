@@ -1,20 +1,29 @@
 <script lang="ts">
-	import { STEP_NAMES, type StepName, type Task } from '#lib/api/types.ts';
+	import { STEP_NAMES, type StepName, type Task, TaskState } from '#lib/api/types.ts';
 	import { stepTime } from '#lib/format.ts';
 	import { live } from '#lib/live.svelte.ts';
 	import { currentStep, runMinutes } from '#lib/model.ts';
 	import StepIcon from './StepIcon.svelte';
+	import { StepMark } from './step-mark.ts';
 
 	let { task, steps }: { task: Task; steps: StepName[] } = $props();
 
 	const run = $derived(currentStep(task));
-	const at = $derived(task.state === 'done' ? STEP_NAMES.length : run ? STEP_NAMES.indexOf(run.step) : -1);
+	const at = $derived(task.state === TaskState.Done ? STEP_NAMES.length : run ? STEP_NAMES.indexOf(run.step) : -1);
 	const places = $derived(
 		STEP_NAMES.map((name, index) => {
 			const used = steps.includes(name);
 			const done = task.steps.find((step) => step.step === name && step.endedAt !== null);
 			const now = run?.step === name ? run : undefined;
-			const kind = !used ? 'unused' : now ? (task.state === 'asking' ? 'asking' : 'running') : done || index < at ? 'done' : 'later';
+			const kind = !used
+				? StepMark.Unused
+				: now
+					? task.state === TaskState.Asking
+						? StepMark.Asking
+						: StepMark.Running
+					: done || index < at
+						? StepMark.Done
+						: StepMark.Later;
 			const minutes = now ? runMinutes(now, live.now) : done ? runMinutes(done, live.now) : null;
 			return { name, kind, time: !used ? null : minutes === null ? '–' : stepTime(minutes), minutes };
 		})
@@ -23,11 +32,11 @@
 		'Steps: ' +
 			places
 				.map((place) =>
-					place.kind === 'unused'
+					place.kind === StepMark.Unused
 						? `${place.name} not used here`
 						: place.minutes === null
 							? `${place.name} not started`
-							: `${place.name} ${place.minutes} min${place.kind === 'asking' ? ' waiting' : place.kind === 'running' ? ' running' : ''}`
+							: `${place.name} ${place.minutes} min${place.kind === StepMark.Asking ? ' waiting' : place.kind === StepMark.Running ? ' running' : ''}`
 				)
 				.join(', ')
 	);
@@ -47,7 +56,13 @@
 			<span class="tile">
 				<StepIcon
 					step={place.name}
-					color={place.kind === 'running' ? 'var(--on-running)' : place.kind === 'asking' ? 'var(--ink)' : place.kind === 'done' ? 'var(--muted-soft)' : 'var(--mark)'}
+					color={place.kind === StepMark.Running
+						? 'var(--on-running)'
+						: place.kind === StepMark.Asking
+							? 'var(--ink)'
+							: place.kind === StepMark.Done
+								? 'var(--muted-soft)'
+								: 'var(--mark)'}
 				/>
 			</span>
 			<span class="label name">{place.name}</span>

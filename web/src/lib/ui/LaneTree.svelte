@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { Lane, StepName, Task } from '#lib/api/types.ts';
-	import { groupByParent, treeRows } from '#lib/tree.ts';
+	import { type Lane, type StepName, type Task, TaskState } from '#lib/api/types.ts';
+	import { groupByParent, RowKind, treeRows } from '#lib/tree.ts';
 	import StepMini from './StepMini.svelte';
 	import TreeCells from './TreeCells.svelte';
 
@@ -19,8 +19,8 @@
 </script>
 
 <ul class="tree" aria-label="Tasks of {lane.name}">
-	{#each rows as row, index (row.kind === 'node' ? row.item.id : `gap-${index}`)}
-		{#if row.kind === 'gap'}
+	{#each rows as row, index (row.kind === RowKind.Node ? row.item.id : `gap-${index}`)}
+		{#if row.kind === RowKind.Gap}
 			<li class="gap" class:between-roots={row.betweenRoots} aria-hidden="true"><TreeCells cells={row.cells} /></li>
 		{:else}
 			{@const task = row.item}
@@ -28,13 +28,13 @@
 				<a class="row" class:picked={picked === task.id} href={href(task)} aria-current={picked === task.id ? 'true' : undefined}>
 					<TreeCells cells={row.cells} />
 					<span class="node-cell" class:line-above={row.lineAbove} class:line-below={row.lineBelow}>
-						<span class="node {task.state}" class:offline={offline && task.state === 'running'}></span>
+						<span class="node {task.state}" class:offline={offline && task.state === TaskState.Running}></span>
 					</span>
 					<span class="text">
 						<span class="meta label">
 							<span class="mono">{task.id}</span>
 							<span>· {task.tracker.status}</span>
-							{#if task.state === 'asking'}
+							{#if task.state === TaskState.Asking}
 								<svg role="img" aria-label="The babysitter asks you" width="12" height="16" viewBox="0 0 12 16">
 									<rect x="0.75" y="0.75" width="10.5" height="14.5" rx="2.5" fill="var(--tile)" stroke="var(--ink)" stroke-width="1.5" />
 									<text x="6" y="11.5" text-anchor="middle" font-size="9" font-weight="700" fill="var(--ink)">?</text>

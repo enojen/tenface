@@ -19,7 +19,6 @@
 
 	const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-	/** Slides the sheet down, then closes it. */
 	function dismiss() {
 		if (leaving) return;
 		if (reduced()) {
@@ -53,14 +52,26 @@
 		else pull = 0;
 	}
 
+	function closeOnBackdrop(event: MouseEvent) {
+		if (!dialog) return;
+		const sheet = dialog.getBoundingClientRect();
+		const inside =
+			event.clientX >= sheet.left &&
+			event.clientX <= sheet.right &&
+			event.clientY >= sheet.top &&
+			event.clientY <= sheet.bottom;
+		if (!inside) dismiss();
+	}
+
 	$effect(() => {
 		if (!dialog) return;
-		// Not passive: the pull must stop the page from scrolling.
+		dialog.addEventListener('click', closeOnBackdrop);
 		dialog.addEventListener('touchstart', touchstart, { passive: true });
 		dialog.addEventListener('touchmove', touchmove, { passive: false });
 		dialog.addEventListener('touchend', touchend);
 		dialog.addEventListener('touchcancel', touchend);
 		return () => {
+			dialog?.removeEventListener('click', closeOnBackdrop);
 			dialog?.removeEventListener('touchstart', touchstart);
 			dialog?.removeEventListener('touchmove', touchmove);
 			dialog?.removeEventListener('touchend', touchend);
@@ -81,7 +92,6 @@
 		dismiss();
 	}}
 	onclose={onclose}
-	onclick={(event) => event.target === dialog && dismiss()}
 >
 	<div class="handle" aria-hidden="true"></div>
 	<div class="scroll" bind:this={scroller}>
