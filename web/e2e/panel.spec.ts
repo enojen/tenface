@@ -246,6 +246,29 @@ test('the floating agent snaps to an edge and its card stays on screen', async (
 	expect(shown.y + shown.height).toBeLessThanOrEqual(page.viewportSize()!.height);
 });
 
+test('the agent card slides to fit when the ring sits in the middle', async ({ page }, info) => {
+	test.skip(!phone(info.project.name), 'the phone only');
+	await page.addInitScript(() =>
+		localStorage.setItem('tenface.agent', JSON.stringify({ side: 'right', bottom: 308 }))
+	);
+	await page.goto('/projects/sample');
+	await page
+		.getByRole('button', { name: /^Planner of sample/ })
+		.first()
+		.click();
+	await expect(page.getByRole('button', { name: 'Copy handover prompt' })).toBeVisible();
+	const card = page.locator('dialog[open] .card');
+	await settled(card);
+	const fit = await card.evaluate((node) => ({
+		hidden: node.scrollHeight - node.clientHeight,
+		top: node.getBoundingClientRect().top,
+		bottom: innerHeight - node.getBoundingClientRect().bottom
+	}));
+	expect(fit.hidden).toBeLessThanOrEqual(0);
+	expect(fit.top).toBeGreaterThanOrEqual(16);
+	expect(fit.bottom).toBeGreaterThanOrEqual(16);
+});
+
 for (const url of [
 	'/projects',
 	'/projects/sample',
