@@ -1,23 +1,78 @@
 {
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-	"vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
-	"files": { "includes": ["**", "!**/.svelte-kit", "!**/build", "!pnpm-lock.yaml"] },
-	"html": { "experimentalFullSupportEnabled": true, "formatter": { "enabled": false } },
-	"formatter": { "indentStyle": "tab", "lineWidth": 100 },
-	"javascript": { "formatter": { "quoteStyle": "single", "trailingCommas": "none" } },
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"includes": ["**", "!**/.svelte-kit", "!**/build", "!pnpm-lock.yaml"]
+	},
+	"html": {
+		"experimentalFullSupportEnabled": true,
+		"formatter": {
+			"enabled": false
+		}
+	},
+	"formatter": {
+		"indentStyle": "tab",
+		"lineWidth": 100
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "single",
+			"trailingCommas": "none"
+		}
+	},
 	"linter": {
 		"rules": {
 			"preset": "recommended",
-			"correctness": { "noUnusedVariables": "error", "noUnusedImports": "error" },
-			"style": { "noNonNullAssertion": "warn", "useImportType": "error" },
-			"suspicious": { "noExplicitAny": "error" }
+			"correctness": {
+				"noUnusedVariables": "error",
+				"noUnusedImports": "error"
+			},
+			"style": {
+				"noNonNullAssertion": "warn",
+				"useImportType": "error",
+				"noNestedTernary": "error"
+			},
+			"suspicious": {
+				"noExplicitAny": "error"
+			},
+			"complexity": {
+				"noExcessiveCognitiveComplexity": {
+					"level": "error",
+					"options": {
+						"maxAllowedComplexity": 8
+					}
+				}
+			},
+			"nursery": {
+				"noExcessiveNestedBlocks": {
+					"level": "error",
+					"options": {
+						"max": 2
+					}
+				}
+			}
 		}
 	},
 	"overrides": [
 		{
 			"includes": ["**/*.test.ts", "e2e/**"],
-			"linter": { "rules": { "style": { "noNonNullAssertion": "off" } } }
+			"linter": {
+				"rules": {
+					"style": {
+						"noNonNullAssertion": "off"
+					}
+				}
+			}
 		}
 	],
-	"plugins": [{ "path": "./lint/no-state-literal.grit", "includes": ["src/**", "!**/*.test.ts"] }]
+	"plugins": [
+		{
+			"path": "./lint/no-state-literal.grit",
+			"includes": ["src/**", "!**/*.test.ts"]
+		}
+	]
 }

@@ -84,6 +84,35 @@ export function sampleState(now: number): State {
 		};
 	}
 
+	function chain(id: string, prefix: string, counts: [number, number, number]): Task[] {
+		const states = [TaskState.Done, TaskState.Running, TaskState.Todo];
+		const titles = [
+			(index: number) => `Finished part ${index + 1} of ${id}`,
+			() => `Current work in ${id}`,
+			(index: number) => `Next part ${index + 1} of ${id}`
+		];
+		const made: Task[] = [];
+		states.forEach((state, kind) => {
+			for (let index = 0; index < counts[kind]; index++) {
+				const number = made.length + 1;
+				const parent = made.at(-1)?.id ?? null;
+				made.push(task(`${prefix}-${number}`, titles[kind](index), parent, state));
+			}
+		});
+		for (const [index, item] of made.entries()) {
+			if (item.state !== TaskState.Running) continue;
+			item.steps = runs(
+				[
+					[Step.Plan, 5],
+					[Step.Approve, 2],
+					[Step.Build, 11 + index]
+				],
+				true
+			);
+		}
+		return made;
+	}
+
 	function lane(
 		id: string,
 		description: string,
@@ -91,30 +120,7 @@ export function sampleState(now: number): State {
 		[done, running, waiting]: [number, number, number],
 		tasks: Task[] = []
 	): Lane {
-		if (tasks.length === 0) {
-			let number = 1;
-			let parent: string | null = null;
-			const next = (state: TaskState, title: string) => {
-				const made = task(`${prefix}-${number++}`, title, parent, state);
-				if (state === TaskState.Running)
-					made.steps = runs(
-						[
-							[Step.Plan, 5],
-							[Step.Approve, 2],
-							[Step.Build, 9 + number]
-						],
-						true
-					);
-				tasks.push(made);
-				parent = made.id;
-			};
-			for (let index = 0; index < done; index++)
-				next(TaskState.Done, `Finished part ${index + 1} of ${id}`);
-			for (let index = 0; index < running; index++)
-				next(TaskState.Running, `Current work in ${id}`);
-			for (let index = 0; index < waiting; index++)
-				next(TaskState.Todo, `Next part ${index + 1} of ${id}`);
-		}
+		if (tasks.length === 0) tasks.push(...chain(id, prefix, [done, running, waiting]));
 		const used = 40_000 + id.length * 9_000;
 		return {
 			id,
