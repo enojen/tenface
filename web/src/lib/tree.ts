@@ -1,41 +1,54 @@
-// Lays a tree out as rows of 22 px cells. An only child stays in its parent's
+// Turns a tree into rows of 22 px cells. An only child stays in its parent's
 // column; only a fork indents (the straight-chain rule of DESIGN.md).
 
-export const Cell = { Blank: 'blank', Line: 'line', Tee: 'tee', Corner: 'corner' } as const;
+/** What one cell left of a node draws. */
+export const Cell = {
+	/** Nothing. */
+	Empty: 'empty',
+	/** │ the line of a sibling further down passes through. */
+	Pass: 'pass',
+	/** ├ a branch to this node; more siblings follow. */
+	Branch: 'branch',
+	/** └ a branch to the last sibling. */
+	LastBranch: 'last-branch'
+} as const;
 export type Cell = (typeof Cell)[keyof typeof Cell];
 
 export const RowKind = { Node: 'node', Gap: 'gap' } as const;
 
 export type TreeRow<T> =
-	| { kind: typeof RowKind.Node; item: T; cells: Cell[]; top: boolean; bottom: boolean }
-	| { kind: typeof RowKind.Gap; cells: Cell[]; root: boolean };
+	| { kind: typeof RowKind.Node; item: T; cells: Cell[]; lineAbove: boolean; lineBelow: boolean }
+	| { kind: typeof RowKind.Gap; cells: Cell[]; betweenRoots: boolean };
 
-const below = (cells: Cell[]): Cell[] =>
-	cells.map((cell) => (cell === Cell.Tee ? Cell.Line : cell === Cell.Corner ? Cell.Blank : cell));
+/** The cells of the rows under a node: a branch goes on as a line, the last branch ends. */
+const cellsBelow = (cells: Cell[]): Cell[] =>
+	cells.map((cell) => (cell === Cell.Branch ? Cell.Pass : cell === Cell.LastBranch ? Cell.Empty : cell));
 
-export function layout<T>(roots: T[], childrenOf: (item: T) => T[]): TreeRow<T>[] {
+/** The rows to draw, depth first, in the order of the children. */
+export function treeRows<T>(roots: T[], childrenOf: (item: T) => T[]): TreeRow<T>[] {
 	const rows: TreeRow<T>[] = [];
-	const walk = (item: T, cells: Cell[], top: boolean) => {
+	const addSubtree = (item: T, cells: Cell[], lineAbove: boolean) => {
 		const children = childrenOf(item);
-		rows.push({ kind: RowKind.Node, item, cells, top, bottom: children.length > 0 });
-		const next = below(cells);
+		rows.push({ kind: RowKind.Node, item, cells, lineAbove, lineBelow: children.length > 0 });
+		const next = cellsBelow(cells);
 		if (children.length === 1) {
-			walk(children[0], next, true);
+			addSubtree(children[0], next, true);
 			return;
 		}
 		children.forEach((child, index) => {
-			if (index > 0) rows.push({ kind: RowKind.Gap, cells: [...next, Cell.Line], root: false });
-			walk(child, [...next, index === children.length - 1 ? Cell.Corner : Cell.Tee], false);
+			if (index > 0) rows.push({ kind: RowKind.Gap, cells: [...next, Cell.Pass], betweenRoots: false });
+			addSubtree(child, [...next, index === children.length - 1 ? Cell.LastBranch : Cell.Branch], false);
 		});
 	};
 	roots.forEach((root, index) => {
-		if (index > 0) rows.push({ kind: RowKind.Gap, cells: [], root: true });
-		walk(root, [], false);
+		if (index > 0) rows.push({ kind: RowKind.Gap, cells: [], betweenRoots: true });
+		addSubtree(root, [], false);
 	});
 	return rows;
 }
 
-export function childrenMap<T extends { id: string; parent: string | null }>(items: T[]) {
+/** A task whose parent is not in the list is a root. */
+export function groupByParent<T extends { id: string; parent: string | null }>(items: T[]) {
 	const ids = new Set(items.map((item) => item.id));
 	const children = new Map<string | null, T[]>();
 	for (const item of items) {
@@ -44,6 +57,6 @@ export function childrenMap<T extends { id: string; parent: string | null }>(ite
 	}
 	return {
 		roots: children.get(null) ?? [],
-		of: (item: T) => children.get(item.id) ?? []
+		childrenOf: (item: T) => children.get(item.id) ?? []
 	};
 }
