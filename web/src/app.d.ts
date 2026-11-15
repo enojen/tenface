@@ -5,10 +5,7 @@ declare global {
 		// interface Error {}
 		// interface Locals {}
 		// interface PageData {}
-		interface PageState {
-			/** The agent whose card was open, so that back opens it again. */
-			agent?: 'planner' | 'babysitter';
-		}
+		// interface PageState {}
 		// interface Platform {}
 	}
 }
