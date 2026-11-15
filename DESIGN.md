@@ -201,7 +201,7 @@ A warm, low-chroma Sepia neutral scale with a single blood red; each tone has a 
 - **Sepia Ground** (`ground` / `dark-ground`): the page.
 - **Paper Tile** (`tile` / `dark-tile`): tables, cards, columns, the agent ring.
 - **Raised Sepia** (`raised` / `dark-raised`): the current tab.
-- **Ink** (`ink` / `dark-ink`): main text, the error strip, the selected desktop lane row, outlines that mark a selection, the arc of an idle agent, the box of a new lane in a plan change.
+- **Ink** (`ink` / `dark-ink`): main text, the error strip, outlines that mark a selection, the arc of an idle agent, the box of a new lane in a plan change.
 - **On Running** (`on-running` / `dark-on-running`): an icon or text on red, for example the step icon on a red step tile.
 - **Soft Ink** (`ink-soft` / `dark-ink-soft`): secondary text, notes. `on-ink-muted` is the muted text on an ink row.
 - **Muted** (`muted`, `muted-soft` and their dark twins): labels, meta, ids, times, placeholders.
@@ -215,7 +215,7 @@ A warm, low-chroma Sepia neutral scale with a single blood red; each tone has a 
 
 **The No Accent Rule.** There is no second color. Selection, focus and "current" are shown with ink, weight and tone.
 
-**The Ink Means Here Rule.** Ink marks where the owner is: the current tab has a 1.5 px ink border, a selected tree row a 2 px ink outline, and the selected lane row in the desktop lanes table an ink fill. On an ink row the trio sits on a light capsule and icons turn light. In a plan change, a 1 px ink outline marks what is new: an added row and the box of a new lane.
+**The Ink Means Here Rule.** Ink marks where the owner is: the current tab has a 1.5 px ink border, a selected tree row a 2 px ink outline, and the selected lane row in the desktop lanes table, like the current tab, a Raised Sepia fill with a 1.5 px ink border. The panel has no dark row: the owner wants it light everywhere. In a plan change, a 1 px ink outline marks what is new: an added row and the box of a new lane.
 
 ## Typography
 
@@ -250,7 +250,7 @@ The phone is the first target (designed at 390 px), with a 16 px side gutter and
 **Desktop.** The floating nav sits at the bottom center here too. The projects page is the same table, wide, with every row on one page. A project page is three phone-like columns side by side: the project (its lanes table and the P ring), the lane (its tree and the B ring) and the detail. The columns fill the whole screen width with 32 px side gutters and reach down to the nav: the lanes column is 24% of the screen (360 to 440 px), and the lane and the detail share the rest equally; below 1200 px the gap and the gutters are 16 px and the first column is 380 px. The detail column shows whatever the owner picked last: a task, or the plan change of a planner question. An agent card opens in place under its ring, without dimming the page.
 
 ### Named Rules
-**The Last Pick Rule.** The detail column shows the last pick. The picked task keeps a 2 px ink outline in the tree. The selected lane row has the ink fill while its task is shown, and only a 2 px ink outline while the detail column shows a plan change.
+**The Last Pick Rule.** The detail column shows the last pick. The picked task keeps a 2 px ink outline in the tree. The selected lane row has the raised fill and its 1.5 px ink border while its task is shown, and only a 2 px ink outline, without the fill, while the detail column shows a plan change.
 
 **The Error Rule.** An error of the whole panel (offline, the tracker late) is an ink strip at the top of every screen, with "Try again" only when the owner's action can fix it. An error of one thing stays where that thing is. No red.
 

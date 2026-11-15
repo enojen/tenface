@@ -42,10 +42,4 @@
 	.waiting {
 		border: 1.5px solid var(--mark);
 	}
-
-	:global(.picked) .trio {
-		padding: 2px 8px;
-		border-radius: 999px;
-		background: var(--ground);
-	}
 </style>
