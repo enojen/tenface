@@ -3,7 +3,7 @@
 	import type { PlanNode, PlanSign, Question } from '#lib/api/types.ts';
 	import { minutesBetween, waitTime } from '#lib/format.ts';
 	import { live } from '#lib/live.svelte.ts';
-	import { layout } from '#lib/tree.ts';
+	import { treeRows } from '#lib/tree.ts';
 	import TreeCells from './TreeCells.svelte';
 
 	let {
@@ -18,7 +18,7 @@
 
 {#snippet tree(roots: PlanNode[], signs: boolean)}
 	<ul class="tree">
-		{#each layout(roots, (node) => node.children) as row, index (index)}
+		{#each treeRows(roots, (node) => node.children) as row, index (index)}
 			{#if row.kind === 'gap'}
 				<li class="gap" aria-hidden="true">{#if signs}<span class="sign"></span>{/if}<TreeCells cells={row.cells} /></li>
 			{:else}
@@ -33,7 +33,7 @@
 					{/if}
 					<TreeCells cells={row.cells} />
 					<span class="body" class:added={node.sign === '+'}>
-						<span class="node-cell" class:top={row.top} class:bottom={row.bottom}>
+						<span class="node-cell" class:line-above={row.lineAbove} class:line-below={row.lineBelow}>
 							<span class="node" class:removed={node.sign === '−'} class:moved={node.sign === '→'}></span>
 						</span>
 						<span class="text">
@@ -197,8 +197,8 @@
 		margin-left: -1px;
 	}
 
-	.node-cell.top::before,
-	.node-cell.bottom::after {
+	.node-cell.line-above::before,
+	.node-cell.line-below::after {
 		content: '';
 		position: absolute;
 		left: 10px;
@@ -206,12 +206,12 @@
 		background: var(--mark);
 	}
 
-	.node-cell.top::before {
+	.node-cell.line-above::before {
 		top: 0;
 		height: 24px;
 	}
 
-	.node-cell.bottom::after {
+	.node-cell.line-below::after {
 		top: 40px;
 		bottom: 0;
 	}
