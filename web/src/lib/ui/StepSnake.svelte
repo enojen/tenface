@@ -1,46 +1,15 @@
 <script lang="ts">
-	import { STEP_NAMES, type StepName, type Task, TaskState } from '#lib/api/types.ts';
-	import { stepTime } from '#lib/format.ts';
+	import type { StepName, Task } from '#lib/api/types.ts';
 	import { live } from '#lib/live.svelte.ts';
-	import { currentStep, runMinutes } from '#lib/model.ts';
+	import { iconColor, placeLabel, reachedIndex, stepPlaces } from '#lib/steps.ts';
 	import StepIcon from './StepIcon.svelte';
-	import { StepMark } from './step-mark.ts';
 
 	let { task, steps }: { task: Task; steps: StepName[] } = $props();
 
-	const run = $derived(currentStep(task));
-	const at = $derived(task.state === TaskState.Done ? STEP_NAMES.length : run ? STEP_NAMES.indexOf(run.step) : -1);
-	const places = $derived(
-		STEP_NAMES.map((name, index) => {
-			const used = steps.includes(name);
-			const done = task.steps.find((step) => step.step === name && step.endedAt !== null);
-			const now = run?.step === name ? run : undefined;
-			const kind = !used
-				? StepMark.Unused
-				: now
-					? task.state === TaskState.Asking
-						? StepMark.Asking
-						: StepMark.Running
-					: done || index < at
-						? StepMark.Done
-						: StepMark.Later;
-			const minutes = now ? runMinutes(now, live.now) : done ? runMinutes(done, live.now) : null;
-			return { name, kind, time: !used ? null : minutes === null ? '–' : stepTime(minutes), minutes };
-		})
-	);
-	const label = $derived(
-		'Steps: ' +
-			places
-				.map((place) =>
-					place.kind === StepMark.Unused
-						? `${place.name} not used here`
-						: place.minutes === null
-							? `${place.name} not started`
-							: `${place.name} ${place.minutes} min${place.kind === StepMark.Asking ? ' waiting' : place.kind === StepMark.Running ? ' running' : ''}`
-				)
-				.join(', ')
-	);
-	const dark = (to: number) => (to <= at ? 'dark' : 'light');
+	const reached = $derived(reachedIndex(task));
+	const places = $derived(stepPlaces(task, steps, live.now));
+	const label = $derived(`Steps: ${places.map(placeLabel).join(', ')}`);
+	const dark = (to: number) => (to <= reached ? 'dark' : 'light');
 </script>
 
 <span class="snake" role="img" aria-label={label}>
@@ -52,18 +21,9 @@
 	<span class="cross {dark(4)}" aria-hidden="true"></span>
 	<span class="turn left {dark(4)}" aria-hidden="true"></span>
 	{#each places as place (place.name)}
-		<span class="place {place.kind}">
+		<span class="place {place.mark}">
 			<span class="tile">
-				<StepIcon
-					step={place.name}
-					color={place.kind === StepMark.Running
-						? 'var(--on-running)'
-						: place.kind === StepMark.Asking
-							? 'var(--ink)'
-							: place.kind === StepMark.Done
-								? 'var(--muted-soft)'
-								: 'var(--mark)'}
-				/>
+				<StepIcon step={place.name} color={iconColor(place.mark)} />
 			</span>
 			<span class="label name">{place.name}</span>
 			{#if place.time}<span class="label time">{place.time}</span>{/if}
