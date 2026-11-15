@@ -21,7 +21,7 @@
 	><ChevronLeft size={20} /></a>
 	<PlanChange {question} />
 </main>
-<FloatingAgent agent={project.planner} owner={project.name} questionHref={questionUrl(project.id, null)} />
+<FloatingAgent agent={project.planner} source={{ project: project.id, lane: null }} owner={project.name} questionHref={questionUrl(project.id, null)} />
 
 <style>
 	.content {

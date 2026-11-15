@@ -1,12 +1,17 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
-	import { type Agent, AgentRole, type Question } from '#lib/api/types.ts';
+	import { type Agent, AgentRole, type AgentSource, type Question } from '#lib/api/types.ts';
 	import { rememberCard } from '#lib/nav.svelte.ts';
 	import { page } from '$app/state';
 	import AgentCard from './AgentCard.svelte';
 	import AgentRing from './AgentRing.svelte';
 
-	let { agent, owner, questionHref }: { agent: Agent; owner: string; questionHref: (question: Question) => string } = $props();
+	let {
+		agent,
+		source,
+		owner,
+		questionHref
+	}: { agent: Agent; source: AgentSource; owner: string; questionHref: (question: Question) => string } = $props();
 
 	const SIZE = 56;
 	const EDGE = 8;
@@ -187,7 +192,7 @@
 	onclick={(event) => event.target === dialog && dialog?.close()}
 >
 	<div class="card" class:below={cardBelow} style={cardStyle}>
-		{#if open}<AgentCard {agent} {owner} {questionHref} />{/if}
+		{#if open}<AgentCard {agent} {source} {owner} {questionHref} />{/if}
 	</div>
 	<button type="button" class="float agent-button" {style} aria-label={label} aria-expanded="true" onclick={() => dialog?.close()}>
 		{@render ring()}

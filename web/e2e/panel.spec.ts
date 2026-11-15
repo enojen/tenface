@@ -278,3 +278,62 @@ test('the panel is light on a dark system too', async ({ page }) => {
 	await page.goto('/projects');
 	await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(231, 225, 212)');
 });
+
+async function slowServer(page: Page, ms: number) {
+	await page.addInitScript(
+		(delay) => localStorage.setItem('tenface.mock-delay', String(delay)),
+		ms
+	);
+}
+
+test('a lane shows a skeleton while its tasks load', async ({ page }) => {
+	await slowServer(page, 1500);
+	await page.goto('/projects/sample/lanes/api');
+	await expect(page.getByRole('status', { name: 'Loading the tasks of api' })).toBeVisible();
+	await expect(page.getByRole('heading', { name: 'api' }).first()).toBeVisible();
+	await expect(page.getByRole('list', { name: 'Tasks of api' })).toBeVisible();
+	await expect(page.getByRole('status', { name: 'Loading the tasks of api' })).toBeHidden();
+});
+
+test('a search shows a skeleton until the server answers', async ({ page }) => {
+	await slowServer(page, 1500);
+	await page.goto('/projects');
+	await page.getByRole('searchbox', { name: 'Search projects' }).fill('shop');
+	await expect(page.getByRole('status', { name: 'Searching projects' })).toBeVisible();
+	await expect(page.getByRole('link', { name: /^demo-shop\b/ })).toBeVisible();
+	await expect(page.getByRole('link', { name: /^sample\b/ })).toBeHidden();
+});
+
+test('the agent card shows its head at once and its questions after they load', async ({
+	page
+}) => {
+	await slowServer(page, 1500);
+	await page.goto('/projects/sample/lanes/api');
+	await page.getByRole('button', { name: babysitter }).first().click();
+	await expect(page.getByText('Context 62%')).toBeVisible();
+	await expect(page.getByRole('status', { name: 'Loading the babysitter' })).toBeVisible();
+	await expect(page.getByText('Merge PR #418?')).toBeVisible();
+});
+
+test('a lane picked on the desk does not slide the page', async ({ page }, info) => {
+	test.skip(phone(info.project.name), 'the desk only');
+	await page.addInitScript(() => {
+		const counted = window as unknown as { transitions: number };
+		counted.transitions = 0;
+		const start = document.startViewTransition?.bind(document);
+		if (!start) return;
+		document.startViewTransition = ((update: never) => {
+			counted.transitions += 1;
+			return start(update);
+		}) as typeof document.startViewTransition;
+	});
+	await page.goto('/projects/sample/lanes/api');
+	await page
+		.getByRole('link', { name: /^web\b/ })
+		.first()
+		.click();
+	await expect(page).toHaveURL(/\/lanes\/web$/);
+	expect(
+		await page.evaluate(() => (window as unknown as { transitions: number }).transitions)
+	).toBe(0);
+});

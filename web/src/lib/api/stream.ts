@@ -2,7 +2,7 @@ import type { Api, State } from './types.ts';
 
 const RETRY_MS = [1_000, 2_000, 5_000, 10_000, 30_000];
 
-export function createStreamApi(url: string): Api {
+export function createStreamApi(url: string): Pick<Api, 'subscribe'> {
 	return {
 		subscribe(onState, onConnection) {
 			let source: EventSource;

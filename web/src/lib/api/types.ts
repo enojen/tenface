@@ -110,9 +110,18 @@ export interface PlanChange {
 
 export type Connection = { online: true } | { online: false; since: string };
 
+export interface AgentSource {
+	project: string;
+	lane: string | null;
+}
+
 export interface Api {
 	subscribe(
 		onState: (state: State) => void,
 		onConnection: (connection: Connection) => void
 	): () => void;
+	lane(project: string, lane: string, signal: AbortSignal): Promise<Lane>;
+	agent(source: AgentSource, signal: AbortSignal): Promise<Agent>;
+	searchProjects(query: string, signal: AbortSignal): Promise<string[]>;
+	searchLanes(project: string, query: string, signal: AbortSignal): Promise<string[]>;
 }

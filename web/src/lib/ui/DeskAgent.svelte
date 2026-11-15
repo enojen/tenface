@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
-	import { type Agent, AgentRole, type Question } from '#lib/api/types.ts';
+	import { type Agent, AgentRole, type AgentSource, type Question } from '#lib/api/types.ts';
 	import { rememberCard } from '#lib/nav.svelte.ts';
 	import { page } from '$app/state';
 	import AgentCard from './AgentCard.svelte';
@@ -8,10 +8,17 @@
 
 	let {
 		agent,
+		source,
 		owner,
 		questionHref,
 		align = 'left'
-	}: { agent: Agent; owner: string; questionHref: (question: Question) => string; align?: 'left' | 'right' } = $props();
+	}: {
+		agent: Agent;
+		source: AgentSource;
+		owner: string;
+		questionHref: (question: Question) => string;
+		align?: 'left' | 'right';
+	} = $props();
 
 	let open = $state(untrack(() => page.state.agent === agent.role));
 
@@ -53,7 +60,7 @@
 	</button>
 	{#if open}
 		<section {id} class="card {align}" aria-label="{role} of {owner}">
-			<AgentCard {agent} {owner} {questionHref} />
+			<AgentCard {agent} {source} {owner} {questionHref} />
 		</section>
 	{/if}
 </div>
