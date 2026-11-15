@@ -1,19 +1,24 @@
 import { describe, expect, it } from 'vitest';
-import { childrenMap, layout, type TreeRow } from './tree.ts';
+import { groupByParent, RowKind, treeRows, type TreeRow } from './tree.ts';
 
 const task = (id: string, parent: string | null = null) => ({ id, parent });
 
 function draw(rows: TreeRow<{ id: string }>[]) {
 	return rows.map((row) =>
-		row.kind === 'gap'
+		row.kind === RowKind.Gap
 			? `gap ${row.cells.join(',')}`
-			: `${row.item.id} ${row.cells.join(',')}${row.top ? ' top' : ''}${row.bottom ? ' bottom' : ''}`
+			: `${row.item.id} ${row.cells.join(',')}${row.lineAbove ? ' above' : ''}${row.lineBelow ? ' below' : ''}`
 	);
 }
 
-describe('layout', () => {
+const rowsOf = (items: { id: string; parent: string | null }[]) => {
+	const tree = groupByParent(items);
+	return treeRows(tree.roots, tree.childrenOf);
+};
+
+describe('treeRows', () => {
 	it('draws the api lane of the design', () => {
-		const tree = childrenMap([
+		const rows = rowsOf([
 			task('SAM-101'),
 			task('SAM-102', 'SAM-101'),
 			task('SAM-103', 'SAM-101'),
@@ -22,31 +27,30 @@ describe('layout', () => {
 			task('SAM-108', 'SAM-105'),
 			task('SAM-112', 'SAM-108')
 		]);
-		expect(draw(layout(tree.roots, tree.of))).toEqual([
-			'SAM-101  bottom',
-			'SAM-102 tee',
-			'gap line',
-			'SAM-103 corner bottom',
-			'SAM-105 blank,tee bottom',
-			'SAM-108 blank,line top bottom',
-			'SAM-112 blank,line top',
-			'gap blank,line',
-			'SAM-106 blank,corner'
+		expect(draw(rows)).toEqual([
+			'SAM-101  below',
+			'SAM-102 branch',
+			'gap pass',
+			'SAM-103 last-branch below',
+			'SAM-105 empty,branch below',
+			'SAM-108 empty,pass above below',
+			'SAM-112 empty,pass above',
+			'gap empty,pass',
+			'SAM-106 empty,last-branch'
 		]);
 	});
 
 	it('keeps a straight chain in one column', () => {
-		const tree = childrenMap([task('a'), task('b', 'a'), task('c', 'b')]);
-		expect(draw(layout(tree.roots, tree.of))).toEqual(['a  bottom', 'b  top bottom', 'c  top']);
+		expect(draw(rowsOf([task('a'), task('b', 'a'), task('c', 'b')]))).toEqual(['a  below', 'b  above below', 'c  above']);
 	});
 
 	it('puts a gap between roots', () => {
-		const tree = childrenMap([task('a'), task('b')]);
-		expect(layout(tree.roots, tree.of).map((row) => row.kind)).toEqual(['node', 'gap', 'node']);
+		expect(rowsOf([task('a'), task('b')]).map((row) => row.kind)).toEqual([RowKind.Node, RowKind.Gap, RowKind.Node]);
 	});
+});
 
+describe('groupByParent', () => {
 	it('treats a parent outside the list as a root', () => {
-		const tree = childrenMap([task('a', 'elsewhere')]);
-		expect(tree.roots.map((item) => item.id)).toEqual(['a']);
+		expect(groupByParent([task('a', 'elsewhere')]).roots.map((item) => item.id)).toEqual(['a']);
 	});
 });
