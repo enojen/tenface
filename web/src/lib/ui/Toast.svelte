@@ -1,10 +1,9 @@
 <script lang="ts">
 	import Check from '@lucide/svelte/icons/check';
-	import { toast } from '#lib/toast.svelte.ts';
+	import { ToastMark, toast } from '#lib/toast.svelte.ts';
 
 	let element = $state<HTMLElement>();
 
-	// A popover sits in the top layer, so it shows above an open dialog too.
 	$effect(() => {
 		if (!element) return;
 		toast.shown;
@@ -18,7 +17,7 @@
 </script>
 
 <div bind:this={element} popover="manual" class="toast" role="status">
-	<Check size={16} aria-hidden="true" />{toast.text}
+	{#if toast.mark === ToastMark.Done}<Check size={16} aria-hidden="true" />{/if}{toast.text}
 </div>
 
 <style>
