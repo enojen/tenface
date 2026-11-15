@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Lane, StepName, Task } from '#lib/api/types.ts';
-	import { childrenMap, layout } from '#lib/tree.ts';
+	import { groupByParent, treeRows } from '#lib/tree.ts';
 	import StepMini from './StepMini.svelte';
 	import TreeCells from './TreeCells.svelte';
 
@@ -13,21 +13,21 @@
 	}: { lane: Lane; steps: StepName[]; picked?: string | null; offline?: boolean; href: (task: Task) => string } = $props();
 
 	const rows = $derived.by(() => {
-		const tree = childrenMap(lane.tasks);
-		return layout(tree.roots, tree.of);
+		const tree = groupByParent(lane.tasks);
+		return treeRows(tree.roots, tree.childrenOf);
 	});
 </script>
 
 <ul class="tree" aria-label="Tasks of {lane.name}">
 	{#each rows as row, index (row.kind === 'node' ? row.item.id : `gap-${index}`)}
 		{#if row.kind === 'gap'}
-			<li class="gap" class:root={row.root} aria-hidden="true"><TreeCells cells={row.cells} /></li>
+			<li class="gap" class:between-roots={row.betweenRoots} aria-hidden="true"><TreeCells cells={row.cells} /></li>
 		{:else}
 			{@const task = row.item}
 			<li>
 				<a class="row" class:picked={picked === task.id} href={href(task)} aria-current={picked === task.id ? 'true' : undefined}>
 					<TreeCells cells={row.cells} />
-					<span class="node-cell" class:top={row.top} class:bottom={row.bottom}>
+					<span class="node-cell" class:line-above={row.lineAbove} class:line-below={row.lineBelow}>
 						<span class="node {task.state}" class:offline={offline && task.state === 'running'}></span>
 					</span>
 					<span class="text">
@@ -62,7 +62,7 @@
 		height: 12px;
 	}
 
-	.gap.root {
+	.gap.between-roots {
 		height: 20px;
 	}
 
@@ -84,8 +84,8 @@
 		flex: none;
 	}
 
-	.node-cell.top::before,
-	.node-cell.bottom::after {
+	.node-cell.line-above::before,
+	.node-cell.line-below::after {
 		content: '';
 		position: absolute;
 		left: 10px;
@@ -93,12 +93,12 @@
 		background: var(--mark);
 	}
 
-	.node-cell.top::before {
+	.node-cell.line-above::before {
 		top: 0;
 		height: 24px;
 	}
 
-	.node-cell.bottom::after {
+	.node-cell.line-below::after {
 		top: 40px;
 		bottom: 0;
 	}
