@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { askers, askersLabel, laneState, laneTrio, taskTrio } from './model.ts';
 import { sampleState } from './api/sample.ts';
+import { askers, askersLabel, laneState, laneTrio, taskTrio } from './model.ts';
 
 const project = () => sampleState(Date.parse('2026-11-15T12:00:00Z')).projects[0];
 
