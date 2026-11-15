@@ -1,0 +1,230 @@
+/* Tokens from DESIGN.md: light Sepia by day, dark Sepia by night. */
+:root {
+	color-scheme: light;
+	--ground: #e7e1d4;
+	--tile: #f1ece2;
+	--raised: #e0d9cb;
+	--ink: #1f1c17;
+	--ink-soft: #3d3830;
+	--on-ink-muted: #d8d0c2;
+	--muted: #5e574b;
+	--muted-soft: #6a6254;
+	--line: #d6cebe;
+	--line-strong: #c4bba9;
+	--mark: #857c6c;
+	--mark-done: #7a7262;
+	--mark-empty: #ddd5c6;
+	--running: #a3161c;
+	--on-running: #e7e1d4;
+	--shade: 31, 28, 23;
+
+	--sans: 'Inter Variable', Inter, system-ui, sans-serif;
+	--mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+
+	--shadow-nav: 0 6px 20px rgba(var(--shade), 0.12);
+	--shadow-ring: 0 6px 18px rgba(var(--shade), 0.22);
+	--shadow-card: 0 10px 28px rgba(var(--shade), 0.16);
+	--shadow-sheet: 0 -8px 24px rgba(var(--shade), 0.12);
+	--dim: rgba(var(--shade), 0.32);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		color-scheme: dark;
+		--ground: #2a2620;
+		--tile: #332e27;
+		--raised: #3c362e;
+		--ink: #efe9de;
+		--ink-soft: #d8d0c2;
+		--on-ink-muted: #3d3830;
+		--muted: #b8ae9d;
+		--muted-soft: #a89e8d;
+		--line: #3f392f;
+		--line-strong: #534b3f;
+		--mark: #807666;
+		--mark-done: #8b8170;
+		--mark-empty: #474036;
+		--running: #ff5a5f;
+		--on-running: #2a2620;
+		--shade: 0, 0, 0;
+	}
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	background: var(--ground);
+	color: var(--ink);
+	font-family: var(--sans);
+	font-size: 14px;
+	line-height: 20px;
+	-webkit-text-size-adjust: 100%;
+	-webkit-tap-highlight-color: transparent;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+button {
+	font: inherit;
+	color: inherit;
+}
+
+h1,
+h2,
+h3,
+p {
+	margin: 0;
+}
+
+:where(a, button, input, [tabindex]:not(dialog)):focus-visible {
+	outline: 2px solid var(--ink);
+	outline-offset: 2px;
+}
+
+dialog:focus {
+	outline: none;
+}
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+.mono {
+	font-family: var(--mono);
+}
+
+.display {
+	font-size: 28px;
+	line-height: 34px;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+}
+
+.headline {
+	font-size: 20px;
+	line-height: 26px;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+}
+
+.title {
+	font-size: 16px;
+	line-height: 22px;
+	font-weight: 600;
+}
+
+.label {
+	font-size: 12px;
+	line-height: 16px;
+}
+
+.muted {
+	color: var(--muted);
+}
+
+/* The table kit of Projects, Lanes and Needs you. */
+.table {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 12px;
+	border-radius: 20px;
+	background: var(--tile);
+	border: 1px solid var(--line);
+}
+
+.table-head,
+.table-row {
+	display: grid;
+	grid-template-columns: var(--columns);
+	gap: 8px;
+	align-items: center;
+}
+
+.table-head {
+	padding: 4px 4px 0;
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 600;
+	color: var(--muted);
+}
+
+.table ul,
+.table ol {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.table-row {
+	min-height: 56px;
+	padding: 8px 4px;
+	border-top: 1px solid var(--line);
+}
+
+.table-row.picked,
+.table-row.outlined {
+	padding-inline: 12px;
+}
+
+.table-row.picked {
+	background: var(--ink);
+	color: var(--ground);
+	border-radius: 12px;
+	border-top-color: transparent;
+}
+
+.table-row.outlined {
+	box-shadow: inset 0 0 0 2px var(--ink);
+	border-radius: 12px;
+}
+
+.center {
+	display: flex;
+	justify-content: center;
+	text-align: center;
+}
+
+.button {
+	height: 44px;
+	padding: 0 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	border-radius: 999px;
+	border: 1px solid var(--mark);
+	background: none;
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 600;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.icon-button {
+	width: 44px;
+	height: 44px;
+	flex: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: none;
+	background: none;
+	cursor: pointer;
+}
