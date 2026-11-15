@@ -3,7 +3,8 @@ import type { Connection, State } from './api/types.ts';
 
 /** The last known state of the server and the time, both live. */
 class Live {
-	state = $state<State | null>(null);
+	// Raw: the panel never changes the state, so no deep proxies (less RAM).
+	state = $state.raw<State | null>(null);
 	connection = $state<Connection>({ online: true });
 	now = $state(Date.now());
 
