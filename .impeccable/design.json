@@ -54,6 +54,10 @@
         "role": "neutral",
         "displayName": "Raised Sepia"
       },
+      "lift": {
+        "role": "neutral",
+        "displayName": "Lift"
+      },
       "ink": {
         "role": "neutral",
         "displayName": "Ink"
@@ -272,8 +276,8 @@
         "section": "colors"
       },
       {
-        "name": "The Ink Means Here Rule",
-        "body": "Ink marks where the owner is: the current tab has a 1.5 px ink border, a selected tree row a 2 px ink outline, and the selected lane row in the desktop lanes table an ink fill. In a plan change, a 1 px ink outline marks an added row and the box of a new lane.",
+        "name": "The Lifted Pick Rule",
+        "body": "A picked row rises as a light card: the selected lane row in the desktop lanes table and the selected task row in the tree get the Lift fill, a 1 px line ring and a soft 2 px / 6 px shadow; the picked task's title is semibold. The current tab keeps its 1.5 px ink border. The panel has no dark row. In a plan change, a 1 px ink outline marks an added row and the box of a new lane.",
         "section": "colors"
       },
       {
@@ -283,7 +287,7 @@
       },
       {
         "name": "The Last Pick Rule",
-        "body": "The desktop detail column shows the last pick. The picked task keeps a 2 px ink outline; the selected lane row has the ink fill while its task is shown, and only a 2 px outline while the detail column shows a plan change.",
+        "body": "The desktop detail column shows the last pick. The picked task stays a lifted card; the selected lane row is a lifted card while its task is shown, and only a 2 px ink outline while the detail column shows a plan change.",
         "section": "layout"
       },
       {
