@@ -252,3 +252,22 @@ for (const url of [
 		expect(serious.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(' ')}`)).toEqual([]);
 	});
 }
+
+test('escape in the desk card leaves the focus on its ring', async ({ page }, info) => {
+	test.skip(phone(info.project.name), 'the desk only');
+	await page.goto('/projects/sample/lanes/api');
+	const ring = page.getByRole('button', { name: babysitter }).first();
+	await ring.focus();
+	await page.keyboard.press('Enter');
+	await page.keyboard.press('Tab');
+	await expect(page.getByRole('button', { name: 'Notes of the babysitter' })).toBeFocused();
+	await page.keyboard.press('Escape');
+	await expect(page.getByRole('button', { name: 'Notes of the babysitter' })).toBeHidden();
+	await expect(ring).toBeFocused();
+});
+
+test('the panel is light on a dark system too', async ({ page }) => {
+	await page.emulateMedia({ colorScheme: 'dark' });
+	await page.goto('/projects');
+	await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(231, 225, 212)');
+});

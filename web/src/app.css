@@ -27,26 +27,24 @@
 	--dim: rgba(var(--shade), 0.32);
 }
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		color-scheme: dark;
-		--ground: #2a2620;
-		--tile: #332e27;
-		--raised: #3c362e;
-		--ink: #efe9de;
-		--ink-soft: #d8d0c2;
-		--on-ink-muted: #3d3830;
-		--muted: #b8ae9d;
-		--muted-soft: #a89e8d;
-		--line: #3f392f;
-		--line-strong: #534b3f;
-		--mark: #807666;
-		--mark-done: #8b8170;
-		--mark-empty: #474036;
-		--running: #ff5a5f;
-		--on-running: #2a2620;
-		--shade: 0, 0, 0;
-	}
+:root[data-theme="dark"] {
+	color-scheme: dark;
+	--ground: #2a2620;
+	--tile: #332e27;
+	--raised: #3c362e;
+	--ink: #efe9de;
+	--ink-soft: #d8d0c2;
+	--on-ink-muted: #3d3830;
+	--muted: #b8ae9d;
+	--muted-soft: #a89e8d;
+	--line: #3f392f;
+	--line-strong: #534b3f;
+	--mark: #807666;
+	--mark-done: #8b8170;
+	--mark-empty: #474036;
+	--running: #ff5a5f;
+	--on-running: #2a2620;
+	--shade: 0, 0, 0;
 }
 
 *,
