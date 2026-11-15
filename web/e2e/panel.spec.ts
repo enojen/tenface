@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, type Page, test } from '@playwright/test';
+import { expect, type Locator, type Page, test } from '@playwright/test';
 
 const phone = (name: string) => name === 'phone';
 const babysitter = /^Babysitter of api, context 62 percent, 1 open question/;
@@ -7,6 +7,12 @@ const babysitter = /^Babysitter of api, context 62 percent, 1 open question/;
 async function noSideScroll(page: Page) {
 	const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
 	expect(overflow).toBeLessThanOrEqual(0);
+}
+
+async function settled(element: Locator) {
+	await element.evaluate((node) =>
+		Promise.all(node.getAnimations().map((animation) => animation.finished))
+	);
 }
 
 async function recordCopies(page: Page) {
@@ -86,6 +92,7 @@ test('a tap on the sheet edge keeps it, a tap above closes it', async ({ page },
 	await page.goto('/projects/sample/lanes/api?task=SAM-102');
 	const sheet = page.getByRole('dialog', { name: 'Task SAM-102' });
 	await expect(sheet).toBeVisible();
+	await settled(sheet);
 	const box = (await sheet.boundingBox()) as { x: number; y: number; width: number };
 	await page.mouse.click(box.x + 40, box.y + 6);
 	await page.waitForTimeout(500);
@@ -252,3 +259,22 @@ for (const url of [
 		expect(serious.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(' ')}`)).toEqual([]);
 	});
 }
+
+test('escape in the desk card leaves the focus on its ring', async ({ page }, info) => {
+	test.skip(phone(info.project.name), 'the desk only');
+	await page.goto('/projects/sample/lanes/api');
+	const ring = page.getByRole('button', { name: babysitter }).first();
+	await ring.focus();
+	await page.keyboard.press('Enter');
+	await page.keyboard.press('Tab');
+	await expect(page.getByRole('button', { name: 'Notes of the babysitter' })).toBeFocused();
+	await page.keyboard.press('Escape');
+	await expect(page.getByRole('button', { name: 'Notes of the babysitter' })).toBeHidden();
+	await expect(ring).toBeFocused();
+});
+
+test('the panel is light on a dark system too', async ({ page }) => {
+	await page.emulateMedia({ colorScheme: 'dark' });
+	await page.goto('/projects');
+	await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(231, 225, 212)');
+});

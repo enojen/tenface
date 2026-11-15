@@ -34,8 +34,7 @@
 
 <svelte:head>
 	<title>tenface</title>
-	<meta name="theme-color" content="#e7e1d4" media="(prefers-color-scheme: light)" />
-	<meta name="theme-color" content="#2a2620" media="(prefers-color-scheme: dark)" />
+	<meta name="theme-color" content="#e7e1d4" />
 </svelte:head>
 
 <ErrorStrip />

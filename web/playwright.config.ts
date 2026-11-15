@@ -16,5 +16,8 @@ export default defineConfig({
 		}
 	],
 	use: { baseURL: 'http://localhost:4173' },
-	projects: [{ name: 'phone', use: { ...devices['iPhone 14'] } }]
+	projects: [
+		{ name: 'desktop', use: { channel: 'chrome', viewport: { width: 1280, height: 900 } } },
+		{ name: 'phone', use: { ...devices['iPhone 14'] } }
+	]
 });
