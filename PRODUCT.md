@@ -35,9 +35,9 @@ tracker or each chat in turn.
 
 ## Positioning
 
-The lane is a first-class object of the server, not a note in a file. The babysitters (Claude
-Code sessions) read and write lanes through the same server API that the panel uses, so the
-panel shows what the agents actually do and a change in the panel is what the agents follow.
+The lane is a first-class object of the server, not a note in a file. The planner and the
+babysitters (Claude Code sessions) read and write lanes through the server API, and the panel
+reads the same server, so the panel shows what the agents actually do.
 
 ## Operating Context
 
@@ -98,9 +98,9 @@ hold real client task names, so they are not copied here.
 1. "Needs you" is always in sight: the projects list shows which agents ask, the lanes table
    shows which babysitters ask, and on a lane or project page the agent's ring counts its open
    questions and its card lists them.
-2. One source of truth: the server holds the lanes; the panel and the babysitters only read and
-   write it.
-3. Check on the phone, plan on the desktop: the phone answers "what now", the desktop arranges
-   "what next".
+2. One source of truth: the server holds the lanes; the planner and the babysitters write it,
+   and the panel only reads it.
+3. Check on the phone, see more on the desktop: the phone answers "what now", the desktop shows
+   project, lane and task side by side.
 4. Show only what the owner acts on: the chat is a link, the code review stays in GitHub.
 5. Calm by default: the panel moves only when a state changes.
