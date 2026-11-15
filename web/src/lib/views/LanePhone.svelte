@@ -2,10 +2,11 @@
 	import type { Lane, Project } from '#lib/api/types.ts';
 	import { live } from '#lib/live.svelte.ts';
 	import { back } from '#lib/nav.svelte.ts';
+	import FloatingAgent from '#lib/ui/FloatingAgent.svelte';
 	import LaneHeader from '#lib/ui/LaneHeader.svelte';
 	import LaneTree from '#lib/ui/LaneTree.svelte';
 	import BackHeader from './BackHeader.svelte';
-	import { laneUrl, projectUrl, taskUrl } from './links.ts';
+	import { laneUrl, projectUrl, questionUrl, taskUrl } from './links.ts';
 	import TaskSheet from './TaskSheet.svelte';
 
 	let { project, lane, taskId }: { project: Project; lane: Lane; taskId: string | null } = $props();
@@ -25,6 +26,7 @@
 		href={(item) => taskUrl(project.id, lane.id, item.id)}
 	/>
 </main>
+<FloatingAgent agent={lane.babysitter} owner={lane.name} questionHref={questionUrl(project.id, lane.id)} />
 
 {#if task}
 	{#key task.id}

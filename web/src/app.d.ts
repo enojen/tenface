@@ -1,5 +1,9 @@
-declare global {
-	namespace App {}
-}
+import type { AgentRole } from '#lib/api/types.ts';
 
-export {};
+declare global {
+	namespace App {
+		interface PageState {
+			agent?: AgentRole;
+		}
+	}
+}

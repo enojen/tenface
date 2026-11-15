@@ -1,4 +1,5 @@
-import { type AfterNavigate, goto } from '$app/navigation';
+import { type AfterNavigate, goto, replaceState } from '$app/navigation';
+import { page } from '$app/state';
 
 export const NavigationKind = { Enter: 'enter', Popstate: 'popstate' } as const;
 
@@ -64,4 +65,9 @@ export function slide(
 	const backward = (delta ?? 0) < 0 || depth(to) < depth(from);
 	document.documentElement.dataset.slide = backward ? 'back' : 'forward';
 	return backward;
+}
+
+export function rememberCard(role: App.PageState['agent']) {
+	if (page.state.agent === role) return;
+	replaceState('', { ...page.state, agent: role });
 }
