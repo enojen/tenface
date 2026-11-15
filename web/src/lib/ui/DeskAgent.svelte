@@ -35,7 +35,7 @@
 <div bind:this={root} class="agent">
 	<button
 		class="ring-button agent-button"
-		aria-label="{role} of {owner}, context {percent} percent, {count} open {count === 1 ? 'question' : 'questions'}, {open ? 'close' : 'open'} its card"
+		aria-label="{role} of {owner}, context {percent} percent, {count} open {count === 1 ? 'question' : 'questions'}, {agent.working ? 'working' : 'waiting'}. {open ? 'Close' : 'Open'} its card"
 		aria-expanded={open}
 		aria-controls={id}
 		onclick={() => (open = !open)}

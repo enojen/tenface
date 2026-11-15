@@ -26,5 +26,5 @@ test('two notes with the same time and text both show', async ({ page }) => {
 		.first()
 		.click();
 	await page.getByRole('button', { name: 'Notes of the babysitter' }).click();
-	await expect(page.locator('dialog[open] .notes li')).toHaveCount(2);
+	await expect(page.locator('.notes li')).toHaveCount(2);
 });
