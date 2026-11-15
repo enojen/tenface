@@ -110,18 +110,18 @@
 {/snippet}
 
 {#if notes}
-	<div class="head notes-head">
+	<div class="head notes-head band">
 		<button type="button" class="icon-button back" aria-label="Back to the {role.toLowerCase()}" onclick={() => (notes = false)}>
 			<ChevronLeft size={20} />
 		</button>
-		<h3 class="title">Notes · {role.toLowerCase()} · {owner}</h3>
+		<h3 class="card-head">Notes · {role} · {owner}</h3>
 	</div>
 	{@render loaded(noteList)}
 {:else}
-	<div class="head">
+	<div class="head band">
 		<AgentRing {agent} size={40} count={false} />
 		<span class="who">
-			<h3 class="title">{role} <span class="owner">· {owner}</span></h3>
+			<h3 class="card-head">{role} · {owner}</h3>
 			<span class="label strong">Context {percent}% · {thousands(agent.context.used)} / {thousands(agent.context.limit)}</span>
 		</span>
 		<button type="button" class="icon-button info" aria-label="Notes of the {role.toLowerCase()}" onclick={() => (notes = true)}>
@@ -152,11 +152,6 @@
 		min-width: 0;
 		display: flex;
 		flex-direction: column;
-	}
-
-	.owner {
-		font-weight: 400;
-		color: var(--muted);
 	}
 
 	.strong {

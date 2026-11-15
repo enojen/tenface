@@ -17,8 +17,11 @@
 </script>
 
 <div class="detail">
-	<div class="top">
-		<svelte:element this={heading} class="headline">{task.title}</svelte:element>
+	<div class="top band">
+		<div class="names">
+			<p class="card-head">Task · {task.id}</p>
+			<svelte:element this={heading} class="subject">{task.title}</svelte:element>
+		</div>
 		<button type="button" class="icon-button close" class:hidden-close={hideClose} aria-label="Close" onclick={onclose}><X size={20} /></button>
 	</div>
 
@@ -66,6 +69,12 @@
 		flex: 1;
 		min-width: 0;
 		overflow-wrap: anywhere;
+	}
+
+	.names {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
 	}
 
 	.close {

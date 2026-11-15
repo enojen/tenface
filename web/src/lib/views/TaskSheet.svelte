@@ -93,8 +93,8 @@
 	}}
 	onclose={onclose}
 >
-	<div class="handle" aria-hidden="true"></div>
-	<div class="scroll" bind:this={scroller}>
+	<div class="grip" aria-hidden="true"><div class="handle"></div></div>
+	<div class="scroll banded" bind:this={scroller}>
 		<TaskDetail {task} {steps} heading="h1" hideClose onclose={dismiss} />
 	</div>
 </dialog>
@@ -163,12 +163,18 @@
 		}
 	}
 
-	.handle {
-		align-self: center;
+	.grip {
 		flex: none;
+		display: flex;
+		justify-content: center;
+		padding: 8px 0 4px;
+		border-radius: 31px 31px 0 0;
+		background: var(--raised);
+	}
+
+	.handle {
 		width: 40px;
 		height: 5px;
-		margin: 8px 0 4px;
 		border-radius: 999px;
 		background: var(--line-strong);
 	}
@@ -178,6 +184,9 @@
 		min-height: 0;
 		overflow-y: auto;
 		overscroll-behavior: contain;
+		--band-pad: 20px;
+		--band-top: 10px;
+		--band-radius: 0px;
 		padding: 10px 20px 20px;
 	}
 </style>

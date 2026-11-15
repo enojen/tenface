@@ -122,9 +122,34 @@ dialog:focus {
 }
 
 .title {
+	font-size: 15px;
+	line-height: 20px;
+	font-weight: 500;
+}
+
+.subject {
+	margin: 0;
 	font-size: 16px;
 	line-height: 22px;
-	font-weight: 600;
+	font-weight: 500;
+	color: var(--ink);
+}
+
+.card-head {
+	margin: 0;
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--ink-soft);
+}
+
+.banded .band {
+	margin: calc(-1 * var(--band-top, var(--band-pad))) calc(-1 * var(--band-pad)) 0;
+	padding: 12px var(--band-pad);
+	border-radius: var(--band-radius) var(--band-radius) 0 0;
+	background: var(--raised);
 }
 
 .label {
@@ -137,6 +162,8 @@ dialog:focus {
 }
 
 .table {
+	--band-pad: 12px;
+	--band-radius: 19px;
 	display: flex;
 	flex-direction: column;
 	gap: 8px;

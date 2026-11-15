@@ -62,9 +62,9 @@
 			<LanesTable {project} desk size={10} picked={lane?.id ?? null} outlined={questionId !== null} />
 		</div>
 
-		<main class="column">
+		<main class="column banded">
 			{#if lane}
-				<div class="lane-top">
+				<div class="lane-top band">
 					<LaneHeader {lane} heading="h2" />
 					<DeskAgent agent={lane.babysitter} source={{ project: project.id, lane: lane.id }} owner={lane.name} align="right" questionHref={questionUrl(project.id, lane.id)} />
 				</div>
@@ -86,7 +86,7 @@
 			{/if}
 		</main>
 
-		<aside class="column detail" aria-label={detailLabel()}>
+		<aside class="column detail banded" aria-label={detailLabel()}>
 			{#if task}
 				{#key task.id}<TaskDetail {task} steps={project.steps} onclose={close} />{/key}
 			{:else if questionId}
@@ -118,6 +118,8 @@
 	}
 
 	.column {
+		--band-pad: 16px;
+		--band-radius: 27px;
 		position: relative;
 		flex: 1 1 0;
 		min-width: 0;
@@ -141,7 +143,6 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		padding: 0 4px;
 	}
 
 	@media (max-width: 1199px) {

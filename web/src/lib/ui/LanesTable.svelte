@@ -33,8 +33,8 @@
 	});
 </script>
 
-<section class="table" aria-labelledby="lanes-title" style:--columns={columns}>
-	<h2 id="lanes-title" class="title heading">Lanes</h2>
+<section class="table banded" aria-labelledby="lanes-title" style:--columns={columns}>
+	<h2 id="lanes-title" class="card-head band">Lanes</h2>
 	<SearchField bind:value={query} label="Search lanes" />
 	<div class="table-head" aria-hidden="true">
 		<span>Lane</span><span class="center">Tasks</span><span class="center">Needs you</span>{#if !desk}<span></span>{/if}
@@ -73,10 +73,6 @@
 </section>
 
 <style>
-	.heading {
-		padding: 0 4px;
-	}
-
 	.name {
 		min-width: 0;
 		overflow-wrap: anywhere;
