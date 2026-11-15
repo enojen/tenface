@@ -36,7 +36,7 @@
 		position: relative;
 		display: grid;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
-		row-gap: 12px;
+		row-gap: 32px;
 		white-space: nowrap;
 	}
 
@@ -52,11 +52,11 @@
 	}
 
 	.row2 {
-		top: 105px;
+		top: 125px;
 	}
 
 	.cross {
-		top: 82px;
+		top: 91px;
 		left: 12.5%;
 		width: 75%;
 	}
@@ -70,15 +70,15 @@
 	.turn.right {
 		top: 17px;
 		left: 87.5%;
-		height: 67px;
+		height: 76px;
 		border-left: 0;
 		border-radius: 0 12px 12px 0;
 	}
 
 	.turn.left {
-		top: 82px;
+		top: 91px;
 		left: 0;
-		height: 25px;
+		height: 36px;
 		border-right: 0;
 		border-radius: 12px 0 0 12px;
 	}
@@ -94,6 +94,12 @@
 	}
 
 	.turn {
+		background: none;
+	}
+
+	.cross {
+		height: 0;
+		border-top: 2px dashed;
 		background: none;
 	}
 
@@ -117,7 +123,7 @@
 	}
 
 	.done .tile {
-		background: var(--mark-empty);
+		background: var(--mark-done);
 		border: none;
 	}
 
@@ -138,12 +144,13 @@
 		color: var(--muted-soft);
 	}
 
-	.done .name {
-		color: var(--ink-soft);
-	}
-
 	.time {
 		color: var(--muted);
+	}
+
+	.done .name,
+	.done .time {
+		color: var(--muted-soft);
 	}
 
 	.later .time {

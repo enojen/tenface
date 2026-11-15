@@ -265,7 +265,7 @@ The phone is the first target (designed at 390 px), with a 16 px side gutter and
 
 **Lane.** A "‹ sample" back link, then one card: its band has the head "Lane · api", the one-line description of the lane and its progress, and the card holds one tree. A lane holds one root tree, because one babysitter does not take more. The tree indents only at a fork; an only child stays in its parent's column.
 
-**Task.** A bottom sheet over the lane, dimmed with ink at 32%: a grab handle and the head band ("Task · SAM-103" and the title), the steps with the total time ("1h03 total"), PR and Tracker buttons (48 px), and the babysitter's note. The steps are a snake of eight places, four per row: plan, approve, build, debug, eval, PR, merge, close. A step a project does not use has a dashed `line-strong` tile and no time.
+**Task.** A bottom sheet over the lane, dimmed with ink at 32%: a grab handle and the head band ("Task · SAM-103" and the title, with the PR and Tracker links at its right), the steps with the total time ("1h03 total"), and the babysitter's note. The PR link is a 40 px capsule with the GitHub mark and "#418"; the Tracker link is a 40 px round button with only its icon, because the id is already on the band. The steps are a snake of eight places, four per row: plan, approve, build, debug, eval, PR, merge, close. The rows stand 32 px apart, and the line that runs back from the end of the first row to the start of the second is dashed and sits halfway between them. A step a project does not use has a dashed `line-strong` tile and no time. A done step looks like a closed task in the tree: its tile is filled with Done Mark and holds a light icon, and its name and time are `muted-soft`.
 
 **Desktop.** The floating nav sits at the bottom center here too. The projects page is the same table, wide, with every row on one page. A project page is one project card (see the Project Holds Rule) with three columns inside: the lanes list, the lane card (its tree and the B ring) and the task card. The project card fills the screen width with 32 px side gutters and reaches down to the nav: the lanes list is 22% of the screen (340 to 420 px), and the lane and task cards share the rest equally; below 1200 px the gutters are 16 px and the lanes list is 340 px. The task card shows whatever the owner picked last: a task, or the plan change of a planner question. An agent card opens in place under its ring, without dimming the page.
 
@@ -298,7 +298,7 @@ Capsules for everything you press: buttons, the copy-id pill, tabs, the nav (999
 Clear like a tool: the same shape for the same job on every screen.
 
 ### Buttons
-- **Outline:** a capsule 44 px high with a 1 px gray-mark edge, ink text and an optional icon: Chat, Copy handover prompt, PR #418, Tracker SAM-102, Try again.
+- **Outline:** a capsule 44 px high with a 1 px gray-mark edge, ink text and an optional icon: Chat, Copy handover prompt, Try again. In the task head the PR and Tracker links are the same outline at 40 px: "#418" with the GitHub mark, and the tracker icon alone.
 - **Copy id:** a 36 px capsule with the mono id and a copy icon; it copies the id for the chat.
 - A button that only repeats an action says what it does, for example "Try again: load lane billing".
 

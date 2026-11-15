@@ -269,6 +269,73 @@ test('the agent card slides to fit when the ring sits in the middle', async ({ p
 	expect(fit.bottom).toBeGreaterThanOrEqual(16);
 });
 
+async function openTask(page: Page, phoneView: boolean) {
+	await page.goto('/projects/sample/lanes/api?task=SAM-102');
+	return phoneView
+		? page.getByRole('dialog', { name: 'Task SAM-102' })
+		: page.getByRole('complementary', { name: 'Task SAM-102' });
+}
+
+test('the task head holds the PR and tracker links, the body has none', async ({ page }, info) => {
+	const detail = await openTask(page, phone(info.project.name));
+	const head = detail.locator('.top');
+	await expect(head.getByRole('link', { name: 'PR #418 on GitHub' })).toHaveAttribute(
+		'href',
+		/418/
+	);
+	const tracker = head.getByRole('link', { name: 'Tracker SAM-102' });
+	await expect(tracker).toBeVisible();
+	expect((await tracker.boundingBox())!.width).toBeLessThanOrEqual(44);
+	await expect(detail.locator('.detail-body a')).toHaveCount(0);
+});
+
+test('the middle line of the steps keeps clear of both rows and is dashed', async ({
+	page
+}, info) => {
+	const detail = await openTask(page, phone(info.project.name));
+	const snake = detail.locator('.snake');
+	await expect(snake).toBeVisible();
+	const clear = await snake.evaluate((node) => {
+		const cross = node.querySelector('.cross')!;
+		const line = cross.getBoundingClientRect();
+		const places = [...node.querySelectorAll('.place')];
+		const upper = Math.max(
+			...places.slice(0, 4).map((place) => place.getBoundingClientRect().bottom)
+		);
+		const lower = Math.min(
+			...places.slice(4).map((place) => place.querySelector('.tile')!.getBoundingClientRect().top)
+		);
+		return {
+			above: line.top - upper,
+			below: lower - line.bottom,
+			style: getComputedStyle(cross).borderTopStyle
+		};
+	});
+	expect(clear.above).toBeGreaterThanOrEqual(12);
+	expect(clear.below).toBeGreaterThanOrEqual(12);
+	expect(clear.style).toBe('dashed');
+});
+
+test('a done step looks like a done task in the tree', async ({ page }, info) => {
+	const detail = await openTask(page, phone(info.project.name));
+	const tree = await page
+		.locator('.node.done')
+		.first()
+		.evaluate((node) => ({
+			fill: getComputedStyle(node).backgroundColor,
+			name: getComputedStyle(node.closest('.row')!.querySelector('.name.done')!).color
+		}));
+	const step = await detail
+		.locator('.place.done')
+		.first()
+		.evaluate((place) => ({
+			fill: getComputedStyle(place.querySelector('.tile')!).backgroundColor,
+			name: getComputedStyle(place.querySelector('.name')!).color,
+			time: getComputedStyle(place.querySelector('.time')!).color
+		}));
+	expect(step).toEqual({ fill: tree.fill, name: tree.name, time: tree.name });
+});
+
 for (const url of [
 	'/projects',
 	'/projects/sample',

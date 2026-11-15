@@ -199,7 +199,7 @@
       "name": "Outline Button",
       "kind": "button",
       "refersTo": "button-outline",
-      "description": "Every action: Chat, Copy handover prompt, PR, Tracker, Try again. A gray-mark edge, never a fill.",
+      "description": "Every action: Chat, Copy handover prompt, Try again; in the task head, the PR and Tracker links at 40 px. A gray-mark edge, never a fill.",
       "html": "<a class=\"ds-btn\" href=\"#\"><svg aria-hidden=\"true\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"></path></svg>Chat</a>",
       "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:44px;box-sizing:border-box;padding:0 12px;border-radius:999px;border:1px solid #857c6c;background:none;color:#1f1c17;font:600 14px/20px Inter,system-ui,sans-serif;text-decoration:none}.ds-btn:focus-visible{outline:2px solid #1f1c17;outline-offset:2px}"
     },
