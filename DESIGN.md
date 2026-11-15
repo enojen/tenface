@@ -201,7 +201,7 @@ A warm, low-chroma Sepia neutral scale with a single blood red; each tone has a 
 - **Sepia Ground** (`ground` / `dark-ground`): the page.
 - **Paper Tile** (`tile` / `dark-tile`): tables, cards, columns, the agent ring.
 - **Raised Sepia** (`raised` / `dark-raised`): the current tab.
-- **Ink** (`ink` / `dark-ink`): main text, the error strip, the selected desktop lane row, outlines that mark a selection, the arc of an idle agent, the box of a new lane in a plan change.
+- **Ink** (`ink` / `dark-ink`): main text, the error strip, outlines that mark a selection, the arc of an idle agent, the box of a new lane in a plan change.
 - **On Running** (`on-running` / `dark-on-running`): an icon or text on red, for example the step icon on a red step tile.
 - **Soft Ink** (`ink-soft` / `dark-ink-soft`): secondary text, notes. `on-ink-muted` is the muted text on an ink row.
 - **Muted** (`muted`, `muted-soft` and their dark twins): labels, meta, ids, times, placeholders.
@@ -215,7 +215,7 @@ A warm, low-chroma Sepia neutral scale with a single blood red; each tone has a 
 
 **The No Accent Rule.** There is no second color. Selection, focus and "current" are shown with ink, weight and tone.
 
-**The Ink Means Here Rule.** Ink marks where the owner is: the current tab has a 1.5 px ink border, a selected tree row a 2 px ink outline, and the selected lane row in the desktop lanes table an ink fill. On an ink row the trio sits on a light capsule and icons turn light. In a plan change, a 1 px ink outline marks what is new: an added row and the box of a new lane.
+**The Ink Means Here Rule.** Ink marks where the owner is: the current tab has a 1.5 px ink border, a selected tree row a 2 px ink outline, and the selected lane row in the desktop lanes table, like the current tab, a Raised Sepia fill with a 1.5 px ink border. The panel has no dark row: the owner wants it light everywhere. In a plan change, a 1 px ink outline marks what is new: an added row and the box of a new lane.
 
 ## Typography
 
@@ -247,10 +247,10 @@ The phone is the first target (designed at 390 px), with a 16 px side gutter and
 
 **Task.** A bottom sheet over the lane, dimmed with ink at 32%: a grab handle, the title, the steps with the total time ("1h03 total"), PR and Tracker buttons (48 px), and the babysitter's note. The steps are a snake of eight places, four per row: plan, approve, build, debug, eval, PR, merge, close. A step a project does not use has a dashed `line-strong` tile and no time.
 
-**Desktop.** The floating nav sits at the bottom center here too. The projects page is the same table, wide, with every row on one page. A project page is three phone-like columns side by side: the project (its lanes table and the P ring), the lane (its tree and the B ring) and the detail. The columns share the width equally; below 1200 px the gap is 16 px and the first column is 380 px. The detail column shows whatever the owner picked last: a task, or the plan change of a planner question. An agent card opens in place under its ring, without dimming the page.
+**Desktop.** The floating nav sits at the bottom center here too. The projects page is the same table, wide, with every row on one page. A project page is three phone-like columns side by side: the project (its lanes table and the P ring), the lane (its tree and the B ring) and the detail. The columns fill the whole screen width with 32 px side gutters and reach down to the nav: the lanes column is 24% of the screen (360 to 440 px), and the lane and the detail share the rest equally; below 1200 px the gap and the gutters are 16 px and the first column is 380 px. The detail column shows whatever the owner picked last: a task, or the plan change of a planner question. An agent card opens in place under its ring, without dimming the page.
 
 ### Named Rules
-**The Last Pick Rule.** The detail column shows the last pick. The picked task keeps a 2 px ink outline in the tree. The selected lane row has the ink fill while its task is shown, and only a 2 px ink outline while the detail column shows a plan change.
+**The Last Pick Rule.** The detail column shows the last pick. The picked task keeps a 2 px ink outline in the tree. The selected lane row has the raised fill and its 1.5 px ink border while its task is shown, and only a 2 px ink outline, without the fill, while the detail column shows a plan change.
 
 **The Error Rule.** An error of the whole panel (offline, the tracker late) is an ink strip at the top of every screen, with "Try again" only when the owner's action can fix it. An error of one thing stays where that thing is. No red.
 
@@ -304,7 +304,7 @@ The floating capsule nav with Home and Projects, on the phone and the desktop; t
 An ink strip at the top with an icon, one line of what is wrong and one line of what happens now ("You see the last known state. The panel reconnects by itself."). On the desktop it is at least 56 px high with 24 px side padding.
 
 ### Loading
-What the panel already has shows at once: a lane's header and trio, the agent card's header. What comes from the server (a lane's task tree, the questions, notes and buttons of an agent card, search results) shows as a skeleton until it arrives: still bars in the Raised Sepia tone, in the shape of the rows to come (tree rows with a node square, table rows on the table's columns, card lines). No shimmer and no spinner. If the request fails, one muted line says what did not load, with "Try again". A refresh of something already shown keeps it on screen; only a new lane, a new search or a new card starts from the skeleton. On the desktop a lane pick changes the columns in place, without the phone's page slide.
+What the panel already has shows at once: a lane's header and trio, the agent card's header. What comes from the server (a lane's task tree, the questions, notes and buttons of an agent card, search results) shows as a skeleton until it arrives: still bars in the Raised Sepia tone, in the shape of the rows to come (tree rows with a node square, table rows on the table's columns, card lines). No shimmer and no spinner. If the request fails, one muted line says what did not load, with "Try again". A refresh of something already shown keeps it on screen; only a new lane, a new search or a new card starts from the skeleton. On the desktop a lane pick changes the columns in place, without the phone's page slide. The desk stays one page across a project, its lanes, tasks and plan changes, so the lane search and the scroll stay.
 
 ## Do's and Don'ts
 

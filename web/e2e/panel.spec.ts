@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, type Locator, type Page, test } from '@playwright/test';
+import { chromium, expect, type Locator, type Page, test } from '@playwright/test';
 
 const phone = (name: string) => name === 'phone';
 const babysitter = /^Babysitter of api, context 62 percent, 1 open question/;
@@ -336,4 +336,65 @@ test('a lane picked on the desk does not slide the page', async ({ page }, info)
 	expect(
 		await page.evaluate(() => (window as unknown as { transitions: number }).transitions)
 	).toBe(0);
+});
+
+test('a lane picked from the project page keeps the lane search', async ({ page }, info) => {
+	test.skip(phone(info.project.name), 'the desk only');
+	await page.goto('/projects/sample');
+	await page.getByRole('searchbox', { name: 'Search lanes' }).fill('ap');
+	await page
+		.getByRole('link', { name: /^api\b/ })
+		.first()
+		.click();
+	await expect(page).toHaveURL(/\/lanes\/api$/);
+	await expect(page.getByRole('searchbox', { name: 'Search lanes' })).toHaveValue('ap');
+});
+
+test('a picked task keeps its step marks in place', async ({ page }, info) => {
+	test.skip(phone(info.project.name), 'the desk only');
+	await page.goto('/projects/sample/lanes/api');
+	const row = page.getByRole('link', { name: /Paginate the orders list/ });
+	const marks = row.locator('> :last-child');
+	const before = (await marks.boundingBox())!;
+	await row.click();
+	await expect(page).toHaveURL(/task=SAM-102$/);
+	await expect(row).toHaveClass(/picked/);
+	expect((await marks.boundingBox())!.x).toBe(before.x);
+});
+
+test('the desk fills a wide screen down to the nav', async ({ page }, info) => {
+	test.skip(phone(info.project.name), 'the desk only');
+	await page.setViewportSize({ width: 1920, height: 1080 });
+	await page.goto('/projects/sample/lanes/api');
+	await page.getByRole('list', { name: 'Tasks of api' }).waitFor();
+	const columns = page.locator('.columns > .column');
+	const first = (await columns.first().boundingBox())!;
+	const last = (await columns.last().boundingBox())!;
+	expect(first.x).toBeLessThanOrEqual(32);
+	expect(last.x + last.width).toBeGreaterThanOrEqual(1920 - 32);
+	expect(last.y + last.height).toBeGreaterThanOrEqual(1080 - 120);
+});
+
+test('the panel stays light when the browser darkens pages', async ({ browser }, info) => {
+	test.skip(phone(info.project.name), 'Chrome only');
+	const shot = async (args: string[]) => {
+		const own = await chromium.launch({ channel: 'chrome', args });
+		const page = await own.newPage({ colorScheme: 'dark' });
+		await page.goto('http://localhost:4173/projects');
+		await page.getByRole('heading', { name: 'Projects' }).waitFor();
+		const image = await page.screenshot({ clip: { x: 4, y: 4, width: 8, height: 8 } });
+		await own.close();
+		return image.toString('base64');
+	};
+	expect(browser).toBeTruthy();
+	expect(await shot(['--enable-features=WebContentsForceDark'])).toBe(await shot([]));
+});
+
+test('the picked lane row is light', async ({ page }, info) => {
+	test.skip(phone(info.project.name), 'the desk only');
+	await page.goto('/projects/sample/lanes/api');
+	const row = page.getByRole('link', { name: /^api\b/ }).first();
+	await expect(row).toHaveAttribute('aria-current', 'true');
+	await expect(row).toHaveCSS('background-color', 'rgb(224, 217, 203)');
+	await expect(row).toHaveCSS('color', 'rgb(31, 28, 23)');
 });

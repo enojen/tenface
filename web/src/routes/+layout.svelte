@@ -31,6 +31,7 @@
 
 <svelte:head>
 	<title>tenface</title>
+	<meta name="color-scheme" content="only light" />
 	<meta name="theme-color" content="#e7e1d4" />
 </svelte:head>
 
