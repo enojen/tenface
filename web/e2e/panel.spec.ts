@@ -316,6 +316,26 @@ test('the middle line of the steps keeps clear of both rows and is dashed', asyn
 	expect(clear.style).toBe('dashed');
 });
 
+test('a done step looks like a done task in the tree', async ({ page }, info) => {
+	const detail = await openTask(page, phone(info.project.name));
+	const tree = await page
+		.locator('.node.done')
+		.first()
+		.evaluate((node) => ({
+			fill: getComputedStyle(node).backgroundColor,
+			name: getComputedStyle(node.closest('.row')!.querySelector('.name.done')!).color
+		}));
+	const step = await detail
+		.locator('.place.done')
+		.first()
+		.evaluate((place) => ({
+			fill: getComputedStyle(place.querySelector('.tile')!).backgroundColor,
+			name: getComputedStyle(place.querySelector('.name')!).color,
+			time: getComputedStyle(place.querySelector('.time')!).color
+		}));
+	expect(step).toEqual({ fill: tree.fill, name: tree.name, time: tree.name });
+});
+
 for (const url of [
 	'/projects',
 	'/projects/sample',

@@ -15,7 +15,7 @@ export type StepMark = (typeof StepMark)[keyof typeof StepMark];
 const ICON_COLOR: Record<StepMark, string> = {
 	[StepMark.Running]: 'var(--on-running)',
 	[StepMark.Asking]: 'var(--ink)',
-	[StepMark.Done]: 'var(--muted-soft)',
+	[StepMark.Done]: 'var(--on-running)',
 	[StepMark.Offline]: 'var(--mark)',
 	[StepMark.Later]: 'var(--mark)',
 	[StepMark.Unused]: 'var(--mark)'

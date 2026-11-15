@@ -123,7 +123,7 @@
 	}
 
 	.done .tile {
-		background: var(--mark-empty);
+		background: var(--mark-done);
 		border: none;
 	}
 
@@ -144,12 +144,13 @@
 		color: var(--muted-soft);
 	}
 
-	.done .name {
-		color: var(--ink-soft);
-	}
-
 	.time {
 		color: var(--muted);
+	}
+
+	.done .name,
+	.done .time {
+		color: var(--muted-soft);
 	}
 
 	.later .time {
