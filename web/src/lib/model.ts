@@ -1,13 +1,11 @@
 import { type Lane, type Project, type StepRun, type Task, TaskState } from './api/types.ts';
 import { minutesBetween } from './format.ts';
 
-/** The three marks of the trio; each is also a key of Trio. */
 export const LaneState = { Done: 'done', Running: 'running', Waiting: 'waiting' } as const;
 export type LaneState = (typeof LaneState)[keyof typeof LaneState];
 
 export type Trio = Record<LaneState, number>;
 
-/** Tasks that wait for the owner are counted on the agent's ring, not here. */
 export function taskTrio(tasks: Task[]): Trio {
 	return {
 		[LaneState.Done]: tasks.filter((task) => task.state === TaskState.Done).length,
@@ -62,6 +60,11 @@ export function askersLabel(planner: number, babysitters: number): string {
 	if (parts.length === 0) return 'no open questions';
 	return `${plural(planner + babysitters, 'open question')}: ${parts.join(', ')}`;
 }
+
+export const nameMatches = (name: string, query: string) =>
+	name.toLowerCase().includes(query.trim().toLowerCase());
+
+export const lastPage = (total: number, size: number) => Math.max(0, Math.ceil(total / size) - 1);
 
 export const findLane = (project: Project, id: string) =>
 	project.lanes.find((lane) => lane.id === id);
