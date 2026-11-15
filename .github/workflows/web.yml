@@ -1,0 +1,44 @@
+name: web
+# Types, unit tests and browser tests of the panel on every PR that touches web/.
+on:
+  pull_request:
+    paths:
+      - web/**
+      - .github/workflows/web.yml
+concurrency:
+  group: web-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: web
+    env:
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - name: pnpm
+        run: corepack enable
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Lint and format
+        run: pnpm lint
+      - name: Unused code
+        run: pnpm knip
+      - name: Types
+        run: pnpm check
+      - name: Unit tests
+        run: pnpm test
+      - name: Browsers
+        run: pnpm exec playwright install --with-deps webkit chrome
+      - name: Browser tests
+        run: pnpm test:e2e
+        env:
+          CI: 'true'
