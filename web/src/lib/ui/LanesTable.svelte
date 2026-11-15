@@ -3,7 +3,6 @@
 	import { api } from '#lib/api/index.ts';
 	import type { Project } from '#lib/api/types.ts';
 	import { LoadState, searched, searchFor } from '#lib/load.svelte.ts';
-	import { taskTrio } from '#lib/model.ts';
 	import BotHead from './BotHead.svelte';
 	import LoadFailed from './LoadFailed.svelte';
 	import Pager from './Pager.svelte';
@@ -47,8 +46,7 @@
 	{:else}
 		<ul>
 			{#each shown as lane (lane.id)}
-				{@const trio = taskTrio(lane.tasks)}
-				{@const asks = lane.babysitter.questions.length}
+				{@const asks = lane.babysitter.questions}
 				{@const here = picked === lane.id}
 				<li>
 					<a
@@ -59,7 +57,7 @@
 						aria-current={here ? 'true' : undefined}
 					>
 						<span class="title name">{lane.name}<span class="sr-only">,</span></span>
-						<span class="center"><Trio {trio} noun="tasks: " /></span>
+						<span class="center"><Trio trio={lane.trio} noun="tasks: " /></span>
 						<span class="center">
 							{#if asks > 0}<BotHead letter="B" /><span class="sr-only">, {asks} open {asks === 1 ? 'question' : 'questions'} from the babysitter</span>{/if}
 						</span>

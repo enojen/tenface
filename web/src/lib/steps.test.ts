@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { sampleState } from './api/sample.ts';
+import { sampleWorld } from './api/sample.ts';
 import { currentMark, placeLabel, StepMark, stepPlaces } from './steps.ts';
 
 const now = Date.parse('2026-11-15T12:00:00Z');
-const project = sampleState(now).projects[0];
+const project = sampleWorld(now).projects[0];
 const api = project.lanes[0];
 const byId = (id: string) => api.tasks.find((task) => task.id === id) ?? api.tasks[0];
 

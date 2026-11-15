@@ -1,6 +1,7 @@
 import { nameMatches } from '../model.ts';
-import { sampleState } from './sample.ts';
-import type { AgentSource, Api, State } from './types.ts';
+import { type SampleWorld, sampleWorld } from './sample.ts';
+import type { Api } from './types.ts';
+import { summarize, worldAgent, worldLane, worldQuestion } from './world.ts';
 
 const MockMode = { Offline: 'offline' } as const;
 const DELAY_KEY = 'tenface.mock-delay';
@@ -33,19 +34,14 @@ const matching = <T extends { id: string; name: string }>(items: T[], query: str
 	items.filter((item) => nameMatches(item.name, query)).map((item) => item.id);
 
 export function createMockApi(): Api {
-	let state: State = sampleState(Date.now());
-	const project = (id: string) => state.projects.find((candidate) => candidate.id === id);
-	const findAgent = (source: AgentSource) => {
-		const owner = project(source.project);
-		if (!owner || source.lane === null) return owner?.planner;
-		return owner.lanes.find((lane) => lane.id === source.lane)?.babysitter;
-	};
+	let world: SampleWorld = sampleWorld(Date.now());
+	const project = (id: string) => world.projects.find((candidate) => candidate.id === id);
 
 	return {
 		subscribe(onState, onConnection) {
 			const timer = setTimeout(() => {
-				state = sampleState(Date.now());
-				onState(state);
+				world = sampleWorld(Date.now());
+				onState(summarize(world));
 				const offline = new URLSearchParams(location.search).get('mock') === MockMode.Offline;
 				onConnection(
 					offline
@@ -55,10 +51,10 @@ export function createMockApi(): Api {
 			});
 			return () => clearTimeout(timer);
 		},
-		lane: (projectId, laneId, signal) =>
-			answer(() => project(projectId)?.lanes.find((lane) => lane.id === laneId), signal),
-		agent: (source, signal) => answer(() => findAgent(source), signal),
-		searchProjects: (query, signal) => answer(() => matching(state.projects, query), signal),
+		lane: (projectId, laneId, signal) => answer(() => worldLane(world, projectId, laneId), signal),
+		agent: (source, signal) => answer(() => worldAgent(world, source), signal),
+		question: (projectId, id, signal) => answer(() => worldQuestion(world, projectId, id), signal),
+		searchProjects: (query, signal) => answer(() => matching(world.projects, query), signal),
 		searchLanes: (projectId, query, signal) =>
 			answer(() => matching(project(projectId)?.lanes ?? [], query), signal)
 	};
