@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 const phone = (name: string) => name === 'phone';
 
@@ -13,7 +13,10 @@ async function recordCopies(page: Page) {
 	await page.addInitScript(() => {
 		(window as unknown as { copies: string[] }).copies = [];
 		Object.defineProperty(navigator, 'clipboard', {
-			value: { writeText: async (text: string) => void (window as unknown as { copies: string[] }).copies.push(text) }
+			value: {
+				writeText: async (text: string) =>
+					void (window as unknown as { copies: string[] }).copies.push(text)
+			}
 		});
 	});
 	return () => page.evaluate(() => (window as unknown as { copies: string[] }).copies);
@@ -59,7 +62,10 @@ test('a task opens from the tree and closes again', async ({ page }, info) => {
 		? page.getByRole('dialog', { name: 'Task SAM-102' })
 		: page.getByRole('complementary', { name: 'Task SAM-102' });
 	await expect(detail.getByRole('img', { name: /^Steps: plan 7 min/ })).toBeVisible();
-	await expect(detail.getByRole('link', { name: 'PR #418 on GitHub' })).toHaveAttribute('href', /418/);
+	await expect(detail.getByRole('link', { name: 'PR #418 on GitHub' })).toHaveAttribute(
+		'href',
+		/418/
+	);
 	if (phone(info.project.name)) await page.keyboard.press('Escape');
 	else await detail.getByRole('button', { name: 'Close' }).click();
 	await expect(page).toHaveURL(/\/lanes\/api$/);
@@ -107,7 +113,10 @@ test('a direct link still has a way back', async ({ page }) => {
 test('copying an id says so on the screen', async ({ page }) => {
 	const copies = await recordCopies(page);
 	await page.goto('/projects/sample/lanes/api');
-	await page.getByRole('button', { name: /^Babysitter of api, context 62 percent, 1 open question/ }).first().click();
+	await page
+		.getByRole('button', { name: /^Babysitter of api, context 62 percent, 1 open question/ })
+		.first()
+		.click();
 	await expect(page.getByText('Merge PR #418?')).toBeVisible();
 	await page.getByRole('button', { name: 'Copy Q12' }).click();
 	expect(await copies()).toEqual(['Q12']);
@@ -120,7 +129,10 @@ test('copying an id says so on the screen', async ({ page }) => {
 
 test('a planner question opens its plan change', async ({ page }, info) => {
 	await page.goto('/projects/sample');
-	await page.getByRole('button', { name: /^Planner of sample/ }).first().click();
+	await page
+		.getByRole('button', { name: /^Planner of sample/ })
+		.first()
+		.click();
 	await page.getByRole('link', { name: 'Split search into a new lane' }).click();
 	await expect(page).toHaveURL(/\/questions\/Q16/);
 	await expect(page.getByRole('img', { name: 'added' })).toBeVisible();
@@ -132,7 +144,10 @@ test('a planner question opens its plan change', async ({ page }, info) => {
 
 test('back from a plan change brings the planner card back open', async ({ page }, info) => {
 	await page.goto('/projects/sample');
-	await page.getByRole('button', { name: /^Planner of sample/ }).first().click();
+	await page
+		.getByRole('button', { name: /^Planner of sample/ })
+		.first()
+		.click();
 	await page.getByRole('link', { name: 'Split search into a new lane' }).click();
 	await expect(page).toHaveURL(/\/questions\/Q16/);
 	if (phone(info.project.name)) await page.getByRole('link', { name: 'Back to sample' }).click();
@@ -173,13 +188,20 @@ test('the floating agent snaps to an edge and its card stays on screen', async (
 	expect(shown.y + shown.height).toBeLessThanOrEqual(page.viewportSize()!.height);
 });
 
-for (const url of ['/projects', '/projects/sample', '/projects/sample/lanes/api?task=SAM-102', '/projects/sample/questions/Q16']) {
+for (const url of [
+	'/projects',
+	'/projects/sample',
+	'/projects/sample/lanes/api?task=SAM-102',
+	'/projects/sample/questions/Q16'
+]) {
 	test(`no serious accessibility problems on ${url}`, async ({ page }) => {
 		await page.goto(url);
 		await page.getByRole('main').first().waitFor();
 		// The agent ring shows only a letter and a count, so its name cannot repeat them.
 		const result = await new AxeBuilder({ page }).exclude('.agent-button').analyze();
-		const serious = result.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical');
+		const serious = result.violations.filter(
+			(v) => v.impact === 'serious' || v.impact === 'critical'
+		);
 		expect(serious.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(' ')}`)).toEqual([]);
 	});
 }

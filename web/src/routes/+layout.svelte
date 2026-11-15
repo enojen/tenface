@@ -2,12 +2,12 @@
 	import '@fontsource-variable/inter';
 	import '@fontsource-variable/jetbrains-mono';
 	import '../app.css';
-	import { afterNavigate, onNavigate } from '$app/navigation';
 	import { live, wide } from '#lib/live.svelte.ts';
 	import { slide, track } from '#lib/nav.svelte.ts';
 	import ErrorStrip from '#lib/ui/ErrorStrip.svelte';
 	import Nav from '#lib/ui/Nav.svelte';
 	import Toast from '#lib/ui/Toast.svelte';
+	import { afterNavigate, onNavigate } from '$app/navigation';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
