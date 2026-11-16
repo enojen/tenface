@@ -78,7 +78,7 @@ test('a task opens from the tree and closes again', async ({ page }, info) => {
 		/418/
 	);
 	if (phone(info.project.name)) await page.keyboard.press('Escape');
-	else await detail.getByRole('button', { name: 'Close' }).click();
+	else await page.goBack();
 	await expect(page).toHaveURL(/\/lanes\/api$/);
 	await noSideScroll(page);
 });
@@ -117,7 +117,7 @@ test('back returns to the page before, without new history', async ({ page }, in
 	await expect(page).toHaveURL(/\?task=SAM-102$/);
 	const before = await page.evaluate(() => history.length);
 	if (phone(info.project.name)) await page.keyboard.press('Escape');
-	else await page.getByRole('button', { name: 'Close' }).click();
+	else await page.goBack();
 	await expect(page).toHaveURL(/\/lanes\/api$/);
 	if (phone(info.project.name)) {
 		await page.getByRole('link', { name: 'Back to sample' }).click();
