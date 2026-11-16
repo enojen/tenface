@@ -36,6 +36,8 @@ jobs:
         run: pnpm check
       - name: Unit tests
         run: pnpm test
+      - name: Bundle size
+        run: pnpm build && pnpm size
       - name: Browsers
         run: pnpm exec playwright install --with-deps webkit chrome
       - name: Browser tests
