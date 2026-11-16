@@ -46,6 +46,7 @@
 
 {#snippet planChange()}
 	{#if plan.value?.change}
+		{#if plan.state === LoadState.Failed}<LoadFailed what="the plan change {questionId}" onretry={() => plan.retry()} refresh />{/if}
 		<PlanChange projectId={project.id} question={plan.value} heading="h2" onclose={close} />
 	{:else if plan.state === LoadState.Loading}
 		<Skeleton kind={SkeletonKind.Tree} label="Loading the plan change {questionId}" />
@@ -76,6 +77,7 @@
 					</div>
 					<div class="column-body">
 						{#if tree.value}
+							{#if tree.state === LoadState.Failed}<LoadFailed what="the tasks of {lane.name}" onretry={() => tree.retry()} refresh />{/if}
 							<LaneTree
 								lane={tree.value}
 								picked={task?.id ?? null}

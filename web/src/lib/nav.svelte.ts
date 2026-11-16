@@ -3,7 +3,25 @@ import { page } from '$app/state';
 
 export const NavigationKind = { Enter: 'enter', Popstate: 'popstate' } as const;
 
-let stack: string[] = [];
+const STACK_KEY = 'tenface.stack';
+const LoadKind = { Reload: 'reload' } as const;
+
+const reloaded = () =>
+	performance
+		.getEntriesByType('navigation')
+		.some((entry) => (entry as PerformanceNavigationTiming).type === LoadKind.Reload);
+
+function savedStack(url: string): string[] {
+	try {
+		const saved: unknown = JSON.parse(sessionStorage.getItem(STACK_KEY) ?? '[]');
+		if (Array.isArray(saved) && saved.at(-1) === url) return saved;
+	} catch {}
+	return [url];
+}
+
+const enterStack = (url: string) => (reloaded() ? savedStack(url) : [url]);
+
+let stack: string[] = enterStack(location.pathname + location.search);
 let replacing = false;
 let ownBack = false;
 
@@ -21,11 +39,15 @@ const goBackBy = (steps: number, url: string) => {
 const stepsBack = (navigation: AfterNavigate) =>
 	navigation.type === NavigationKind.Popstate ? -(navigation.delta ?? -1) : 0;
 
-export function track(navigation: AfterNavigate) {
-	if (!navigation.to) return;
-	const url = key(navigation.to.url);
+function saveStack() {
+	try {
+		sessionStorage.setItem(STACK_KEY, JSON.stringify(stack));
+	} catch {}
+}
+
+function follow(navigation: AfterNavigate, url: string) {
 	if (navigation.type === NavigationKind.Enter) {
-		stack = [url];
+		stack = enterStack(url);
 		replacing = false;
 	} else if (replacing) {
 		replaceTop(url);
@@ -35,6 +57,12 @@ export function track(navigation: AfterNavigate) {
 	} else {
 		stack.push(url);
 	}
+}
+
+export function track(navigation: AfterNavigate) {
+	if (!navigation.to) return;
+	follow(navigation, key(navigation.to.url));
+	saveStack();
 }
 
 export function back(target: string) {

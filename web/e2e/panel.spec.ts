@@ -136,6 +136,51 @@ test('a direct link still has a way back', async ({ page }) => {
 	await expect(page).toHaveURL(/\/projects(\/sample)?$/);
 });
 
+test('back after a reload still returns without new history', async ({ page }) => {
+	await page.goto('/projects');
+	await page.getByRole('link', { name: /^sample\b/ }).click();
+	await expect(page.getByRole('link', { name: 'Back to projects' })).toBeVisible();
+	await page.reload();
+	await page.getByRole('link', { name: 'Back to projects' }).click();
+	await expect(page).toHaveURL(/\/projects$/);
+	await expect(page.getByRole('link', { name: /^sample\b/ })).toBeVisible();
+	await page.goForward();
+	await expect(page).toHaveURL(/\/projects\/sample$/);
+});
+
+test('a drag cut short by leaving the page stops its frame loop', async ({ page }, info) => {
+	test.skip(!phone(info.project.name), 'the phone only');
+	await page.addInitScript(() => {
+		const counter = window as unknown as { frames: number };
+		counter.frames = 0;
+		const request = window.requestAnimationFrame.bind(window);
+		window.requestAnimationFrame = (callback) => {
+			counter.frames += 1;
+			return request(callback);
+		};
+	});
+	await page.goto('/projects/sample/lanes/api');
+	const ring = page.getByRole('button', { name: babysitter }).first();
+	const box = (await ring.boundingBox())!;
+	const at = (dx: number, dy: number) => ({
+		pointerId: 1,
+		isPrimary: true,
+		clientX: box.x + dx,
+		clientY: box.y + dy
+	});
+	await ring.dispatchEvent('pointerdown', at(20, 20));
+	await ring.dispatchEvent('pointermove', at(-60, -80));
+	await expect(ring).toHaveClass(/dragging/);
+	await page
+		.getByRole('link', { name: 'Back to sample' })
+		.evaluate((link) => (link as HTMLAnchorElement).click());
+	await expect(page).toHaveURL(/\/projects\/sample$/);
+	const frames = () => page.evaluate(() => (window as unknown as { frames: number }).frames);
+	const before = await frames();
+	await page.waitForTimeout(1000);
+	expect((await frames()) - before).toBeLessThan(5);
+});
+
 test('copying an id says so on the screen', async ({ page }) => {
 	const copies = await recordCopies(page);
 	await page.goto('/projects/sample/lanes/api');

@@ -1,9 +1,13 @@
 <script lang="ts">
-	let { what, onretry }: { what: string; onretry: () => void } = $props();
+	let {
+		what,
+		onretry,
+		refresh = false
+	}: { what: string; onretry: () => void; refresh?: boolean } = $props();
 </script>
 
 <p class="failed label muted" role="alert">
-	Could not load {what}.
+	Could not {refresh ? 'refresh' : 'load'} {what}.
 	<button type="button" class="link" onclick={onretry}>Try again</button>
 </p>
 

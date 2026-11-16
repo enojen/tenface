@@ -156,6 +156,8 @@
 	$effect(() => {
 		if (dialog && page.state.agent === agent.role) untrack(() => !open && openCard());
 	});
+
+	$effect(() => () => cancelAnimationFrame(frame));
 </script>
 
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} />
