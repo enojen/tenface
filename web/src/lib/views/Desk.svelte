@@ -67,7 +67,8 @@
 				<LanesTable {project} desk size={10} picked={lane?.id ?? null} outlined={questionId !== null} />
 			</div>
 
-			<main class="column banded" hidden={planWide}>
+			{#if !planWide}
+			<main class="column banded">
 				{#if lane}
 					<div class="lane-top band">
 						<LaneHeader {lane} heading="h2" />
@@ -91,8 +92,9 @@
 					<div class="band"><p class="card-head">Lane</p><p class="subject">This project has no lanes yet</p></div>
 				{/if}
 			</main>
+			{/if}
 
-			<aside class="column banded" class:wide={planWide} aria-label={detailLabel()}>
+			<svelte:element this={planWide ? 'main' : 'aside'} class="column banded" class:wide={planWide} aria-label={detailLabel()}>
 				{#if task}
 					{#key task.id}<TaskDetail {task} steps={project.steps} onclose={close} />{/key}
 				{:else if questionId}
@@ -100,7 +102,7 @@
 				{:else}
 					<div class="band"><p class="card-head">Task</p><p class="subject">No task selected</p></div>
 				{/if}
-			</aside>
+			</svelte:element>
 		</div>
 	</section>
 </div>
@@ -158,10 +160,6 @@
 		border-radius: 24px;
 		border: 1px solid var(--line);
 		background: var(--lift);
-	}
-
-	.column[hidden] {
-		display: none;
 	}
 
 	.column.wide {

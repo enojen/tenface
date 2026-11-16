@@ -33,7 +33,7 @@
 	<ul aria-label="Tasks of {lane.name}">
 		{#each nodes as row, index (row.item.id)}
 			{@const task = row.item}
-			{@const step = rowStep(task, live.now)}
+			{@const step = rowStep(task, live.now, offline)}
 			<li>
 				<a class="row {task.state}" class:picked={picked === task.id} class:offline={offline && task.state === TaskState.Running} href={href(task)} draggable="false" onclick={keepSelection} aria-current={picked === task.id ? 'true' : undefined}>
 					<span class="number" aria-hidden="true">{index + 1}</span>
@@ -45,11 +45,10 @@
 						<span class="id">{task.id}</span>
 						<span class="name">{task.title}</span>
 					</span>
-					<span class="step">
-						<span class="tile" aria-hidden="true"></span>
+					<span class="step" role="img" aria-label="{step.label}{task.state === TaskState.Asking ? ', the babysitter asks you' : ''}">
+						<span class="tile"></span>
 						<span class="word">{step.word}</span>
 						{#if step.time}<span class="time">{step.time}</span>{/if}
-						{#if task.state === TaskState.Asking}<span class="sr-only">, the babysitter asks you</span>{/if}
 					</span>
 				</a>
 			</li>

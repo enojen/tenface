@@ -19,7 +19,7 @@
 		[LineKind.Removed]: { sign: '−', name: 'removed' }
 	};
 	const state = $derived(task?.state ?? TaskState.Todo);
-	const step = $derived(task ? rowStep(task, live.now) : { word: 'waiting', time: '' });
+	const step = $derived(task ? rowStep(task, live.now) : { word: 'waiting', time: '', label: 'waiting' });
 	const hidden = $derived(side === Side.Left && line?.kind === LineKind.Same);
 </script>
 

@@ -98,11 +98,16 @@ export function placeLabel(place: StepPlace): string {
 export interface RowStep {
 	word: string;
 	time: string;
+	label: string;
 }
 
-export function rowStep(task: Task, now: number): RowStep {
-	if (task.state === TaskState.Done) return { word: 'done', time: '' };
+const restingStep = (word: string): RowStep => ({ word, time: '', label: word });
+
+export function rowStep(task: Task, now: number, offline = false): RowStep {
+	if (task.state === TaskState.Done) return restingStep('done');
 	const run = currentStep(task);
-	if (!run) return { word: 'waiting', time: '' };
-	return { word: run.step, time: stepTime(runMinutes(run, now)) };
+	if (!run) return restingStep('waiting');
+	const minutes = runMinutes(run, now);
+	const label = `${run.step} ${minutes} min${statusWords(currentMark(task, offline))}`;
+	return { word: run.step, time: stepTime(minutes), label };
 }
