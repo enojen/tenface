@@ -85,7 +85,7 @@
 							<span class="sub">{question.task ?? `lane ${question.lane}`}</span>
 						</span>
 						<span class="id-cell">
-							<CopyText class="copy-id" text={question.id} label="Copy {question.id}" done="{question.id} copied, paste it in the chat">
+							<CopyText class="copy-id" quiet text={question.id} label="Copy {question.id}" done="{question.id} copied, paste it in the chat">
 								{#snippet children(copied)}
 									{question.id}{#if copied}<Check size={12} aria-hidden="true" />{:else}<Copy size={12} aria-hidden="true" />{/if}
 								{/snippet}
@@ -268,12 +268,6 @@
 	.pages {
 		padding: 0 var(--band-pad);
 		border-top: 1px solid var(--line);
-	}
-
-	.needs :global(.copy-id.copied) {
-		padding-inline: 4px;
-		background: var(--ink);
-		color: var(--ground);
 	}
 
 	.actions :global(.button.copied) {

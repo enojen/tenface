@@ -143,7 +143,10 @@ test('copying an id says so on the screen', async ({ page }) => {
 	await expect(page.getByText('Merge PR #418?')).toBeVisible();
 	await page.getByRole('button', { name: 'Copy Q12' }).click();
 	expect(await copies()).toEqual(['Q12']);
-	await expect(page.getByText('Q12 copied, paste it in the chat')).toBeVisible();
+	await expect(
+		page.getByRole('status').filter({ hasText: 'Q12 copied, paste it in the chat' })
+	).toBeAttached();
+	await expect(page.locator('.toast')).toHaveText('');
 	await page.getByRole('button', { name: 'Copy handover prompt' }).click();
 	await expect(page.getByRole('button', { name: 'Copy handover prompt' })).toHaveText('Copied');
 	await page.keyboard.press('Escape');
