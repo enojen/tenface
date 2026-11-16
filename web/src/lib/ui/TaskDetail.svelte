@@ -10,7 +10,7 @@
 		onclose,
 		heading = 'h2',
 		hideClose = false
-	}: { task: Task; steps: StepName[]; onclose: () => void; heading?: 'h1' | 'h2'; hideClose?: boolean } = $props();
+	}: { task: Task; steps: StepName[]; onclose?: () => void; heading?: 'h1' | 'h2'; hideClose?: boolean } = $props();
 </script>
 
 <div class="detail">
@@ -30,19 +30,12 @@
 				<ListChecks size={18} aria-hidden="true" /><span class="sr-only">Tracker {task.id}</span>
 			</a>
 		</span>
-		<button type="button" class="icon-button close" class:hidden-close={hideClose} aria-label="Close" onclick={onclose}><X size={20} /></button>
+		{#if onclose}<button type="button" class="icon-button close" class:hidden-close={hideClose} aria-label="Close" onclick={onclose}><X size={20} /></button>{/if}
 	</div>
 
 	<div class="detail-body">
 	{#if task.steps.length > 0 || task.state !== TaskState.Todo}
 		<StepTable {task} {steps} />
-	{/if}
-
-	{#if task.note}
-		<div class="note">
-			<h3 class="label muted">Note</h3>
-			<p>{task.note}</p>
-		</div>
 	{/if}
 	</div>
 </div>
@@ -105,20 +98,5 @@
 		font-weight: 600;
 		color: var(--ink);
 		text-decoration: none;
-	}
-
-	.note {
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-	}
-
-	.note h3 {
-		font-weight: 400;
-	}
-
-	.note p {
-		color: var(--ink-soft);
-		overflow-wrap: anywhere;
 	}
 </style>

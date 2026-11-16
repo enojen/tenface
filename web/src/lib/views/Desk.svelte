@@ -96,7 +96,7 @@
 
 			<svelte:element this={planWide ? 'main' : 'aside'} class="column banded" class:wide={planWide} aria-label={detailLabel()}>
 				{#if task}
-					{#key task.id}<TaskDetail {task} steps={project.steps} onclose={close} />{/key}
+					{#key task.id}<TaskDetail {task} steps={project.steps} />{/key}
 				{:else if questionId}
 					{@render planChange()}
 				{:else}
