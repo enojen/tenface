@@ -161,8 +161,9 @@ export function sampleWorld(now: number): SampleWorld {
 					[
 						[Step.Plan, 7],
 						[Step.Approve, 2],
-						[Step.Build, 38],
+						[Step.Build, 30],
 						[Step.PR, 4],
+						[Step.Build, 8],
 						[Step.Merge, 12]
 					],
 					true

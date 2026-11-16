@@ -115,7 +115,6 @@ rounded:
   step-dot: "2px"
   mark: "4px"
   node: "3px"
-  step-tile: "9px"
   row: "12px"
   card: "18px"
   panel: "20px"
@@ -325,7 +324,9 @@ The phone is the first target (designed at 390 px), with a 16 px side gutter and
 
 **Lane tree.** The tree is a table with four columns: the line number (#), the tree graph, the task (its id, then its title) and the step. The head row of the table sits flush under the lane band and runs to the card's edges: a Raised Sepia row with `line-strong` borders above and below and 12 px muted labels "#", "task" and "step". Rows are at least 30 px high, in the Row type. A title wraps under itself, not under the id. Below 400 px of tree width the graph cells are 14 px instead of 22 px, and the step column shows only the time, not the step name. The owner can select the text of a row without opening the task.
 
-**Task.** A bottom sheet over the lane, dimmed with ink at 32%: a grab handle and the head band ("Task · SAM-103" and the title, with the PR and Tracker links at its right), the steps with the total time ("1h03 total"), and the babysitter's note. The PR link is a 40 px capsule with the GitHub mark and "#418"; the Tracker link is a 40 px round button with only its icon, because the id is already on the band. The steps are a snake of eight places, four per row: plan, approve, build, debug, eval, PR, merge, close. The rows stand 32 px apart, and the line that runs back from the end of the first row to the start of the second is dashed and sits halfway between them. A step a project does not use has a dashed `line-strong` tile and no time. A done step looks like a closed task in the tree: its tile is filled with Done Mark and holds a light icon, and its name and time are `muted-soft`.
+**Task.** A bottom sheet over the lane, dimmed with ink at 32%: a grab handle and the head band ("Task · SAM-103" and the title, with the PR and Tracker links at its right), the steps, and the babysitter's note. The PR link is a 40 px capsule with the GitHub mark and "#418"; the Tracker link is a 40 px round button with only its icon, because the id is already on the band.
+
+**Steps.** The steps are a table like the lane tree, flush under the band: # | node | step | started | time. The node line runs straight from the first step to the last, with the same squares as the tree. A step cell holds a 14 px step icon and the step name. The rows follow the runs in the order they ran. A step that runs again gets a new row: the first run is "build", the next ones are "build #2", "build #3". A step without a run stays at its place among the eight: plan, approve, build, debug, eval, PR, merge, close. A step the project does not use has a dashed `line-strong` node, a pale icon, "not used" in muted italic and no time. A done step looks like a closed task in the tree: a Done Mark node, and its name and time in `muted-soft`. The running step is red at 600 and a step that asks the owner is ink at 600. "started" is the clock time of the run ("14:38", or "Nov 13, 20:30" on another day). A step that has not started shows "–" as its time. The last row, under a `line-strong` rule, is the total time of the task.
 
 **Desktop.** The floating nav sits at the bottom center here too. The projects page is the same table, wide, with every row on one page. A project page is one project card (see the Project Holds Rule) with three columns inside: the lanes list, the lane card (its tree and the B ring) and the task card. The project card fills the screen width with 32 px side gutters and reaches down to the nav: the lanes list is 22% of the screen (340 to 420 px), and the lane and task cards share the rest equally; below 1200 px the gutters are 16 px and the lanes list is 340 px. The task card shows whatever the owner picked last: a task, or the plan change of a planner question. A plan change needs the room for its two sides, so it spans the lane and task columns and becomes the page's main content; the lane card leaves until the owner picks a task again. An agent card opens in place under its ring, without dimming the page.
 
@@ -351,7 +352,7 @@ Surfaces are flat. Tables, cards and columns are told apart by tone (ground, til
 
 ## Shapes
 
-Capsules for everything you press: buttons, the copy-id pill, tabs, the nav (999px). The agent ring is a circle. Agent cards have 18 px corners, tables 20 px, desktop columns 24 px, the project card 28 px, the task sheet 32 px top corners, a selected lane row, the lane diff cards and the box of a new lane 12 px. A tree row and a table head row have no corners; they run to the card's edges. The lane progress bar is 8 px high and 220 px at most, a capsule; tree nodes are 11 px with 3 px corners, and the square of a step cell is 8 px with 2 px corners. Step icons sit on 36 px tiles with 9 px corners in the task. No glass, no blur, no transparency in surfaces.
+Capsules for everything you press: buttons, the copy-id pill, tabs, the nav (999px). The agent ring is a circle. Agent cards have 18 px corners, tables 20 px, desktop columns 24 px, the project card 28 px, the task sheet 32 px top corners, a selected lane row, the lane diff cards and the box of a new lane 12 px. A tree row and a table head row have no corners; they run to the card's edges. The lane progress bar is 8 px high and 220 px at most, a capsule; tree nodes are 11 px with 3 px corners, and the square of a step cell is 8 px with 2 px corners. The steps of a task use the same 11 px nodes. No glass, no blur, no transparency in surfaces.
 
 ## Components
 
