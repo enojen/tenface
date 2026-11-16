@@ -90,6 +90,7 @@
 		flex-direction: column;
 		gap: 10px;
 		--band-pad: 14px;
+		--band-top: 14px;
 		--band-radius: 17px;
 		padding: 14px;
 		border-radius: 18px;

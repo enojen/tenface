@@ -11,7 +11,7 @@
 <style>
 	.cell {
 		position: relative;
-		width: 22px;
+		width: var(--tree-cell, 22px);
 		flex: none;
 	}
 
@@ -21,30 +21,29 @@
 	.last-branch::before {
 		content: '';
 		position: absolute;
-		left: 10px;
+		left: 6px;
 	}
 
 	.pass::before,
 	.branch::before {
 		top: 0;
 		bottom: 0;
-		width: 2px;
+		width: 1px;
 		background: var(--mark);
 	}
 
 	.branch::after {
-		top: 31px;
-		width: 15px;
-		height: 2px;
+		top: 15px;
+		width: calc(var(--tree-cell, 22px) - 6px);
+		height: 1px;
 		background: var(--mark);
 	}
 
 	.last-branch::before {
 		top: 0;
-		width: 15px;
-		height: 33px;
-		border-left: 2px solid var(--mark);
-		border-bottom: 2px solid var(--mark);
-		border-bottom-left-radius: 8px;
+		width: calc(var(--tree-cell, 22px) - 6px);
+		height: 16px;
+		border-left: 1px solid var(--mark);
+		border-bottom: 1px solid var(--mark);
 	}
 </style>

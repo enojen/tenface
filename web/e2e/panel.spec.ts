@@ -193,8 +193,8 @@ test('a planner question opens its plan change', async ({ page }, info) => {
 		.click();
 	await page.getByRole('link', { name: 'Split search into a new lane' }).click();
 	await expect(page).toHaveURL(/\/questions\/Q16/);
-	await expect(page.getByRole('img', { name: 'added' })).toBeVisible();
-	await expect(page.getByText('New lane search-index')).toBeVisible();
+	await expect(page.getByRole('img', { name: 'added' }).first()).toBeVisible();
+	await expect(page.getByRole('region', { name: 'New lane search-index' })).toBeVisible();
 	if (!phone(info.project.name)) {
 		await expect(page.getByRole('link', { name: /^api\b/ })).toHaveClass(/outlined/);
 	}
@@ -319,11 +319,11 @@ test('the middle line of the steps keeps clear of both rows and is dashed', asyn
 test('a done step looks like a done task in the tree', async ({ page }, info) => {
 	const detail = await openTask(page, phone(info.project.name));
 	const tree = await page
-		.locator('.node.done')
+		.locator('.row.done')
 		.first()
-		.evaluate((node) => ({
-			fill: getComputedStyle(node).backgroundColor,
-			name: getComputedStyle(node.closest('.row')!.querySelector('.name.done')!).color
+		.evaluate((row) => ({
+			fill: getComputedStyle(row.querySelector('.node')!).backgroundColor,
+			name: getComputedStyle(row.querySelector('.name')!).color
 		}));
 	const step = await detail
 		.locator('.place.done')
@@ -484,20 +484,21 @@ test('the panel stays light when the browser darkens pages', async ({ browser },
 	expect(await shot(['--enable-features=WebContentsForceDark'])).toBe(await shot([]));
 });
 
-test('a picked lane and a picked task are raised light cards', async ({ page }, info) => {
+test('a picked lane is a raised light card and a picked task a darker row', async ({
+	page
+}, info) => {
 	test.skip(phone(info.project.name), 'the desk only');
 	await page.goto('/projects/sample/lanes/api?task=SAM-102');
 	const lane = page.getByRole('link', { name: /^api\b/ }).first();
 	const task = page.getByRole('link', { name: /Paginate the orders list/ });
 	await expect(lane).toHaveAttribute('aria-current', 'true');
 	await expect(task).toHaveAttribute('aria-current', 'true');
-	for (const row of [lane, task]) {
-		await expect(row).toHaveCSS('background-color', 'rgb(255, 253, 249)');
-		await expect(row).toHaveCSS(
-			'box-shadow',
-			/rgb\(214, 206, 190\) 0px 0px 0px 1px, rgba\(31, 28, 23, 0\.08\) 0px 2px 6px/
-		);
-	}
+	await expect(lane).toHaveCSS('background-color', 'rgb(255, 253, 249)');
+	await expect(lane).toHaveCSS(
+		'box-shadow',
+		/rgb\(214, 206, 190\) 0px 0px 0px 1px, rgba\(31, 28, 23, 0\.08\) 0px 2px 6px/
+	);
+	await expect(task).toHaveCSS('background-color', 'rgb(224, 217, 203)');
 	await expect(task.locator('.name')).toHaveCSS('font-weight', '600');
 });
 

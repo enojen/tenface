@@ -117,5 +117,5 @@ test('a plan change comes from the server', async ({ page }) => {
 	);
 	await page.goto('/projects/sample/questions/Q16');
 	await asked;
-	await expect(page.getByText('New lane search-index')).toBeVisible();
+	await expect(page.getByRole('region', { name: 'New lane search-index' })).toBeVisible();
 });

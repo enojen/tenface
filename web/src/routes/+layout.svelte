@@ -8,12 +8,19 @@
 	import Nav from '#lib/ui/Nav.svelte';
 	import Toast from '#lib/ui/Toast.svelte';
 	import { afterNavigate, onNavigate } from '$app/navigation';
+	import { page } from '$app/state';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
 
+	const THEMES = new Set(['light', 'dark']);
+
 	$effect(() => live.start());
 	$effect(() => wide.start());
+	$effect(() => {
+		const theme = page.url.searchParams.get('theme');
+		if (theme !== null && THEMES.has(theme)) document.documentElement.dataset.theme = theme;
+	});
 
 	afterNavigate(track);
 	onNavigate((navigation) => {

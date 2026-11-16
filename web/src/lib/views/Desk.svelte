@@ -35,6 +35,8 @@
 	const task = $derived(taskId ? tree.value?.tasks.find((candidate) => candidate.id === taskId) : undefined);
 	const close = () => back(lane ? laneUrl(project.id, lane.id) : projectUrl(project.id));
 
+	const planWide = $derived(questionId !== null && !task);
+
 	function detailLabel() {
 		if (task) return `Task ${task.id}`;
 		if (questionId) return `Question ${questionId}`;
@@ -44,7 +46,7 @@
 
 {#snippet planChange()}
 	{#if plan.value?.change}
-		<PlanChange question={plan.value} heading="h2" onclose={close} />
+		<PlanChange projectId={project.id} question={plan.value} heading="h2" onclose={close} />
 	{:else if plan.state === LoadState.Loading}
 		<Skeleton kind={SkeletonKind.Tree} label="Loading the plan change {questionId}" />
 	{:else}
@@ -65,6 +67,7 @@
 				<LanesTable {project} desk size={10} picked={lane?.id ?? null} outlined={questionId !== null} />
 			</div>
 
+			{#if !planWide}
 			<main class="column banded">
 				{#if lane}
 					<div class="lane-top band">
@@ -75,7 +78,6 @@
 						{#if tree.value}
 							<LaneTree
 								lane={tree.value}
-								steps={project.steps}
 								picked={task?.id ?? null}
 								offline={!live.connection.online}
 								href={(item) => taskUrl(project.id, lane.id, item.id)}
@@ -90,8 +92,9 @@
 					<div class="band"><p class="card-head">Lane</p><p class="subject">This project has no lanes yet</p></div>
 				{/if}
 			</main>
+			{/if}
 
-			<aside class="column banded" aria-label={detailLabel()}>
+			<svelte:element this={planWide ? 'main' : 'aside'} class="column banded" class:wide={planWide} aria-label={detailLabel()}>
 				{#if task}
 					{#key task.id}<TaskDetail {task} steps={project.steps} onclose={close} />{/key}
 				{:else if questionId}
@@ -99,7 +102,7 @@
 				{:else}
 					<div class="band"><p class="card-head">Task</p><p class="subject">No task selected</p></div>
 				{/if}
-			</aside>
+			</svelte:element>
 		</div>
 	</section>
 </div>
@@ -159,6 +162,10 @@
 		background: var(--lift);
 	}
 
+	.column.wide {
+		grid-column: 2 / span 2;
+	}
+
 	.column > :global(.detail),
 	.column > :global(.plan) {
 		grid-row: 1 / span 2;
@@ -166,14 +173,15 @@
 		grid-template-rows: subgrid;
 	}
 
-	.column :global(.band) {
+	.column > :global(.band),
+	.column > :global(* > .band) {
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
 	}
 
 	.lane-top.band,
-	.column :global(.top.band) {
+	.column > :global(* > .top.band) {
 		flex-direction: row;
 		align-items: flex-start;
 		gap: 8px;
