@@ -3,6 +3,8 @@ import { live } from './live.svelte.ts';
 export const LoadState = { Loading: 'loading', Ready: 'ready', Failed: 'failed' } as const;
 export type LoadState = (typeof LoadState)[keyof typeof LoadState];
 
+const kept = new Map<string, unknown>();
+
 export class Load<T> {
 	value = $state.raw<T | undefined>(undefined);
 	state = $state<LoadState>(LoadState.Loading);
@@ -27,12 +29,13 @@ export class Load<T> {
 
 	private reset(key: string) {
 		this.key = key;
-		this.value = undefined;
-		this.state = LoadState.Loading;
+		this.value = kept.get(key) as T | undefined;
+		this.state = this.value === undefined ? LoadState.Loading : LoadState.Ready;
 	}
 
 	private done(signal: AbortSignal, value: T) {
 		if (signal.aborted) return;
+		if (this.key !== null) kept.set(this.key, value);
 		this.value = value;
 		this.state = LoadState.Ready;
 	}
@@ -67,11 +70,15 @@ export function loadFor<T>(key: () => string | null, fetch: (signal: AbortSignal
 const SEARCH_PAUSE_MS = 250;
 
 export function searchFor(
+	scope: () => string,
 	query: () => string,
 	find: (query: string, signal: AbortSignal) => Promise<string[]>
 ) {
 	return loadFor(
-		() => query().trim() || null,
+		() => {
+			const text = query().trim();
+			return text ? `${scope()}?${text}` : null;
+		},
 		async (signal) => {
 			const text = query().trim();
 			await pause(SEARCH_PAUSE_MS, signal);

@@ -15,6 +15,7 @@
 	let query = $state('');
 	let page = $state(0);
 	const hits = searchFor(
+		() => 'projects',
 		() => query,
 		(text, signal) => api.searchProjects(text, signal)
 	);
