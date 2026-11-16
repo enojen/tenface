@@ -29,7 +29,7 @@
 	const thousands = (tokens: number) => `${Math.round(tokens / 1000)}k`;
 
 	const detail = loadFor(
-		() => `${source.project}/${source.lane ?? ''}`,
+		() => `agent/${source.project}/${source.lane ?? ''}`,
 		(signal) => api.agent(source, signal)
 	);
 	const oldest = $derived(

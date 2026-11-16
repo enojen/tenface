@@ -16,7 +16,7 @@
 	let { project, lane, taskId }: { project: Project; lane: LaneSummary; taskId: string | null } = $props();
 
 	const tree = loadFor(
-		() => `${project.id}/${lane.id}`,
+		() => `lane/${project.id}/${lane.id}`,
 		(signal) => api.lane(project.id, lane.id, signal)
 	);
 	const task = $derived(taskId ? tree.value?.tasks.find((candidate) => candidate.id === taskId) : undefined);

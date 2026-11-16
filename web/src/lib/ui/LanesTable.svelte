@@ -21,6 +21,7 @@
 	let query = $state('');
 	let page = $state(0);
 	const hits = searchFor(
+		() => `lanes/${project.id}`,
 		() => query,
 		(text, signal) => api.searchLanes(project.id, text, signal)
 	);

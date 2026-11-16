@@ -25,11 +25,11 @@
 
 	const lane = $derived(project.lanes.find((candidate) => candidate.id === laneId) ?? project.lanes[0]);
 	const tree = loadFor(
-		() => (lane ? `${project.id}/${lane.id}` : null),
+		() => (lane ? `lane/${project.id}/${lane.id}` : null),
 		(signal) => api.lane(project.id, lane?.id ?? '', signal)
 	);
 	const plan = loadFor(
-		() => (questionId ? `${project.id}/${questionId}` : null),
+		() => (questionId ? `question/${project.id}/${questionId}` : null),
 		(signal) => api.question(project.id, questionId ?? '', signal)
 	);
 	const task = $derived(taskId ? tree.value?.tasks.find((candidate) => candidate.id === taskId) : undefined);

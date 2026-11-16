@@ -12,7 +12,7 @@
 	let { project, questionId }: { project: Project; questionId: string } = $props();
 
 	const plan = loadFor(
-		() => `${project.id}/${questionId}`,
+		() => `question/${project.id}/${questionId}`,
 		(signal) => api.question(project.id, questionId, signal)
 	);
 </script>

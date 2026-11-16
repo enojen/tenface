@@ -18,7 +18,7 @@
 	let { projectId, tree, trees }: { projectId: string; tree: PlanTree; trees: PlanTree[] } = $props();
 
 	const lane = loadFor(
-		() => `${projectId}/${tree.lane}`,
+		() => `lane/${projectId}/${tree.lane}`,
 		(signal) => api.lane(projectId, tree.lane, signal)
 	);
 	const tasks = $derived(new Map<string, Task>((lane.value?.tasks ?? []).map((task) => [task.id, task])));

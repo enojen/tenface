@@ -381,6 +381,22 @@ test('a lane shows a skeleton while its tasks load', async ({ page }) => {
 	await expect(page.getByRole('status', { name: 'Loading the tasks of api' })).toBeHidden();
 });
 
+test('a lane seen before shows its tasks at once when the owner comes back', async ({ page }) => {
+	await slowServer(page, 1500);
+	await page.goto('/projects');
+	await page.getByRole('link', { name: /^sample\b/ }).click();
+	await page
+		.getByRole('link', { name: /^api\b/ })
+		.first()
+		.click();
+	await expect(page.getByRole('list', { name: 'Tasks of api' })).toBeVisible();
+	await page.goBack();
+	await expect(page).toHaveURL(/\/projects\/sample$/);
+	await page.goForward();
+	await expect(page.getByRole('list', { name: 'Tasks of api' })).toBeVisible({ timeout: 500 });
+	await expect(page.getByRole('status', { name: 'Loading the tasks of api' })).toHaveCount(0);
+});
+
 test('a search shows a skeleton until the server answers', async ({ page }) => {
 	await slowServer(page, 1500);
 	await page.goto('/projects');
