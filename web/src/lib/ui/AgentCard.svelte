@@ -43,6 +43,7 @@
 
 {#snippet loaded(render: Snippet<[Agent]>)}
 	{#if detail.value}
+		{#if detail.state === LoadState.Failed}<LoadFailed what="the {role.toLowerCase()}" onretry={() => detail.retry()} refresh />{/if}
 		{@render render(detail.value)}
 	{:else if detail.state === LoadState.Failed}
 		<LoadFailed what="the {role.toLowerCase()}" onretry={() => detail.retry()} />

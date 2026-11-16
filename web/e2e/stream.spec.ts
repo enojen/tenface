@@ -110,6 +110,37 @@ test('a lane that does not load says so and loads again on a retry', async ({ pa
 	await expect(page.getByRole('list', { name: 'Tasks of api' })).toBeVisible();
 });
 
+test('a lane that fails to refresh keeps its tasks and says so', async ({ page }) => {
+	const world = sampleWorld(Date.now());
+	await serve(page, world);
+	let pushing = true;
+	await page.route('**/api/stream', (route) =>
+		pushing
+			? route.fulfill({
+					status: 200,
+					headers: { 'content-type': 'text/event-stream' },
+					body: `retry: 200\nevent: state\ndata: ${JSON.stringify(summarize(world))}\n\n`
+				})
+			: route.fulfill({ status: 204 })
+	);
+	let calls = 0;
+	let failing = true;
+	await page.route('**/api/projects/sample/lanes/api', (route) => {
+		calls += 1;
+		if (calls > 1 && failing) return route.fulfill({ status: 500 });
+		return route.fallback();
+	});
+	await page.goto('/projects/sample/lanes/api');
+	await expect(page.getByRole('list', { name: 'Tasks of api' })).toBeVisible();
+	await expect(page.getByRole('alert')).toHaveText(/Could not refresh the tasks of api/);
+	await expect(page.getByRole('list', { name: 'Tasks of api' })).toBeVisible();
+	pushing = false;
+	await expect(page.getByText(/^Offline since/)).toBeVisible();
+	failing = false;
+	await page.getByRole('button', { name: 'Try again' }).click();
+	await expect(page.getByRole('alert')).toHaveCount(0);
+});
+
 test('a plan change comes from the server', async ({ page }) => {
 	await serve(page, sampleWorld(Date.now()));
 	const asked = page.waitForRequest((request) =>

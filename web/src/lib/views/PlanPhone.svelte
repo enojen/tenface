@@ -21,6 +21,7 @@
 <main class="content">
 	<section class="panel-card banded">
 		{#if plan.value?.change}
+			{#if plan.state === LoadState.Failed}<LoadFailed what="the plan change {questionId}" onretry={() => plan.retry()} refresh />{/if}
 			<PlanChange projectId={project.id} question={plan.value} />
 		{:else if plan.state === LoadState.Loading}
 			<Skeleton kind={SkeletonKind.Tree} label="Loading the plan change {questionId}" />

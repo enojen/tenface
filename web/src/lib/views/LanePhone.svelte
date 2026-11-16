@@ -27,6 +27,7 @@
 	<section class="panel-card banded">
 		<div class="band"><LaneHeader {lane} /></div>
 	{#if tree.value}
+		{#if tree.state === LoadState.Failed}<LoadFailed what="the tasks of {lane.name}" onretry={() => tree.retry()} refresh />{/if}
 		<LaneTree
 			lane={tree.value}
 			picked={taskId}

@@ -41,7 +41,7 @@ export class Load<T> {
 	}
 
 	private fail(signal: AbortSignal) {
-		if (signal.aborted || this.value !== undefined) return;
+		if (signal.aborted) return;
 		this.state = LoadState.Failed;
 	}
 }
