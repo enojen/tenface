@@ -309,7 +309,7 @@
       },
       {
         "name": "The Card Head Rule",
-        "body": "A card opens with its head on a band: the Card Head line, then the Subject, on a Raised Sepia band that runs to the card edges and top corners (project card, lane card, task card, agent card, task sheet). A level below is never heavier than the level above. A Card Head outside a card has no band.",
+        "body": "A card opens with its head on a band: the Card Head line, then the Subject, on a Raised Sepia band that runs to the card edges and top corners (project card, lane card, task card, agent card, task sheet). A level below is never heavier than the level above. On the phone the plan change is a card too, with a back link that names the project.",
         "section": "typography"
       },
       {
