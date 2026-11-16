@@ -3,9 +3,10 @@
 	import type { Question } from '#lib/api/types.ts';
 	import { minutesBetween, waitTime } from '#lib/format.ts';
 	import { live } from '#lib/live.svelte.ts';
-	import { splitSource } from '#lib/plan-diff.ts';
+	import { laneChanges, splitSource } from '#lib/plan-diff.ts';
 	import LaneDiff from './LaneDiff.svelte';
 	import NewLane from './NewLane.svelte';
+	import PlanLanes from './PlanLanes.svelte';
 
 	let {
 		projectId,
@@ -36,10 +37,10 @@
 		</header>
 
 		<div class="plan-body">
-			<p class="reason">{change.reason}</p>
+			<PlanLanes changes={laneChanges(trees)} />
+			<p class="why"><span class="section label">Why</span><span class="reason">{change.reason}</span></p>
 
 			{#if changed.length > 0}
-				<p class="section label">Lane diff</p>
 				{#each changed as tree (tree.lane)}
 					<LaneDiff {projectId} {tree} {trees} />
 				{/each}
@@ -106,8 +107,14 @@
 		color: var(--ink-soft);
 	}
 
+	.why {
+		display: flex;
+		align-items: baseline;
+		gap: 12px;
+	}
+
 	.section {
-		margin-top: 4px;
+		flex: none;
 		font-weight: 600;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
