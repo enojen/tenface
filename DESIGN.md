@@ -239,7 +239,7 @@ Tenface is a ledger that the owner reads in a few seconds. Every project, lane, 
 
 What the agents ask the owner does not sit on the page. Each question belongs to the agent that asked it: the planner of the project (P) or the babysitter of a lane (B). The agent is a ring that shows its context use, and a small card on the ring counts its open questions. Tap the ring and its card lists the questions. The owner answers in that agent's chat, for example "Q12 ok".
 
-The surface is light Sepia, also on a phone or computer set to dark. The dark Sepia twins live under `data-theme="dark"`. Until the panel has a real theme switch, `?theme=dark` or `?theme=light` in the URL sets it. There is no accent color. Hierarchy comes from tone, weight and position. Shapes follow Apple's current capsule forms without the glass: capsule buttons and tabs, round agent rings, softly rounded cards, all opaque and flat.
+The surface is light Sepia, also on a phone or computer set to dark. The dark Sepia twins live under `data-theme="dark"`. The theme switch in the nav sets it, and the device remembers the choice; the system setting does not change it. There is no accent color. Hierarchy comes from tone, weight and position. Shapes follow Apple's current capsule forms without the glass: capsule buttons and tabs, round agent rings, softly rounded cards, all opaque and flat.
 
 The phone answers "what now"; the desktop shows project, lane and task side by side.
 
@@ -316,7 +316,7 @@ The lane diff of a plan change, and only it, uses git's colors. Each tone has a 
 
 The phone is the first target (designed at 390 px), with a 16 px side gutter and 44 × 44 px tap targets. Spacing steps are 4, 8, 12, 16, 24 and 32 px.
 
-**Phone.** Every screen has the floating capsule nav at the bottom center: two tabs, Home and Projects, 220 px wide. The agent of the page floats over it as a 56 px ring, 8 px from the right edge and 104 px from the bottom; the owner can drag it, and it snaps to the nearest edge. A lane page shows the lane's babysitter (B), a project page and a plan change show the project's planner (P), and Home, Projects and a task show no agent. Tapping the ring opens its card full width, over a page dimmed with ink at 32%: above the ring, or below it when the ring is in the upper half of the screen. When the card does not fit on that side, it slides toward the ring, and under it, until the whole card shows 16 px from the screen edges; a card taller than the screen scrolls.
+**Phone.** Every screen has the floating capsule nav at the bottom center: two tabs, Home and Projects, then a thin line and the theme switch. The agent of the page floats over it as a 56 px ring, 8 px from the right edge and 104 px from the bottom; the owner can drag it, and it snaps to the nearest edge. A lane page shows the lane's babysitter (B), a project page and a plan change show the project's planner (P), and Home, Projects and a task show no agent. Tapping the ring opens its card full width, over a page dimmed with ink at 32%: above the ring, or below it when the ring is in the upper half of the screen. When the card does not fit on that side, it slides toward the ring, and under it, until the whole card shows 16 px from the screen edges; a card taller than the screen scrolls.
 
 **Tables.** Projects and lanes use one table kit: an optional section title, a "Search …" capsule field, a header row and rows at least 56 px high. The phone shows five rows per page with a pager ("1–5 of 10" between two arrows); a question list in an agent card shows three. Projects: Project | Needs you (one agent head per asking agent, P and/or B); under the project name a red "running" when one of its lanes runs. A project: Lane | Needs you (a B head when the lane's babysitter asks something); under the lane name a red "1 task running" / "3 tasks running". A row with nothing running shows only its name.
 
@@ -394,7 +394,7 @@ The planner's change to the lanes is read-only. Its band has "Plan change · Q16
 The planner sends every task it moves as its own line, one node per task. The panel cannot open a summary line such as "SAM-305 … SAM-310". The signs are images with a name for screen readers. No Approve and no Reject: the page ends with "Answer in the planner chat with the id, for example Q16 ok."
 
 ### Navigation
-The floating capsule nav with Home and Projects, on the phone and the desktop; the current tab is a raised capsule with a 1.5 px ink border.
+The floating capsule nav with Home and Projects, on the phone and the desktop; the current tab is a raised capsule with a 1.5 px ink border. After a 1 px `line-strong` divider, a 56 px round theme switch shows the moon in light Sepia and the sun in dark Sepia: the icon is the theme the owner gets. Its name says the same ("Dark theme" / "Light theme").
 
 ### Error strip
 An ink strip at the top with an icon, one line of what is wrong and one line of what happens now ("You see the last known state. The panel reconnects by itself."). On the desktop it is at least 56 px high with 24 px side padding.
@@ -427,4 +427,3 @@ What the panel already has shows at once: a lane's header and progress, the agen
 ### Open points
 - Done and running squares differ only by hue (1.64:1). The labels say the state in words; a mark inside the red square was tried and left out.
 - The settings page is not drawn. There is no Archive and no eval page.
-- Dark Sepia has every token, the diff tones too, but the panel has no theme switch yet. `?theme=dark` in the URL is a stopgap.

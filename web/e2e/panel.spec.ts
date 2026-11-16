@@ -349,6 +349,19 @@ test('the panel is light on a dark system too', async ({ page }) => {
 	await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(231, 225, 212)');
 });
 
+test('the theme switch in the nav turns the panel dark and keeps it after a reload', async ({
+	page
+}) => {
+	await page.goto('/projects');
+	await page.getByRole('button', { name: 'Dark theme' }).click();
+	await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+	await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(42, 38, 32)');
+	await page.reload();
+	await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(42, 38, 32)');
+	await page.getByRole('button', { name: 'Light theme' }).click();
+	await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(231, 225, 212)');
+});
+
 async function slowServer(page: Page, ms: number) {
 	await page.addInitScript(
 		(delay) => localStorage.setItem('tenface.mock-delay', String(delay)),

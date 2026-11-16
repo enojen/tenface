@@ -4,23 +4,18 @@
 	import '../app.css';
 	import { live, wide } from '#lib/live.svelte.ts';
 	import { NavigationKind, slide, track } from '#lib/nav.svelte.ts';
+	import { GROUND, theme } from '#lib/theme.svelte.ts';
 	import ErrorStrip from '#lib/ui/ErrorStrip.svelte';
 	import Nav from '#lib/ui/Nav.svelte';
 	import Toast from '#lib/ui/Toast.svelte';
 	import { afterNavigate, onNavigate } from '$app/navigation';
-	import { page } from '$app/state';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
 
-	const THEMES = new Set(['light', 'dark']);
-
 	$effect(() => live.start());
 	$effect(() => wide.start());
-	$effect(() => {
-		const theme = page.url.searchParams.get('theme');
-		if (theme !== null && THEMES.has(theme)) document.documentElement.dataset.theme = theme;
-	});
+	$effect(() => theme.start());
 
 	afterNavigate(track);
 	onNavigate((navigation) => {
@@ -38,8 +33,8 @@
 
 <svelte:head>
 	<title>tenface</title>
-	<meta name="color-scheme" content="only light" />
-	<meta name="theme-color" content="#e7e1d4" />
+	<meta name="color-scheme" content="only {theme.value}" />
+	<meta name="theme-color" content={GROUND[theme.value]} />
 </svelte:head>
 
 <ErrorStrip />
