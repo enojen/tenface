@@ -7,6 +7,7 @@ import {
 	diffPairs,
 	HunkKind,
 	hunks,
+	laneChanges,
 	splitSource,
 	wordDiff
 } from './plan-diff.ts';
@@ -112,6 +113,28 @@ describe('splitSource', () => {
 			roots: [node('SAM-304', null)]
 		};
 		expect(splitSource([searchLane, fresh], fresh)).toBe('search');
+	});
+});
+
+describe('laneChanges', () => {
+	it('says what happens to each lane, the changed lanes first', () => {
+		const fresh: PlanTree = {
+			lane: 'search-index',
+			isNew: true,
+			waits: null,
+			roots: [node('SAM-304', null)]
+		};
+		expect(laneChanges([fresh, searchLane])).toEqual([
+			{
+				lane: 'search',
+				isNew: false,
+				added: 2,
+				removed: 2,
+				moves: [{ to: 'search-index', count: 1 }],
+				source: null
+			},
+			{ lane: 'search-index', isNew: true, added: 1, removed: 0, moves: [], source: 'search' }
+		]);
 	});
 });
 

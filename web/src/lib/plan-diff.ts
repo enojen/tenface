@@ -194,3 +194,43 @@ export function splitSource(trees: PlanTree[], newLane: PlanTree): string | null
 		trees.find((tree) => !tree.isNew && refs.some((ref) => refsOf(tree).has(ref)))?.lane ?? null
 	);
 }
+
+export interface LaneMove {
+	to: string | null;
+	count: number;
+}
+
+export interface LaneChange {
+	lane: string;
+	isNew: boolean;
+	added: number;
+	removed: number;
+	moves: LaneMove[];
+	source: string | null;
+}
+
+function movesOf(trees: PlanTree[], tree: PlanTree): LaneMove[] {
+	const counts = new Map<string | null, number>();
+	for (const node of walk(tree.roots).filter((item) => item.sign === PlanSign.Moved)) {
+		const to = laneOfRef(trees, node.ref, true);
+		counts.set(to, (counts.get(to) ?? 0) + 1);
+	}
+	return [...counts].map(([to, count]) => ({ to, count }));
+}
+
+function laneChange(trees: PlanTree[], tree: PlanTree): LaneChange {
+	const count = diffCount(diffPairs(tree));
+	return {
+		lane: tree.lane,
+		isNew: tree.isNew,
+		added: count.added,
+		removed: count.removed,
+		moves: tree.isNew ? [] : movesOf(trees, tree),
+		source: tree.isNew ? splitSource(trees, tree) : null
+	};
+}
+
+export const laneChanges = (trees: PlanTree[]): LaneChange[] =>
+	[...trees.filter((tree) => !tree.isNew), ...trees.filter((tree) => tree.isNew)].map((tree) =>
+		laneChange(trees, tree)
+	);

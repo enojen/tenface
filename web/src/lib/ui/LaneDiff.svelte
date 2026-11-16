@@ -50,7 +50,7 @@
 	</li>
 {/snippet}
 
-<section class="diff" style:--depth={diffDepth(pairs)} aria-label="Lane diff of {tree.lane}">
+<section class="diff" id="lane-diff-{tree.lane}" style:--depth={diffDepth(pairs)} aria-label="Lane diff of {tree.lane}">
 	<h3 class="title">
 		<span>{tree.lane}</span>
 		<span class="counts">
@@ -97,6 +97,7 @@
 		font-family: var(--sans);
 		font-size: 13px;
 		line-height: 22px;
+		scroll-margin-top: 16px;
 	}
 
 	.title {
@@ -107,7 +108,8 @@
 		gap: 4px 14px;
 		margin: 0;
 		padding: 0 4px;
-		font-size: 13px;
+		font-size: 15px;
+		line-height: 20px;
 		font-weight: 600;
 	}
 
