@@ -69,33 +69,35 @@
 {#snippet needsAndActions(full: Agent)}
 	{#if full.questions.length > 0}
 		<section class="needs" aria-label="Needs you">
-			<h4>Needs you</h4>
-			<div class="table-head" aria-hidden="true" style:--columns="1fr 72px 64px">
-				<span>Question</span><span class="center">ID</span><span class="center">Waiting</span>
+			<div class="qrow head" aria-hidden="true">
+				<span class="number">#</span><span>needs you</span><span>id</span><span class="wait">waiting</span>
 			</div>
 			<ol>
-				{#each shown as question (question.id)}
-					<li class="table-row" style:--columns="1fr 72px 64px">
+				{#each shown as question, index (question.id)}
+					<li class="qrow">
+						<span class="number" aria-hidden="true">{page * PAGE + index + 1}</span>
 						<span class="question">
 							{#if question.change}
-								<a class="title" href={questionHref(question)}>{question.topic}</a>
+								<a class="topic" href={questionHref(question)}>{question.topic}</a>
 							{:else}
-								<span class="title">{question.topic}</span>
+								<span class="topic">{question.topic}</span>
 							{/if}
-							<span class="label muted" class:mono={question.task}>{question.task ?? `lane ${question.lane}`}</span>
+							<span class="sub">{question.task ?? `lane ${question.lane}`}</span>
 						</span>
-						<span class="center">
+						<span class="id-cell">
 							<CopyText class="copy-id" text={question.id} label="Copy {question.id}" done="{question.id} copied, paste it in the chat">
 								{#snippet children(copied)}
-									{question.id}{#if copied}<Check size={14} aria-hidden="true" />{:else}<Copy size={14} aria-hidden="true" />{/if}
+									{question.id}{#if copied}<Check size={12} aria-hidden="true" />{:else}<Copy size={12} aria-hidden="true" />{/if}
 								{/snippet}
 							</CopyText>
 						</span>
-						<span class="center label muted">{waitTime(minutesBetween(question.openedAt, live.now))}</span>
+						<span class="wait">{waitTime(minutesBetween(question.openedAt, live.now))}</span>
 					</li>
 				{/each}
 			</ol>
-			<Pager bind:page size={PAGE} total={oldest.length} noun="questions" />
+			{#if oldest.length > PAGE}
+				<div class="pages"><Pager bind:page size={PAGE} total={oldest.length} noun="questions" /></div>
+			{/if}
 		</section>
 	{/if}
 
@@ -165,58 +167,115 @@
 	.needs {
 		display: flex;
 		flex-direction: column;
-	}
-
-	h4 {
-		margin: 0;
-		padding: 0 4px 8px;
-		font-size: 14px;
-		line-height: 20px;
-		font-weight: 600;
+		margin: -10px calc(-1 * var(--band-pad)) 0;
+		font-size: 13px;
+		line-height: 22px;
 	}
 
 	ol {
 		list-style: none;
-		margin: 4px 0 0;
+		margin: 0;
 		padding: 0;
+	}
+
+	.qrow {
+		display: grid;
+		grid-template-columns: 28px minmax(0, 1fr) 56px 64px;
+		min-height: 30px;
+	}
+
+	.qrow > span {
+		padding-block: 4px;
+	}
+
+	.qrow.head {
+		min-height: 0;
+		font-size: 12px;
+		font-weight: 600;
+		color: var(--muted);
+		background: var(--raised);
+		border-top: 1px solid var(--line-strong);
+		border-bottom: 1px solid var(--line-strong);
+	}
+
+	.qrow.head > span {
+		padding-block: 4px;
+	}
+
+	li.qrow + li.qrow {
+		border-top: 1px solid var(--line);
+	}
+
+	.number {
+		padding-right: 8px;
+		text-align: right;
+		font-size: 12px;
+		color: var(--muted-soft);
+		user-select: none;
 	}
 
 	.question {
 		min-width: 0;
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		padding-inline: 4px 8px;
 		overflow-wrap: anywhere;
 	}
 
-	a.title {
+	a.topic {
+		color: var(--ink);
 		text-decoration: underline;
+		text-decoration-color: var(--mark);
 		text-underline-offset: 3px;
-		text-decoration-thickness: 1px;
 	}
 
-	.question .mono {
-		font-weight: 500;
+	.sub {
+		font-size: 12px;
+		line-height: 16px;
+		color: var(--muted);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.wait {
+		padding-right: var(--band-pad);
+		text-align: right;
+		font-size: 12px;
+		color: var(--muted);
+		white-space: nowrap;
 	}
 
 	.needs :global(.copy-id) {
-		height: 36px;
-		display: flex;
+		display: inline-flex;
 		align-items: center;
-		gap: 4px;
-		padding: 0 8px;
-		border-radius: 999px;
-		border: 1px solid var(--mark);
+		gap: 3px;
+		padding: 0;
+		border: 0;
+		border-radius: 4px;
 		background: none;
-		font-family: var(--mono);
-		font-size: 14px;
-		line-height: 20px;
+		color: var(--ink);
+		font: inherit;
 		font-weight: 600;
+		font-variant-numeric: tabular-nums;
 		cursor: pointer;
 		transition: background-color 160ms ease, color 160ms ease;
 	}
 
-	.needs :global(.copy-id.copied),
+	.needs :global(.copy-id:hover) {
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.pages {
+		padding: 0 var(--band-pad);
+		border-top: 1px solid var(--line);
+	}
+
+	.needs :global(.copy-id.copied) {
+		padding-inline: 4px;
+		background: var(--ink);
+		color: var(--ground);
+	}
+
 	.actions :global(.button.copied) {
 		background: var(--ink);
 		color: var(--ground);
