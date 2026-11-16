@@ -2,10 +2,7 @@
 	import ListChecks from '@lucide/svelte/icons/list-checks';
 	import X from '@lucide/svelte/icons/x';
 	import { type StepName, type Task, TaskState } from '#lib/api/types.ts';
-	import { stepTime } from '#lib/format.ts';
-	import { live } from '#lib/live.svelte.ts';
-	import { totalMinutes } from '#lib/model.ts';
-	import StepSnake from './StepSnake.svelte';
+	import StepTable from './StepTable.svelte';
 
 	let {
 		task,
@@ -38,10 +35,7 @@
 
 	<div class="detail-body">
 	{#if task.steps.length > 0 || task.state !== TaskState.Todo}
-		<div class="steps">
-			<span class="label muted head"><span>Steps</span><span>{stepTime(totalMinutes(task, live.now))} total</span></span>
-			<StepSnake {task} {steps} />
-		</div>
+		<StepTable {task} {steps} />
 	{/if}
 
 	{#if task.note}
@@ -89,17 +83,6 @@
 		height: 1px;
 		overflow: hidden;
 		clip-path: inset(50%);
-	}
-
-	.steps {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-	}
-
-	.head {
-		display: flex;
-		justify-content: space-between;
 	}
 
 	.head-links {

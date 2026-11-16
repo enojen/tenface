@@ -1,28 +1,51 @@
 import { describe, expect, it } from 'vitest';
 import { sampleWorld } from './api/sample.ts';
-import { currentMark, placeLabel, rowStep, StepMark, stepPlaces } from './steps.ts';
+import { currentMark, rowStep, StepMark, stepLabel, stepName, stepRows } from './steps.ts';
 
 const now = Date.parse('2026-11-15T12:00:00Z');
 const project = sampleWorld(now).projects[0];
 const api = project.lanes[0];
 const byId = (id: string) => api.tasks.find((task) => task.id === id) ?? api.tasks[0];
 
-describe('steps', () => {
-	it('marks the step a task waits in, and the steps a project skips', () => {
-		const places = stepPlaces(byId('SAM-102'), project.steps, now);
-		expect(places.map((place) => place.mark)).toEqual([
+describe('stepRows', () => {
+	const rows = stepRows(byId('SAM-102'), project.steps, now);
+
+	it('lists the runs in the order they ran, and numbers a step that ran again', () => {
+		expect(rows.map(stepName)).toEqual([
+			'plan',
+			'approve',
+			'build',
+			'debug',
+			'eval',
+			'PR',
+			'build #2',
+			'merge',
+			'close'
+		]);
+	});
+
+	it('marks the step a task waits in, the steps a project skips and the steps to come', () => {
+		expect(rows.map((row) => row.mark)).toEqual([
 			StepMark.Done,
 			StepMark.Done,
 			StepMark.Done,
 			StepMark.Unused,
 			StepMark.Unused,
+			StepMark.Done,
 			StepMark.Done,
 			StepMark.Asking,
 			StepMark.Later
 		]);
-		expect(places.map(placeLabel).slice(-2)).toEqual(['merge 12 min waiting', 'close not started']);
 	});
 
+	it('says each row aloud with its time and start', () => {
+		expect(stepLabel(rows[7])).toMatch(/^merge 12 min waiting, started \d\d:\d\d$/);
+		expect(stepLabel(rows[3])).toBe('debug not used here');
+		expect(stepLabel(rows[8])).toBe('close not started');
+	});
+});
+
+describe('steps', () => {
 	it('shows offline before any other state', () => {
 		expect(currentMark(byId('SAM-102'), true)).toBe(StepMark.Offline);
 		expect(currentMark(byId('SAM-103'), false)).toBe(StepMark.Running);
