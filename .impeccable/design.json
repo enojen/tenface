@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-15T21:00:00Z",
+  "generatedAt": "2026-11-16T12:00:00Z",
   "title": "Design System: Tenface",
   "extensions": {
     "colorMeta": {
@@ -115,6 +115,16 @@
       "on-running": {
         "role": "neutral",
         "displayName": "On Running"
+      },
+      "diff-add": {
+        "role": "diff",
+        "displayName": "Diff Add",
+        "purpose": "The fill of an added line in a lane diff; diff-add-word marks changed words, diff-add-ink colors the number, the + and the +N count. Dark twin dark-diff-add."
+      },
+      "diff-remove": {
+        "role": "diff",
+        "displayName": "Diff Remove",
+        "purpose": "The fill of a removed line in a lane diff; diff-remove-word marks removed words, diff-remove-ink colors the number, the − and the −N count. Not Blood Red. Dark twin dark-diff-remove."
       }
     },
     "typographyMeta": {
@@ -136,7 +146,7 @@
       },
       "title": {
         "displayName": "Title",
-        "purpose": "The name in a table row, a question title, a new lane in a plan change; a task in the tree at 400."
+        "purpose": "The name in a projects or lanes table row."
       },
       "body": {
         "displayName": "Body",
@@ -148,7 +158,7 @@
       },
       "id": {
         "displayName": "Id",
-        "purpose": "Task ids, question ids, PR numbers; takes the size of its line."
+        "purpose": "Task ids, question ids, PR numbers: Inter with tabular-nums at the size and weight of its line. No mono."
       },
       "button": {
         "displayName": "Button",
@@ -157,6 +167,14 @@
       "id-button": {
         "displayName": "Id Button",
         "purpose": "The id in a copy-id pill."
+      },
+      "row": {
+        "displayName": "Row",
+        "purpose": "A line of a lane tree, a lane diff and the question table of an agent card. 13px 400 on 22px; the picked task 600."
+      },
+      "tag": {
+        "displayName": "Tag",
+        "purpose": "The NEW LANE capsule and the now / after the change heads of a lane diff. 11px 700, 0.06em."
       }
     },
     "shadows": [
@@ -207,9 +225,9 @@
       "name": "Copy Id",
       "kind": "button",
       "refersTo": "copy-id",
-      "description": "Copies a question id for the chat answer.",
-      "html": "<button class=\"ds-copy\" aria-label=\"Copy Q12\">Q12<svg aria-hidden=\"true\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\"></rect><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"></path></svg></button>",
-      "css": ".ds-copy{display:inline-flex;align-items:center;gap:4px;height:36px;box-sizing:border-box;padding:0 8px;border-radius:999px;border:1px solid #857c6c;background:none;color:#1f1c17;font:600 14px/20px 'JetBrains Mono',ui-monospace,monospace}.ds-copy:focus-visible{outline:2px solid #1f1c17;outline-offset:2px}"
+      "description": "The id as plain ink text at 600 with a 12 px copy icon, no frame; a click copies it for the chat answer and briefly shows an ink chip with a check. The owner has not decided whether the icon stays.",
+      "html": "<button class=\"ds-copy\" aria-label=\"Copy Q12\">Q12<svg aria-hidden=\"true\" width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\"></rect><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"></path></svg></button>",
+      "css": ".ds-copy{display:inline-flex;align-items:center;gap:3px;padding:0;border:0;border-radius:4px;background:none;color:#1f1c17;font:600 13px/22px Inter,system-ui,sans-serif;font-variant-numeric:tabular-nums;cursor:pointer}.ds-copy:hover{text-decoration:underline;text-underline-offset:3px}.ds-copy:focus-visible{outline:2px solid #1f1c17;outline-offset:2px}"
     },
     {
       "name": "Lane Progress",
@@ -231,9 +249,9 @@
       "name": "Agent Card Questions",
       "kind": "card",
       "refersTo": "agent-card",
-      "description": "The agent's open questions: Question | ID | Waiting, oldest first; three per page on the phone.",
+      "description": "The agent's open questions in the lane tree's table style: a Raised Sepia head row flush under the band (#, needs you, id, waiting), then one 13 px row per question, oldest first; three per page on the phone.",
       "html": "<section class=\"ds-card\" aria-labelledby=\"q-t\"><h3 id=\"q-t\">Needs you</h3><ol><li><a href=\"#\"><span class=\"t\">Merge PR #418?</span><span class=\"s\">SAM-102</span></a><button class=\"ds-copy\" aria-label=\"Copy Q12\">Q12</button><span class=\"w\">12 min</span></li></ol></section>",
-      "css": ".ds-card{padding:14px;border-radius:18px;background:#f1ece2;border:1px solid #c4bba9;font-family:Inter,system-ui,sans-serif;color:#1f1c17}.ds-card h3{margin:0;padding:0 4px;font:600 14px/20px Inter,system-ui,sans-serif}.ds-card ol{list-style:none;margin:4px 0 0;padding:0}.ds-card li{display:grid;grid-template-columns:1fr 72px 64px;gap:8px;align-items:center;min-height:56px;padding:8px 4px;border-top:1px solid #d6cebe}.ds-card a{display:flex;flex-direction:column;gap:2px;color:inherit;text-decoration:none}.ds-card .t{font:500 15px/20px Inter,system-ui,sans-serif}.ds-card .s{font:500 12px/16px 'JetBrains Mono',ui-monospace,monospace;color:#5e574b}.ds-card .w{text-align:center;font:400 12px/16px Inter,system-ui,sans-serif;color:#5e574b}.ds-copy{height:36px;padding:0 8px;border-radius:999px;border:1px solid #857c6c;background:none;font:600 14px/20px 'JetBrains Mono',ui-monospace,monospace}"
+      "css": ".ds-card{padding:14px;border-radius:18px;background:#f1ece2;border:1px solid #c4bba9;font-family:Inter,system-ui,sans-serif;color:#1f1c17}.ds-card h3{margin:0;padding:0 4px;font:600 14px/20px Inter,system-ui,sans-serif}.ds-card ol{list-style:none;margin:4px 0 0;padding:0}.ds-card li{display:grid;grid-template-columns:1fr 72px 64px;gap:8px;align-items:center;min-height:56px;padding:8px 4px;border-top:1px solid #d6cebe}.ds-card a{display:flex;flex-direction:column;gap:2px;color:inherit;text-decoration:none}.ds-card .t{font:500 15px/20px Inter,system-ui,sans-serif}.ds-card .s{font:500 12px/16px Inter,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:#5e574b}.ds-card .w{text-align:center;font:400 12px/16px Inter,system-ui,sans-serif;color:#5e574b}.ds-copy{height:36px;padding:0 8px;border-radius:999px;border:1px solid #857c6c;background:none;font:600 13px/22px Inter,system-ui,sans-serif;font-variant-numeric:tabular-nums}"
     },
     {
       "name": "Bottom Nav",
@@ -252,20 +270,21 @@
       "css": ".ds-err{display:flex;flex-direction:column;min-height:44px;box-sizing:border-box;padding:8px 16px;background:#1f1c17;color:#e7e1d4;font:400 14px/20px Inter,system-ui,sans-serif}.ds-err strong{font-weight:600}.ds-err span{font-size:12px;line-height:16px;color:#d8d0c2}"
     },
     {
-      "name": "Plan Signs",
+      "name": "Lane Diff",
       "kind": "custom",
       "refersTo": "mark-waiting",
-      "description": "The sign column of a read-only plan change: + added, − removed, → moved, ~ changed.",
-      "html": "<span class=\"ds-sign\" role=\"img\" aria-label=\"added\">+</span><span class=\"ds-sign\" role=\"img\" aria-label=\"removed\">−</span><span class=\"ds-sign\" role=\"img\" aria-label=\"moved\">→</span><span class=\"ds-sign\" role=\"img\" aria-label=\"changed\">~</span>",
-      "css": ".ds-sign{display:inline-flex;width:16px;justify-content:center;font:600 14px/20px 'JetBrains Mono',ui-monospace,monospace;color:#1f1c17}"
+      "description": "A split diff of each changed lane: now at the left, after the change at the right. Added lines on diff-add, removed on diff-remove, changed words on the word tones, + and − in the diff inks, → lane for a moved task, folded unchanged runs. A new lane is a box with an ink border and a NEW LANE tag under the right side.",
+      "html": "<div class=\"ds-diff\"><div class=\"add\"><span>3</span><b>+</b><span>SAM-104</span><span>Split the <ins>billing</ins> job</span></div><div class=\"rem\"><span>3</span><b>−</b><span>SAM-104</span><span>Split the <del>old</del> job</span></div></div>",
+      "css": ".ds-diff{font:400 13px/22px Inter,system-ui,sans-serif;color:#1f1c17;font-variant-numeric:tabular-nums}.ds-diff>div{display:grid;grid-template-columns:34px 14px auto 1fr;gap:6px;min-height:30px;padding-top:4px}.ds-diff .add{background:#cdecd3}.ds-diff .rem{background:#f6d5cf}.ds-diff .add>:nth-child(-n+2){color:#0f5c25}.ds-diff .rem>:nth-child(-n+2){color:#9a0f22}.ds-diff ins{text-decoration:none;background:#9bd8aa;border-radius:3px}.ds-diff del{text-decoration:none;background:#eaaea5;border-radius:3px}"
     }
   ],
   "narrative": {
     "northStar": "The Quiet Ledger",
-    "overview": "Tenface is a ledger that the owner reads in a few seconds. Every project, lane, task and step is written down in warm, paper-like Sepia tones, in tables and trees that read like a well-kept book. The page does not glow or decorate. Its one color, a blood red, says \"this runs now\". What the agents ask the owner does not sit on the page. Each question belongs to the agent that asked it: the planner of the project (P) or the babysitter of a lane (B). The agent is a ring that shows its context use, and a small card on the ring counts its open questions. Tap the ring and its card lists the questions. The owner answers in that agent's chat, for example \"Q12 ok\". The surface is light Sepia by day and dark Sepia by night. There is no accent color. Shapes follow Apple's current capsule forms without the glass. The phone answers \"what now\"; the desktop shows project, lane and task side by side.",
+    "overview": "Tenface is a ledger that the owner reads in a few seconds. Every project, lane, task and step is written down in warm, paper-like Sepia tones, in tables and trees that read like a well-kept book. The page does not glow or decorate. Its one color, a blood red, says \"this runs now\". What the agents ask the owner does not sit on the page. Each question belongs to the agent that asked it: the planner of the project (P) or the babysitter of a lane (B). The agent is a ring that shows its context use, and a small card on the ring counts its open questions. Tap the ring and its card lists the questions. The owner answers in that agent's chat, for example \"Q12 ok\". The surface is light Sepia, also on a device set to dark. The dark Sepia twins live under data-theme=\"dark\"; until a real theme switch exists, ?theme=dark or ?theme=light in the URL sets it. There is no accent color. Shapes follow Apple's current capsule forms without the glass. The phone answers \"what now\"; the desktop shows project, lane and task side by side.",
     "keyCharacteristics": [
       "Done is a filled gray square, running a filled red square, waiting an empty outline; these marks draw the tree. A project row shows only a red \"running\", a lane row a red \"N tasks running\"; the lane head shows all counts in words over a capsule bar.",
-      "Red means running and nothing else; a question is a count on the asking agent's ring.",
+      "A lane tree and a question list read as tables: a line number, the content, and a short column at the right.",
+      "Red means running and nothing else; a question is a count on the asking agent's ring. The one exception is the lane diff, which uses git's green and red.",
       "Every question has an id (Q12) that is unique across the whole system.",
       "Ink marks where the owner is: the current tab, the selected row, the selected desktop lane.",
       "An error of the whole panel is an ink strip at the top of every screen.",
@@ -275,17 +294,17 @@
     "rules": [
       {
         "name": "The Red Means Running Rule",
-        "body": "Red marks what runs now and nothing else. No red for a question, an error, a link, a brand or decoration.",
+        "body": "Red marks what runs now and nothing else. No red for a question, an error, a link, a brand or decoration. The diff red is a separate token that lives only inside the lane diff.",
         "section": "colors"
       },
       {
         "name": "The No Accent Rule",
-        "body": "There is no second color. Selection, focus and \"current\" are shown with ink, weight and tone.",
+        "body": "There is no second color. Selection, focus and \"current\" are shown with ink, weight and tone. The diff green and red are the one exception, because the owner reads a diff in git's colors.",
         "section": "colors"
       },
       {
-        "name": "The Lifted Pick Rule",
-        "body": "A picked row rises as a light card: the selected lane row in the desktop lanes table and the selected task row in the tree get the Lift fill, a 1 px line ring and a soft 2 px / 6 px shadow; the picked task's title is semibold. The current tab keeps its 1.5 px ink border. The panel has no dark row. In a plan change, a 1 px ink outline marks an added row and the box of a new lane.",
+        "name": "The Pick Rule",
+        "body": "The picked task row in the tree is a Raised Sepia row across the full width of the tree, with a semibold title. The selected lane row in the desktop lanes table rises as a light card: the Lift fill, a 1 px line ring and a soft 2 px / 6 px shadow. The current tab keeps its 1.5 px ink border. The panel has no ink row.",
         "section": "colors"
       },
       {
@@ -299,13 +318,13 @@
         "section": "layout"
       },
       {
-        "name": "The Six Sizes Rule",
-        "body": "Only 12, 14, 15, 16, 20 and 28 px exist, except the 9 px mark inside a small icon: the letter or count of an agent icon and the \"?\" of the question card in a tree row. A long title wraps; it is never cut.",
+        "name": "The Sizes Rule",
+        "body": "Only 11, 12, 13, 14, 15, 16, 20 and 28 px exist: 13 px for table lines (tree, diff, questions), 11 px only for a tag or a diff head, and the 9 px mark inside a small agent icon. A long title wraps; it is never cut.",
         "section": "typography"
       },
       {
         "name": "The Last Pick Rule",
-        "body": "The desktop detail column shows the last pick. The picked task stays a lifted card; the selected lane row is a lifted card while its task is shown, and only a 2 px ink outline while the detail column shows a plan change.",
+        "body": "The desktop detail column shows the last pick. A plan change spans the lane and task columns and becomes the main content. The picked task stays a Raised Sepia row; the selected lane row is a lifted card while its task is shown, and only a 2 px ink outline while a plan change is shown.",
         "section": "layout"
       },
       {
@@ -315,7 +334,7 @@
       },
       {
         "name": "The Offline Rule",
-        "body": "Offline, the panel shows the last known state under the strip: the running notes, the lane progress and the ring keep their last colors, and the strip alone says the panel is offline. Only the running node turns into a 2 px gray outline and its step tile turns gray.",
+        "body": "Offline, the panel shows the last known state under the strip: the running notes, the lane progress and the ring keep their last colors, and the strip alone says the panel is offline. Only the running node turns into a 2 px gray outline and its step cell turns muted with a gray outline.",
         "section": "layout"
       },
       {
@@ -329,7 +348,7 @@
       "Do put a question in the card of the agent that asked it, with its id and the waiting time.",
       "Do close a question when the owner answers it in the chat: a hook in the asking agent's session (the babysitter's or the planner's) tells the server, and the row leaves the card.",
       "Do show the agent on every lane and project page, and let the owner drag it out of the way.",
-      "Do show a plan change before it is applied, with + − → ~ signs.",
+      "Do show a plan change before it is applied, as a split lane diff: + and − lines, the changed words marked, and → lane for a task that moves.",
       "Do give every focusable element a 2 px ink focus ring with a 2 px offset.",
       "Do write times as \"11:20\" for today and \"Nov 13, 20:30\" for another day."
     ],
@@ -339,9 +358,10 @@
       "Don't put a list of questions on a page; questions live in the agent card.",
       "Don't write a state word next to an agent; the ring says it.",
       "Don't add Approve or Reject to a plan change.",
-      "Don't use a font size outside 12, 14, 15, 16, 20 and 28 px, or cut a title with \"…\".",
+      "Don't use a font size outside 11, 12, 13, 14, 15, 16, 20 and 28 px, or cut a title with \"…\".",
       "Don't draw drag handles or drop zones for tasks; the tree is never edited by hand.",
-      "Don't use real client, project or task names in designs or code; sample data is made up."
+      "Don't use real client, project or task names in designs or code; sample data is made up.",
+      "Don't use the diff green or red outside a lane diff."
     ]
   }
 }

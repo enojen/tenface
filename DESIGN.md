@@ -33,6 +33,18 @@ colors:
   dark-mark-empty: "#474036"
   dark-running: "#ff5a5f"
   dark-on-running: "#2a2620"
+  diff-add: "#cdecd3"
+  diff-add-word: "#9bd8aa"
+  diff-add-ink: "#0f5c25"
+  diff-remove: "#f6d5cf"
+  diff-remove-word: "#eaaea5"
+  diff-remove-ink: "#9a0f22"
+  dark-diff-add: "#183a24"
+  dark-diff-add-word: "#2a6b3e"
+  dark-diff-add-ink: "#8ee4a8"
+  dark-diff-remove: "#43201f"
+  dark-diff-remove-word: "#7a2e2e"
+  dark-diff-remove-ink: "#ffa9a6"
 typography:
   display:
     fontFamily: "Inter, system-ui, sans-serif"
@@ -66,6 +78,17 @@ typography:
     fontSize: "14px"
     fontWeight: 400
     lineHeight: "20px"
+  row:
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "13px"
+    fontWeight: 400
+    lineHeight: "22px"
+  tag:
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "11px"
+    fontWeight: 700
+    lineHeight: "18px"
+    letterSpacing: "0.06em"
   label:
     fontFamily: "Inter, system-ui, sans-serif"
     fontSize: "12px"
@@ -77,25 +100,27 @@ typography:
     fontWeight: 600
     lineHeight: "20px"
   id-button:
-    fontFamily: "'JetBrains Mono', ui-monospace, monospace"
-    fontSize: "14px"
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "13px"
     fontWeight: 600
-    lineHeight: "20px"
+    lineHeight: "22px"
+    fontFeature: "tabular-nums"
   id:
-    fontFamily: "'JetBrains Mono', ui-monospace, monospace"
-    fontSize: "12px"
-    fontWeight: 500
-    lineHeight: "16px"
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "13px"
+    fontWeight: 400
+    lineHeight: "22px"
+    fontFeature: "tabular-nums"
 rounded:
   step-dot: "2px"
   mark: "4px"
-  node: "5px"
-  step-mini: "6px"
+  node: "3px"
   step-tile: "9px"
   row: "12px"
   card: "18px"
   panel: "20px"
-  column: "28px"
+  column: "24px"
+  project: "28px"
   sheet: "32px"
   capsule: "999px"
 spacing:
@@ -124,9 +149,8 @@ components:
     backgroundColor: "transparent"
     textColor: "{colors.ink}"
     typography: "{typography.id-button}"
-    rounded: "{rounded.capsule}"
-    padding: "0 8px"
-    height: "36px"
+    rounded: "{rounded.mark}"
+    padding: "0"
   tab-current:
     backgroundColor: "{colors.raised}"
     textColor: "{colors.ink}"
@@ -146,6 +170,32 @@ components:
     textColor: "{colors.ink}"
     rounded: "{rounded.card}"
     padding: "14px"
+  tree-row:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink}"
+    typography: "{typography.row}"
+    height: "30px"
+  tree-row-picked:
+    backgroundColor: "{colors.raised}"
+    textColor: "{colors.ink}"
+    typography: "{typography.row}"
+    height: "30px"
+  diff-line-added:
+    backgroundColor: "{colors.diff-add}"
+    textColor: "{colors.ink}"
+    typography: "{typography.row}"
+    height: "30px"
+  diff-line-removed:
+    backgroundColor: "{colors.diff-remove}"
+    textColor: "{colors.ink}"
+    typography: "{typography.row}"
+    height: "30px"
+  new-lane-tag:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink}"
+    typography: "{typography.tag}"
+    rounded: "{rounded.capsule}"
+    padding: "0 8px"
   table:
     backgroundColor: "{colors.tile}"
     textColor: "{colors.ink}"
@@ -190,13 +240,14 @@ Tenface is a ledger that the owner reads in a few seconds. Every project, lane, 
 
 What the agents ask the owner does not sit on the page. Each question belongs to the agent that asked it: the planner of the project (P) or the babysitter of a lane (B). The agent is a ring that shows its context use, and a small card on the ring counts its open questions. Tap the ring and its card lists the questions. The owner answers in that agent's chat, for example "Q12 ok".
 
-The surface is light Sepia, also on a phone or computer set to dark. The dark Sepia twins wait under `data-theme="dark"` for a later switch; nothing sets it yet. There is no accent color. Hierarchy comes from tone, weight and position. Shapes follow Apple's current capsule forms without the glass: capsule buttons and tabs, round agent rings, softly rounded cards, all opaque and flat.
+The surface is light Sepia, also on a phone or computer set to dark. The dark Sepia twins live under `data-theme="dark"`. Until the panel has a real theme switch, `?theme=dark` or `?theme=light` in the URL sets it. There is no accent color. Hierarchy comes from tone, weight and position. Shapes follow Apple's current capsule forms without the glass: capsule buttons and tabs, round agent rings, softly rounded cards, all opaque and flat.
 
 The phone answers "what now"; the desktop shows project, lane and task side by side.
 
 **Key Characteristics:**
 - Done is a filled gray square, running a filled red square, waiting an empty square with a gray outline; these marks draw the tree. The lane progress bar uses the same gray and red.
-- Red means running and nothing else. A question for the owner is never red; it is a count on the asking agent's ring.
+- A lane tree and a question list read as tables: a line number, the content, and a short column at the right.
+- Red means running and nothing else. A question for the owner is never red; it is a count on the asking agent's ring. The one exception is the lane diff, which uses git's green and red.
 - Every question has an id (Q12) that is unique across the whole system.
 - Ink marks where the owner is: the current tab, the selected row, the last pick.
 - An error of the whole panel is an ink strip at the top of every screen.
@@ -213,9 +264,9 @@ A warm, low-chroma Sepia neutral scale with a single blood red; each tone has a 
 ### Neutral
 - **Sepia Ground** (`ground` / `dark-ground`): the page.
 - **Paper Tile** (`tile` / `dark-tile`): tables, cards, columns, the agent ring.
-- **Raised Sepia** (`raised` / `dark-raised`): the current tab.
-- **Lift** (`lift` / `dark-lift`, #fffdf9 / #403a31): the card of a picked lane row and a picked task row.
-- **Ink** (`ink` / `dark-ink`): main text, the error strip, outlines that mark a selection, the arc of an idle agent, the box of a new lane in a plan change.
+- **Raised Sepia** (`raised` / `dark-raised`): the current tab, card bands, table head rows, the picked task row.
+- **Lift** (`lift` / `dark-lift`, #fffdf9 / #403a31): the desktop lane and task cards, the card of a picked lane row, the bar of a new lane in a plan change.
+- **Ink** (`ink` / `dark-ink`): main text, the error strip, outlines that mark a selection, the arc of an idle agent, the box and the tag of a new lane in a plan change.
 - **On Running** (`on-running` / `dark-on-running`): an icon or text on red, for example the step icon on a red step tile.
 - **Soft Ink** (`ink-soft` / `dark-ink-soft`): secondary text, notes. `on-ink-muted` is the muted text on an ink row.
 - **Muted** (`muted`, `muted-soft` and their dark twins): labels, meta, ids, times, placeholders.
@@ -224,36 +275,43 @@ A warm, low-chroma Sepia neutral scale with a single blood red; each tone has a 
 - **Done Mark** (`mark-done` / `dark-mark-done`): the done square, a closed tree node, a done step.
 - **Empty Mark** (`mark-empty` / `dark-mark-empty`): the tile behind a step icon.
 
+### Diff
+The lane diff of a plan change, and only it, uses git's colors. Each tone has a dark twin (`dark-diff-*`).
+- **Diff Add** (`diff-add`): the fill of an added line. `diff-add-word` marks the changed words in it, and `diff-add-ink` colors its number, its "+" and the "+N" count.
+- **Diff Remove** (`diff-remove`): the fill of a removed line. `diff-remove-word` marks the removed words, and `diff-remove-ink` colors its number, its "−" and the "−N" count.
+
 ### Named Rules
-**The Red Means Running Rule.** Red marks what runs now and nothing else. No red for a question, an error, a link, a brand or decoration. A question is a count on the asking agent's ring; an error is ink.
+**The Red Means Running Rule.** Red marks what runs now and nothing else. No red for a question, an error, a link, a brand or decoration. A question is a count on the asking agent's ring; an error is ink. The diff red is not Blood Red. It is a separate token that lives only inside the lane diff.
 
-**The No Accent Rule.** There is no second color. Selection, focus and "current" are shown with ink, weight and tone.
+**The No Accent Rule.** There is no second color. Selection, focus and "current" are shown with ink, weight and tone. The diff green and red are the one exception, because the owner reads a diff in git's colors.
 
-**The Lifted Pick Rule.** A picked row rises as a light card: the selected lane row in the desktop lanes table and the selected task row in the tree get the Lift fill, a 1 px `line` ring and a soft 2 px / 6 px shadow (`--shadow-pick`); the picked task's title is semibold. The current tab keeps its 1.5 px ink border. The panel has no dark row: the owner wants it light everywhere. In a plan change, a 1 px ink outline marks what is new: an added row and the box of a new lane.
+**The Pick Rule.** The picked task row in the tree is a Raised Sepia row across the full width of the tree, and its title is semibold. Its node keeps a 2 px Raised Sepia gap around it. The selected lane row in the desktop lanes table rises as a light card: the Lift fill, a 1 px `line` ring and a soft 2 px / 6 px shadow (`--shadow-pick`). The current tab keeps its 1.5 px ink border. The panel has no ink row: the owner wants it light everywhere.
 
 ## Typography
 
 **Body Font:** Inter (with system-ui, sans-serif)
 **Mono Font:** JetBrains Mono (with ui-monospace, monospace)
 
-**Character:** Inter carries every word at a calm, tight scale; JetBrains Mono sets the exact things the owner may copy or compare: task ids, question ids, PR numbers.
+**Character:** Inter carries every word at a calm, tight scale, ids too: a task id, a question id or a PR number is Inter with tabular figures, so the ids in a column line up. JetBrains Mono is left only for text the owner types into a chat ("Q16 ok") and for the source lane name in "Split off from lane api".
 
 ### Hierarchy
 - **Display** (700, 28px, 34px): page titles: Home, Projects.
 - **Headline** (700, 20px, 26px): the title of the "not here" page.
 - **Card Head** (700, 12px, 16px, uppercase, 0.08em, soft ink): what a card is, with its short name: "Project · sample", "Lane · api", "Task · SAM-103", "Plan change · Q16", "Babysitter · api". On a project page the project head is the page title (h1).
 - **Subject** (500, 16px, 22px): the sentence under a card head: the lane's description, the task title, the plan change topic.
-- **Title** (500, 15px, 20px): the name in a table row, a question title, a new lane in a plan change. A task in the tree is 15px at 400; the picked one is 600.
+- **Title** (500, 15px, 20px): the name in a projects or lanes table row.
 - **Body** (400, 14px, 20px): notes, button text, error text.
-- **Label** (600, 12px, 16px): table headers, meta, times, counts, step names, nav labels. Weight 400–500 for muted meta.
-- **Id** (JetBrains Mono 500–600, the size of its line): SAM-102, Q12, PR #418.
+- **Row** (400, 13px, 22px): a line of a lane tree, a lane diff and the question table of an agent card. The picked task is 600. A lane diff title and a new lane bar are 13px at 600.
+- **Label** (600, 12px, 16px): table headers, meta, times, counts, step names, line numbers, nav labels. Weight 400–500 for muted meta.
+- **Tag** (700, 11px, 18px, 0.06em, uppercase text): the "NEW LANE" capsule and the "now" / "after the change" heads of a lane diff (600).
+- **Id** (Inter with `tabular-nums`, the size and weight of its line): SAM-102, Q12, PR #418. In a tree row the id is muted; in an agent card it is ink at 600.
 
 ### Named Rules
 **The Card Head Rule.** A card opens with its head on a band: the Card Head line, then the Subject, on a Raised Sepia band that runs to the card's edges and its top corners. The project card, the lane card, the task card, the agent card and the task sheet have it. The head is the strongest line of its card and the Subject sits under it, quieter; a level below is never heavier than the level above. A Card Head outside a card (the phone plan change) has no band.
 
 **The Project Holds Rule.** On the desktop the project card holds the page: its band runs the full width ("Project · sample", a red "running" when a lane runs, the back arrow and the P ring), the lanes list is its own content without a frame, and the lane card and the task card sit inside it in Lift white. The lane and task bands share one row, so they have the same top and height (CSS subgrid). The task card keeps its band when nothing is picked: "Task" and "No task selected", and an empty body. On the phone each level is its own page, so cards do not nest: a "‹ Projects" or "‹ sample" back link names the level above, and the page is one card with its band.
 
-**The Six Sizes Rule.** Only 12, 14, 15, 16, 20 and 28 px exist. The one exception is the 9 px mark drawn inside a small icon: the letter or count of an agent icon, and the "?" of the question card in a tree row. A long title wraps; it is never cut with "…".
+**The Sizes Rule.** Only 11, 12, 13, 14, 15, 16, 20 and 28 px exist. 13 px is for table lines (tree, diff, questions) and 11 px only for a tag or a diff head. The one exception is the 9 px mark drawn inside a small icon: the letter or count of an agent icon. A long title wraps; it is never cut with "…".
 
 ## Layout
 
@@ -265,12 +323,14 @@ The phone is the first target (designed at 390 px), with a 16 px side gutter and
 
 **Lane.** A "‹ sample" back link, then one card: its band has the head "Lane · api", the one-line description of the lane and its progress, and the card holds one tree. A lane holds one root tree, because one babysitter does not take more. The tree indents only at a fork; an only child stays in its parent's column.
 
+**Lane tree.** The tree is a table with four columns: the line number (#), the tree graph, the task (its id, then its title) and the step. The head row of the table sits flush under the lane band and runs to the card's edges: a Raised Sepia row with `line-strong` borders above and below and 12 px muted labels "#", "task" and "step". Rows are at least 30 px high, in the Row type. A title wraps under itself, not under the id. Below 400 px of tree width the graph cells are 14 px instead of 22 px, and the step column shows only the time, not the step name. The owner can select the text of a row without opening the task.
+
 **Task.** A bottom sheet over the lane, dimmed with ink at 32%: a grab handle and the head band ("Task · SAM-103" and the title, with the PR and Tracker links at its right), the steps with the total time ("1h03 total"), and the babysitter's note. The PR link is a 40 px capsule with the GitHub mark and "#418"; the Tracker link is a 40 px round button with only its icon, because the id is already on the band. The steps are a snake of eight places, four per row: plan, approve, build, debug, eval, PR, merge, close. The rows stand 32 px apart, and the line that runs back from the end of the first row to the start of the second is dashed and sits halfway between them. A step a project does not use has a dashed `line-strong` tile and no time. A done step looks like a closed task in the tree: its tile is filled with Done Mark and holds a light icon, and its name and time are `muted-soft`.
 
-**Desktop.** The floating nav sits at the bottom center here too. The projects page is the same table, wide, with every row on one page. A project page is one project card (see the Project Holds Rule) with three columns inside: the lanes list, the lane card (its tree and the B ring) and the task card. The project card fills the screen width with 32 px side gutters and reaches down to the nav: the lanes list is 22% of the screen (340 to 420 px), and the lane and task cards share the rest equally; below 1200 px the gutters are 16 px and the lanes list is 340 px. The task card shows whatever the owner picked last: a task, or the plan change of a planner question. An agent card opens in place under its ring, without dimming the page.
+**Desktop.** The floating nav sits at the bottom center here too. The projects page is the same table, wide, with every row on one page. A project page is one project card (see the Project Holds Rule) with three columns inside: the lanes list, the lane card (its tree and the B ring) and the task card. The project card fills the screen width with 32 px side gutters and reaches down to the nav: the lanes list is 22% of the screen (340 to 420 px), and the lane and task cards share the rest equally; below 1200 px the gutters are 16 px and the lanes list is 340 px. The task card shows whatever the owner picked last: a task, or the plan change of a planner question. A plan change needs the room for its two sides, so it spans the lane and task columns and becomes the page's main content; the lane card leaves until the owner picks a task again. An agent card opens in place under its ring, without dimming the page.
 
 ### Named Rules
-**The Last Pick Rule.** The detail column shows the last pick. The picked task stays a lifted card in the tree. The selected lane row is a lifted card while its task is shown, and only a 2 px ink outline, without the card, while the detail column shows a plan change.
+**The Last Pick Rule.** The detail column shows the last pick. The picked task stays a Raised Sepia row in the tree. The selected lane row is a lifted card while its task is shown, and only a 2 px ink outline, without the card, while a plan change is shown.
 
 **The Error Rule.** An error of the whole panel (offline, the tracker late) is an ink strip at the top of every screen, with "Try again" only when the owner's action can fix it. An error of one thing stays where that thing is. No red.
 
@@ -291,7 +351,7 @@ Surfaces are flat. Tables, cards and columns are told apart by tone (ground, til
 
 ## Shapes
 
-Capsules for everything you press: buttons, the copy-id pill, tabs, the nav (999px). The agent ring is a circle. Agent cards have 18 px corners, tables and the box of a new lane 20 px, desktop columns 28 px, the task sheet 32 px top corners, a selected row 12 px. The lane progress bar is 8 px high and 220 px at most, a capsule; tree nodes are 16 px with 5 px corners. Step icons sit on 36 px tiles with 9 px corners in the task, and on 22 px tiles with 6 px corners in a tree row; step dots are 6 px with 2 px corners. No glass, no blur, no transparency in surfaces.
+Capsules for everything you press: buttons, the copy-id pill, tabs, the nav (999px). The agent ring is a circle. Agent cards have 18 px corners, tables 20 px, desktop columns 24 px, the project card 28 px, the task sheet 32 px top corners, a selected lane row, the lane diff cards and the box of a new lane 12 px. A tree row and a table head row have no corners; they run to the card's edges. The lane progress bar is 8 px high and 220 px at most, a capsule; tree nodes are 11 px with 3 px corners, and the square of a step cell is 8 px with 2 px corners. Step icons sit on 36 px tiles with 9 px corners in the task. No glass, no blur, no transparency in surfaces.
 
 ## Components
 
@@ -299,7 +359,7 @@ Clear like a tool: the same shape for the same job on every screen.
 
 ### Buttons
 - **Outline:** a capsule 44 px high with a 1 px gray-mark edge, ink text and an optional icon: Chat, Copy handover prompt, Try again. In the task head the PR and Tracker links are the same outline at 40 px: "#418" with the GitHub mark, and the tracker icon alone.
-- **Copy id:** a 36 px capsule with the mono id and a copy icon; it copies the id for the chat.
+- **Copy id:** the id as plain ink text at 600 with a 12 px copy icon after it, without a frame. A hover underlines it; a click copies the id for the chat, and for a moment the id turns into a small ink chip with a check icon. The owner has not decided yet whether the copy icon stays.
 - A button that only repeats an action says what it does, for example "Try again: load lane billing".
 
 ### Running notes and the lane progress
@@ -310,16 +370,25 @@ The lane head shows everything: the counts in words ("1 running · 5 waiting · 
 **The Need-to-Know Rule.** A table row carries only the one fact its level needs; the full count lives in the lane head.
 
 ### Tree nodes
-16 px squares on a line from root to leaf: closed is a filled done mark, in progress is red, to do is empty with a 1.5 px gray-mark outline. A task with an open question has a 2 px ink outline on the tile color and a small question card (12 × 16 px) after its status, named "The babysitter asks you". Right of a running or waiting task: a 22 px tile with the current step's icon, the step's time beside it, and one 6 px dot per step. Done dots are filled done mark; the current dot is red while the step runs and ink-outlined while it waits; the rest have a gray-mark outline.
+11 px squares with 3 px corners on a 1 px gray-mark line from root to leaf: closed is a filled done mark, in progress is red, to do is empty with a 1 px gray-mark outline. A task with an open question has a 2 px ink outline on the tile color; its step cell tells screen readers "the babysitter asks you".
+
+### Step cell
+The step column of a tree row says the step aloud: an 8 px square with 2 px corners, the step name and its time ("build 12m"). A running task's cell is red at 600 with a red square. A task that asks the owner is ink at 600 with a 1.5 px ink outline. A waiting task says "waiting" and a closed task "done" (with a done-mark square), both muted and without a time. Offline, the running cell turns muted with a gray outline. The full eight steps live only in the task.
 
 ### Agent ring (signature)
 A robot head with P (planner) or B (babysitter), in a ring that fills with the context use. The arc is red while the agent works and ink while it waits. A fixed tick at 35% marks where an idle agent hands over to a new session; the Copy handover prompt button copies that prompt. A small card on the orbit, at the upper right, counts its open questions: "1", "2" … "9+". 48 px in a desktop header, 56 px floating on the phone.
 
 ### Agent card (signature)
-Opens from the ring. A head band with a 40 px ring, the Card Head ("Babysitter · api"), the context line ("Context 62% · 124k / 200k") and a notes button; no state word, the ring's color says it. Then "Needs you" (a 14 px section title): a table of Question | ID | Waiting, oldest first, where the id is a copy-id pill; the title of a planner question opens its plan change, other titles are plain text. Then Chat and Copy handover prompt. The notes view has a back button and lists what the agent did, with times and a kind (stuck, idea, handover).
+Opens from the ring. A head band with a 40 px ring, the Card Head ("Babysitter · api"), the context line ("Context 62% · 124k / 200k") and a notes button; no state word, the ring's color says it. Then the questions, in the same table style as the lane tree: a Raised Sepia head row flush under the band ("#", "needs you", "id", "waiting"), then one 13 px row per question, oldest first, with `line` dividers. A row holds its number, the question title with its task id (or "lane api") under it in 12 px muted, the id as a copy id, and the waiting time. The title of a planner question is an underlined link to its plan change; other titles are plain text. Then Chat and Copy handover prompt. The notes view has a back button and lists what the agent did, with times and a kind (stuck, idea, handover).
 
 ### Plan change (signature)
-The planner's change to the lanes is read-only. The lane's tree with a sign column: "+" added (the row in a 1 px ink outline), "−" removed (struck through, on the ground color), "→" moved (with where it goes), "~" changed (the old text struck under the new). A new lane is its own tree in a 1 px ink box with 20 px corners. The signs are images with a name for screen readers. No Approve and no Reject: the page ends with "Answer in the planner chat with the id, for example Q16 ok."
+The planner's change to the lanes is read-only. Its band has "Plan change · Q16", the topic and "From the planner · 12 min". Then the planner's reason, and a "Lane diff" section title.
+
+**Lane diff.** Each changed lane is a split diff, like a git review. A title line holds the lane name and the counts: "+3" in `diff-add-ink`, "−1" in `diff-remove-ink` and "2 moved out" muted. Under it, two cards side by side: "now" at the left and "after the change" at the right, each with a Raised Sepia head and 12 px corners. Each line has the line number, a sign ("+" or "−"), the tree graph, the task id and title, and the step cell. An added line has the Diff Add fill and a removed line the Diff Remove fill; inside a changed title, only the changed words carry the stronger word tone. Where one side has no line, the cell is a hatched gap. A task that leaves for another lane says "→ lane" after its title, as a link to that lane's box. Runs of unchanged tasks fold into one "⋯ 4 unchanged tasks" button, which opens them in place. Below 600 px of width only the right card shows, with the head "now and after the change"; below 1000 px the step cell shows only the time.
+
+**New lane.** A new lane is its own box under the right card, so it lines up with "after the change". The box has a 1 px ink border, 12 px corners, and a Lift bar with a "NEW LANE" capsule tag, the lane name and "+N". When the lane splits off from another lane, a dashed joint above it says "Split off from lane api", and its first task says "← from api". Every line of a new lane is an added line.
+
+The planner sends every task it moves as its own line, one node per task. The panel cannot open a summary line such as "SAM-305 … SAM-310". The signs are images with a name for screen readers. No Approve and no Reject: the page ends with "Answer in the planner chat with the id, for example Q16 ok."
 
 ### Navigation
 The floating capsule nav with Home and Projects, on the phone and the desktop; the current tab is a raised capsule with a 1.5 px ink border.
@@ -337,7 +406,7 @@ What the panel already has shows at once: a lane's header and progress, the agen
 - **Do** put a question in the card of the agent that asked it, with its id and the waiting time.
 - **Do** close a question when the owner answers it in the chat: a hook in the asking agent's session (the babysitter's or the planner's) tells the server, and the row leaves the card.
 - **Do** show the agent on every lane and project page, and let the owner drag it out of the way.
-- **Do** show a plan change before it is applied, with + − → ~ signs.
+- **Do** show a plan change before it is applied, as a split lane diff: "+" and "−" lines, the changed words marked, and "→ lane" for a task that moves.
 - **Do** give every focusable element a 2 px ink focus ring with a 2 px offset.
 - **Do** write times as "11:20" for today and "Nov 13, 20:30" for another day.
 
@@ -347,11 +416,12 @@ What the panel already has shows at once: a lane's header and progress, the agen
 - **Don't** put a list of questions on a page; questions live in the agent card.
 - **Don't** write a state word ("asleep", "working") next to an agent; the ring says it.
 - **Don't** add Approve or Reject to a plan change.
-- **Don't** use a font size outside 12, 14, 15, 16, 20 and 28 px, or cut a title with "…".
+- **Don't** use a font size outside 11, 12, 13, 14, 15, 16, 20 and 28 px, or cut a title with "…".
+- **Don't** use the diff green or red outside a lane diff.
 - **Don't** draw drag handles or drop zones for tasks; the tree is never edited by hand.
 - **Don't** use real client, project or task names in designs or code; sample data is made up.
 
 ### Open points
 - Done and running squares differ only by hue (1.64:1). The labels say the state in words; a mark inside the red square was tried and left out.
 - The settings page is not drawn. There is no Archive and no eval page.
-- Dark Sepia is drawn only for the projects page and a lane tree.
+- Dark Sepia has every token, the diff tones too, but the panel has no theme switch yet. `?theme=dark` in the URL is a stopgap.
