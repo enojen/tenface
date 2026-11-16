@@ -7,8 +7,16 @@
 		label,
 		done,
 		class: className = '',
+		quiet = false,
 		children
-	}: { text: string; label: string; done: string; class?: string; children: Snippet<[boolean]> } = $props();
+	}: {
+		text: string;
+		label: string;
+		done: string;
+		class?: string;
+		quiet?: boolean;
+		children: Snippet<[boolean]>;
+	} = $props();
 
 	let copied = $state(false);
 	let timer: ReturnType<typeof setTimeout> | undefined;
@@ -21,10 +29,11 @@
 			return;
 		}
 		copied = true;
-		toast.show(done);
+		if (!quiet) toast.show(done);
 		clearTimeout(timer);
 		timer = setTimeout(() => (copied = false), 1800);
 	}
 </script>
 
 <button type="button" class={className} class:copied aria-label={label} onclick={copy}>{@render children(copied)}</button>
+{#if quiet}<span class="sr-only" role="status">{copied ? done : ''}</span>{/if}

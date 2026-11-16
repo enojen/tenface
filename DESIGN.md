@@ -360,7 +360,7 @@ Clear like a tool: the same shape for the same job on every screen.
 
 ### Buttons
 - **Outline:** a capsule 44 px high with a 1 px gray-mark edge, ink text and an optional icon: Chat, Copy handover prompt, Try again. In the task head the PR and Tracker links are the same outline at 40 px: "#418" with the GitHub mark, and the tracker icon alone.
-- **Copy id:** the id as plain ink text at 600 with a 12 px copy icon after it, without a frame. A hover underlines it; a click copies the id for the chat, and for a moment the id turns into a small ink chip with a check icon. The owner has not decided yet whether the copy icon stays.
+- **Copy id:** the id as plain ink text at 600 with a 12 px copy icon after it, without a frame. A hover underlines it; a click copies the id for the chat, and for a moment the copy icon turns into a check. The id copy shows no toast and no fill; screen readers hear "Q12 copied, paste it in the chat". The owner has not decided yet whether the copy icon stays.
 - A button that only repeats an action says what it does, for example "Try again: load lane billing".
 
 ### Running notes and the lane progress
