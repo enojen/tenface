@@ -193,8 +193,8 @@ test('a planner question opens its plan change', async ({ page }, info) => {
 		.click();
 	await page.getByRole('link', { name: 'Split search into a new lane' }).click();
 	await expect(page).toHaveURL(/\/questions\/Q16/);
-	await expect(page.getByRole('img', { name: 'added' })).toBeVisible();
-	await expect(page.getByText('New lane search-index')).toBeVisible();
+	await expect(page.getByRole('img', { name: 'added' }).first()).toBeVisible();
+	await expect(page.getByRole('region', { name: 'New lane search-index' })).toBeVisible();
 	if (!phone(info.project.name)) {
 		await expect(page.getByRole('link', { name: /^api\b/ })).toHaveClass(/outlined/);
 	}

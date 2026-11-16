@@ -16,6 +16,12 @@
 	--mark-empty: #ddd5c6;
 	--running: #a3161c;
 	--on-running: #e7e1d4;
+	--diff-add: #cdecd3;
+	--diff-add-word: #9bd8aa;
+	--diff-add-ink: #0f5c25;
+	--diff-remove: #f6d5cf;
+	--diff-remove-word: #eaaea5;
+	--diff-remove-ink: #9a0f22;
 	--shade: 31, 28, 23;
 
 	--sans: "Inter Variable", Inter, system-ui, sans-serif;
@@ -47,6 +53,12 @@
 	--mark-empty: #474036;
 	--running: #ff5a5f;
 	--on-running: #2a2620;
+	--diff-add: #183a24;
+	--diff-add-word: #2a6b3e;
+	--diff-add-ink: #8ee4a8;
+	--diff-remove: #43201f;
+	--diff-remove-word: #7a2e2e;
+	--diff-remove-ink: #ffa9a6;
 	--shade: 0, 0, 0;
 }
 

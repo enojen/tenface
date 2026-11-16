@@ -29,7 +29,7 @@
 		}}
 	><ChevronLeft size={20} /></a>
 	{#if plan.value?.change}
-		<PlanChange question={plan.value} />
+		<PlanChange projectId={project.id} question={plan.value} />
 	{:else if plan.state === LoadState.Loading}
 		<Skeleton kind={SkeletonKind.Tree} label="Loading the plan change {questionId}" />
 	{:else}

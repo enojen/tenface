@@ -35,6 +35,8 @@
 	const task = $derived(taskId ? tree.value?.tasks.find((candidate) => candidate.id === taskId) : undefined);
 	const close = () => back(lane ? laneUrl(project.id, lane.id) : projectUrl(project.id));
 
+	const planWide = $derived(questionId !== null && !task);
+
 	function detailLabel() {
 		if (task) return `Task ${task.id}`;
 		if (questionId) return `Question ${questionId}`;
@@ -44,7 +46,7 @@
 
 {#snippet planChange()}
 	{#if plan.value?.change}
-		<PlanChange question={plan.value} heading="h2" onclose={close} />
+		<PlanChange projectId={project.id} question={plan.value} heading="h2" onclose={close} />
 	{:else if plan.state === LoadState.Loading}
 		<Skeleton kind={SkeletonKind.Tree} label="Loading the plan change {questionId}" />
 	{:else}
@@ -65,7 +67,7 @@
 				<LanesTable {project} desk size={10} picked={lane?.id ?? null} outlined={questionId !== null} />
 			</div>
 
-			<main class="column banded">
+			<main class="column banded" hidden={planWide}>
 				{#if lane}
 					<div class="lane-top band">
 						<LaneHeader {lane} heading="h2" />
@@ -75,7 +77,6 @@
 						{#if tree.value}
 							<LaneTree
 								lane={tree.value}
-								steps={project.steps}
 								picked={task?.id ?? null}
 								offline={!live.connection.online}
 								href={(item) => taskUrl(project.id, lane.id, item.id)}
@@ -91,7 +92,7 @@
 				{/if}
 			</main>
 
-			<aside class="column banded" aria-label={detailLabel()}>
+			<aside class="column banded" class:wide={planWide} aria-label={detailLabel()}>
 				{#if task}
 					{#key task.id}<TaskDetail {task} steps={project.steps} onclose={close} />{/key}
 				{:else if questionId}
@@ -159,6 +160,14 @@
 		background: var(--lift);
 	}
 
+	.column[hidden] {
+		display: none;
+	}
+
+	.column.wide {
+		grid-column: 2 / span 2;
+	}
+
 	.column > :global(.detail),
 	.column > :global(.plan) {
 		grid-row: 1 / span 2;
@@ -166,14 +175,15 @@
 		grid-template-rows: subgrid;
 	}
 
-	.column :global(.band) {
+	.column > :global(.band),
+	.column > :global(* > .band) {
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
 	}
 
 	.lane-top.band,
-	.column :global(.top.band) {
+	.column > :global(* > .top.band) {
 		flex-direction: row;
 		align-items: flex-start;
 		gap: 8px;

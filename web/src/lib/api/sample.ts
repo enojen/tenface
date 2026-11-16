@@ -261,6 +261,14 @@ export function sampleWorld(now: number): SampleWorld {
 		]
 	);
 
+	const indexParts = (sign: PlanSign | null) =>
+		[10, 9, 8, 7, 6, 5].reduce<PlanChange['trees'][number]['roots']>(
+			(children, n) => [
+				node(`SAM-3${String(n).padStart(2, '0')}`, `Index job part ${n - 4}`, sign, children)
+			],
+			[]
+		);
+
 	const change: PlanChange = {
 		reason: 'The branch under SAM-304 has 7 open tasks, and the limit is 6.',
 		trees: [
@@ -276,9 +284,12 @@ export function sampleWorld(now: number): SampleWorld {
 							}),
 							node('SAM-311', 'Page the search results', PlanSign.Added),
 							node('SAM-299', 'Old search page', PlanSign.Removed),
-							node('SAM-304', 'SAM-304 and 6 tasks under it', PlanSign.Moved, [], {
-								note: 'moves to lane search-index'
-							})
+							node(
+								'SAM-304',
+								'Rebuild the index every night',
+								PlanSign.Moved,
+								indexParts(PlanSign.Moved)
+							)
 						])
 					])
 				]
@@ -287,11 +298,7 @@ export function sampleWorld(now: number): SampleWorld {
 				lane: 'search-index',
 				isNew: true,
 				waits: 'Waits for SAM-302 (running), then a new babysitter starts it.',
-				roots: [
-					node('SAM-304', 'Rebuild the index every night', null, [
-						node('SAM-305 … SAM-310', '6 tasks, same order as now', null)
-					])
-				]
+				roots: [node('SAM-304', 'Rebuild the index every night', null, indexParts(null))]
 			}
 		]
 	};
