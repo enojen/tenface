@@ -94,3 +94,15 @@ export function placeLabel(place: StepPlace): string {
 	if (place.minutes === null) return `${place.name} not started`;
 	return `${place.name} ${place.minutes} min${statusWords(place.mark)}`;
 }
+
+export interface RowStep {
+	word: string;
+	time: string;
+}
+
+export function rowStep(task: Task, now: number): RowStep {
+	if (task.state === TaskState.Done) return { word: 'done', time: '' };
+	const run = currentStep(task);
+	if (!run) return { word: 'waiting', time: '' };
+	return { word: run.step, time: stepTime(runMinutes(run, now)) };
+}

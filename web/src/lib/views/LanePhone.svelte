@@ -29,7 +29,6 @@
 	{#if tree.value}
 		<LaneTree
 			lane={tree.value}
-			steps={project.steps}
 			picked={taskId}
 			offline={!live.connection.online}
 			href={(item) => taskUrl(project.id, lane.id, item.id)}
